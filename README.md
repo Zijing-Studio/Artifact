@@ -38,7 +38,7 @@
 //operation_type: "forbid"
 {
     "type": "Artifact",
-    "target": "A"/"abstain"(1/-1)	//禁用神器的种类（字符串还是id）		 
+    "target": "A/abstain or (1/-1)"	//禁用神器的种类（字符串还是id）		 
 }
 ```
 
@@ -99,7 +99,7 @@
 //operation_type: "move"
 {
     "mover": 1,				//移动的生物的编号
-    "position": (x, y, z)	//移动到的位置
+    "position": [x, y, z]	//移动到的位置
 }
 ```
 
@@ -118,7 +118,7 @@
 ```json
 //operation_type: "summon"
 {
-  "postion": (x, y, z), 	//召唤位置
+  "postion": [x, y, z], 	//召唤位置
   "type": "Elf",	 		//召唤种类
   "star": 5					//召唤星级
 }
@@ -160,9 +160,9 @@
 ```json
 //operation_type: "use"
 {
-    "type": "Artifact"
+    "type": "Artifact",
     "artifact": 1,	//使用的神器的编号
-    ("target":	2)	//有些神器有使用对象
+    "target":	2	//有些神器有使用对象(optional)
 }
 ```
 
