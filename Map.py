@@ -14,3 +14,9 @@ class Map:
             if pos == unit.pos:
                 return unit
         return None
+
+    def add_unit(self,unit):
+        self.unit_list.append(unit)
+
+    def remove_unit(self,unit):
+        self.unit_list.remove(unit)
