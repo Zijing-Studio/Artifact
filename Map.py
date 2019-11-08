@@ -9,3 +9,8 @@ class Map:
         self.barrack_list = []
         self.relic_list = []
         
+    def get_unit_at(self,pos):
+        for unit in self.unit_list:
+            if pos == unit.pos:
+                return unit
+        return None

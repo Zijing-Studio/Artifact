@@ -3,13 +3,14 @@ Definition of unit classes
 '''
 
 class Unit:
-    def __init__(self,cost,atk,hp,atk_range,max_move,cool_down):
+    def __init__(self,cost,atk,hp,atk_range,max_move,cool_down,pos):
         self.cost = cost
         self.atk = atk
         self.hp = hp
         self.atk_range = atk_range
         self.max_move = max_move
         self.cool_down = cool_down
+        self.pos = pos
         self.event_listener_list = []
 
     def add_event_listener(self,listener):
