@@ -17,6 +17,10 @@ get_player_by_id(int player_id)
 # 通过player的id获取其信息
 get_barracks(player_id)
 # 返回选手id为player_id的兵营列表
+get_obstacles()
+# 返回所有障碍物
+get_relic_by_id(player_camp)
+# 获得一个玩家的神迹
 unit_conflict(string type, pos)
 # 检查在pos位置如果产生种类为type的生物是否会发生重叠
 player.check_unit_cost(string type, int star)

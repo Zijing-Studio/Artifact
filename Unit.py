@@ -1,6 +1,7 @@
 '''
 Definition of unit classes
 '''
+from EventListener import *
 
 UNIT_ID = 0
 
@@ -21,6 +22,9 @@ class Unit:
         self.pos = pos
         self.state_system = state_system
         self.event_listener_list = []
+
+        self.add_event_listener(DamageListener())
+        self.add_event_listener(AttackListener())
 
     def __str__(self):
         return '''{}

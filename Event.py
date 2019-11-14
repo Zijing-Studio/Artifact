@@ -9,4 +9,5 @@ class Event:
 
     def __str__(self):
         return '''Event: {}
-    Priority: {}'''
+    Priority: {}
+    Parameters: {}'''.format(self.name,self.priority,self.parameter_dict)
