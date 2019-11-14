@@ -12,9 +12,10 @@ def parse(operation):
     '''
     #create operation object
     operation_object = to_object(operation)
-    if operation_object == None:
+    if isinstance(operation_object, BaseException):
         #return error message
-        return ""
+        print(operation_object)
+        return operation_object 
     if operation_object.check_legality:
         #emit responding event
         print("emit")
@@ -28,17 +29,21 @@ def to_object(operation_json):
     '''
     try:
         operation_type = operation_json["operation_type"].lower()
-        player_id = operation_json["player"]
+        player_id = int(operation_json["player"])
         params = operation_json["operation_parameters"]
         if operation_type == "forbid":
             operation_object = Forbid(player_id, params)
+        elif operation_type == "select":
+            operation_object = Select(player_id, params)
         return operation_object
-    except KeyError as e:
-        print(e)
+    except KeyError as error:
+        return KeyError("KeyError: " + str(error))
+    except ValueError as error:
+        return ValueError("ValueError: " + str(error).split(':')[-1])
 
 if __name__ == "__main__":
     example = {
-            "player": 1,
+            "player": "fuck",
             "operation_type": "Forbid",
             "operation_parameters":{
                 }
