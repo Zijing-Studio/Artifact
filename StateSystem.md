@@ -11,5 +11,19 @@ getMap()
 # 返回当前地图
 getUnits()
 # 返回当前所有单位的列表/集合
+get_unit_by_id(int id)
+# 通过生物id获取生物
+get_player_by_id(int player_id)
+# 通过player的id获取其信息
+get_barracks(player_id)
+# 返回选手id为player_id的兵营列表
+unit_conflict(string type, pos)
+# 检查在pos位置如果产生种类为type的生物是否会发生重叠
+player.check_unit_cost(string type, int star)
+# 检查player召唤星级为star的生物生物槽是否够用
+player.check_magic_cost(string type, int star)
+# 检查player召唤星级为star的生物法力值是否够用
+path(mover, position)
+# 返回移动到position的路径，不行就返回False
 ```
 

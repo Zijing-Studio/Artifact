@@ -181,3 +181,15 @@ parse(operation)	#控制器传入符合Json格式的字符串或者字典，由�
 ##### 设置陷阱
 
 to be continue ...
+
+
+
+# 计算几何库
+
+```python
+to_xy((x, y ,z, ...))
+# 把三元坐标转化为x+y = -z的形式
+path(from, to, obstacles)
+# 给出从from到to的路径，不行就返回False, obstablcs为不能经过的点
+```
+
