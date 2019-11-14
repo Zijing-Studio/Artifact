@@ -5,6 +5,8 @@
 import sys
 import json
 import logic_python_SDK
+from PlayerLegality.player_legality import Parser
+from StateSystem import StateSystem
 
 # pylint: disable = R1702
 # pylint: disable = R0801
@@ -16,30 +18,46 @@ class Game:
     '''
     游戏类
     '''
+    # pylint: disable=too-many-instance-attributes
+
     def __init__(self):
         '''
         初始化
         '''
-        self.state = 1  # 当前回合数
-        self.listen = 0  # 当前监听的玩家
+        self.player0 = -1       # player0对应的编号
+        self.player1 = -1       # player1对应的编号
+        self.media_player = []  # 播放器
+        self.audience = []      # 观众
+        self.replay = ""        # 录像文件存储处
+        self.state = 0          # 当前回合数
+        self.listen = 0         # 当前监听的玩家
+        self.is_end = False     # 是否结束
+        self.statesystem = StateSystem()
+        self.parser = Parser()
 
     def get_game_end(self):
         '''
         获取游戏终局信息并结束对局
         '''
-        if 1 == 1:  # 1号玩家胜利条件
-            game_end(1, 0)
-        elif 2 == 2:  # 2号玩家胜利条件
-            game_end(0, 1)
+        if 0 == 0:  # 0号玩家胜利条件
+            self.is_end = True
+            self.game_end(self.player0)
+        elif 1 == 1:  # 1号玩家胜利条件
+            self.is_end = True
+            self.game_end(self.player1)
         else:
-            game_end(0, 0)
+            self.is_end = True
+            self.game_end(-1)
 
     def get_next_player(self):
         '''
         切换到下一个玩家
         '''
-        self.listen = 1-self.listen
-        # 判断胜利情况，若游戏结束，则game_end
+        if self.listen == self.player0:
+            self.listen = self.player1
+        elif self.listen == self.player1:
+            self.listen = self.player0
+        # 判断胜利情况，若游戏结束，则self.get_game_end()
 
     def get_state_opt(self):
         '''
@@ -51,34 +69,43 @@ class Game:
                 opt = opt_dict['content']
                 # 查询当前地图状态
                 if opt[0] == '#':
-                    ans_list = []
-                    # ans_list.append(表示地图状态的字符串)
-                    logic_python_SDK.send_state(self.get_state_dict("".join(ans_list)))
+                    logic_python_SDK.send_state(self.get_state_dict(
+                        self.board_message()))
 
                 # 输入操作指令
                 else:
-                    # 处理ai传过来的信息，转交给合法性检测方 parse(opt_dict)?
-                    # （等待合法性检测、状态系统、事件堆）
-                    # 处理事件堆传过来的信息，转交给播放器方
-
-                    # 回合结束，切换玩家回合
-                    self.get_next_player()
-                    self.state += 1
-
-                    break
+                    opt['player'] = self.listen
+                    parser_respond = self.parser.parse(opt)
+                    if isinstance(parser_respond, BaseException):
+                        pass
+                    elif not parser_respond:
+                        pass
+                    else:
+                        media_events = ""
+                        for event in self.statesystem.event_heap.record:
+                            # 处理event
+                            pass
+                        self.statesystem.event_heap.record.clear()
+                        state_dict = {}
+                        state_dict['state'] = self.state
+                        state_dict['listen'] = [self.listen]
+                        state_dict['player'] = self.media_player[:]
+                        state_dict['content'] = [media_events] * len(self.media_player)
+                        logic_python_SDK.send_state(state_dict)
 
             elif opt_dict['player'] == -1:
                 opt = json.loads(opt_dict['content'])
+                # AI异常退出
                 if opt['error'] == 0:
-                    if opt['player'] == 0:
-                        game_end(0, 1)
+                    if opt['player'] == self.player0:
+                        self.game_end(self.player1)
                     else:
-                        game_end(1, 0)
-                else:
-                    if self.listen == 0:
-                        game_end(0, 1)
-                    else:
-                        game_end(1, 0)
+                        self.game_end(self.player0)
+                # 超时
+                elif opt['error'] == 1:
+                    # 回合结束，切换玩家回合
+                    self.get_next_player()
+                    self.state += 1
 
     def get_state_dict(self, content_str):
         '''
@@ -99,40 +126,51 @@ class Game:
         # board_str.append(局面描述)
         return "#"+"".join(board_str)+"#"
 
+    def game_init(self, player_list):
+        '''
+        游戏初始化处理
+        '''
+        for player, status in enumerate(player_list):
+            if status in (1, 2):
+                if self.player0 != -1:
+                    self.player0 = player
+                elif self.player1 != -1:
+                    self.player1 = player
+            elif status == 3:
+                self.media_player.append(player)
+            elif status == 4:
+                self.audience.append(player)
+
+        if self.player1 == -1:
+            # 没有玩家连入
+            self.game_end(-1)
+        if self.player0 != -1 and self.player1 == -1:
+            self.game_end(self.player0)
+
     def start(self):
         '''
         开始游戏
         '''
-        game_init(logic_python_SDK.read_player_state())
+        opt_dict = logic_python_SDK.read_opt()
+        self.replay = opt_dict['replay']
+        self.game_init(opt_dict['player_list'])
         logic_python_SDK.send_init(3, 1024)
         # 处理初始卡组
 
-        while True:
-            logic_python_SDK.send_state(self.get_state_dict(self.board_message()))
+        while not self.is_end:
+            logic_python_SDK.send_state(self.get_state_dict(
+                self.board_message()))
             self.get_state_opt()
 
-
-def game_init(player_list):
-    '''
-    游戏初始化处理
-    '''
-    first_state = player_list[0]
-    second_state = player_list[1]
-    if first_state == 0 or second_state == 0:
-        game_end(first_state, second_state)
-
-
-def game_end(first_state, second_state):
-    '''
-    游戏终局处理
-    '''
-    if first_state == second_state:
-        logic_python_SDK.send_end_info("draw!")
-    elif first_state == 0:
-        logic_python_SDK.send_end_info("player1 win!")
-    else:
-        logic_python_SDK.send_end_info("player0 win!")
-    sys.exit()
+    def game_end(self, winner):
+        '''
+        游戏终局处理
+        '''
+        if winner == -1:
+            logic_python_SDK.send_end_info("draw!")
+        else:
+            logic_python_SDK.send_end_info("player " + str(winner) + " win!")
+        sys.exit()
 
 
 def main():
