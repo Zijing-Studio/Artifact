@@ -15,6 +15,18 @@ class Map:
                 return unit
         return None
 
+    def get_unit_by_id(self,id):
+        for unit in self.unit_list:
+            if unit.id == id:
+                return unit
+        return None
+
+    def get_relic_by_id(self,id):
+        for relic in self.relic_list:
+            if relic.camp == id:
+                return relic
+        return None
+
     def add_unit(self,unit):
         self.unit_list.append(unit)
 

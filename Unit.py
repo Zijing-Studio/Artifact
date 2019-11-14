@@ -1,14 +1,16 @@
 '''
 Definition of unit classes
 '''
+from EventListener import *
 
 UNIT_ID = 0
 
 class Unit:
-    def __init__(self,name,cost,atk,max_hp,atk_range,max_move,cool_down,pos,state_system):
+    def __init__(self,camp,name,cost,atk,max_hp,atk_range,max_move,cool_down,pos,state_system):
         global UNIT_ID
         self.id = UNIT_ID
         UNIT_ID += 1
+        self.camp = camp
         self.name = name
         self.cost = cost
         self.atk = atk
@@ -21,9 +23,13 @@ class Unit:
         self.state_system = state_system
         self.event_listener_list = []
 
+        self.add_event_listener(DamageListener())
+        self.add_event_listener(AttackListener())
+
     def __str__(self):
         return '''{}
     ID: {}
+    Camp: {}
     Cost: {}
     Atk: {}
     HP: {}/{}
@@ -33,6 +39,7 @@ class Unit:
     Pos: {}'''.format(
                 self.name,
                 self.id,
+                self.camp,
                 self.cost,
                 self.atk,
                 self.hp,
@@ -55,7 +62,7 @@ class Unit:
         self.state_system.emit(event)
 
 class Archer(Unit):
-    def __init__(self,level,pos,state_system):
+    def __init__(self,camp,level,pos,state_system):
         name = "Archer"
         cost = [2,4,6]
         atk = [1,2,3]
@@ -65,6 +72,7 @@ class Archer(Unit):
         cool_down = 4
         Unit.__init__(
             self,
+            camp,
             name + " (Level " + str(level) + ")",
             cost[level-1],
             atk[level-1],
@@ -75,7 +83,3 @@ class Archer(Unit):
             pos,
             state_system
         )
-
-if __name__=="__main__":
-    archer = Archer(2,(0,0,0,0),None)
-    print(archer)
