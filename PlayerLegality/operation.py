@@ -98,7 +98,9 @@ class Move(AbstractOperation):
             result = "Out of reach"
         elif self.mover.create_round == self.map.round:
             result = "Just summoned"
-        elif 
+        elif self.mover.has_acted():
+            result = "Has acted this round"
+        return result
 
     def act(self):
         self.map.emit()
@@ -109,11 +111,22 @@ class Attack(AbstractOperation):
     '''
     def __init__(self, _id, _map, _params):
         AbstractOperation.__init__(self, _id, _map)
-        self.attacker = _params["attacker"]
-        self.target = _params["target"]
+        self.attacker = self.map.get_unit_by_id(_params["attacker"])
+        self.target = self.map.get_unit_by_id(_params["target"])
 
     def check_legality(self):
-        return True
+        result = True
+        if self.attacker.attack <= 0:
+            result = "Attack below zero"
+        elif self.create_round == self.map.round:
+            result = "Summoned this round"
+        elif self.attacker.has_acted:
+            result = "Has acted"
+        elif calculator.distance(self.attacker.pos, self.target.pos) > self.attacker.attack_range:
+            result = "Out of range"
+        elif self.target.pos[-1] == 1 and self.attacker.pos[-1] == 0:
+            result = "Cannot reach unit in sky"
+        return result
     
     def act(self):
         pass
