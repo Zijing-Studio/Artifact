@@ -2,8 +2,13 @@
 Definition of unit classes
 '''
 
+UNIT_ID = 0
+
 class Unit:
     def __init__(self,name,cost,atk,max_hp,atk_range,max_move,cool_down,pos,state_system):
+        global UNIT_ID
+        self.id = UNIT_ID
+        UNIT_ID += 1
         self.name = name
         self.cost = cost
         self.atk = atk
@@ -18,6 +23,7 @@ class Unit:
 
     def __str__(self):
         return '''{}
+    ID: {}
     Cost: {}
     Atk: {}
     HP: {}/{}
@@ -26,6 +32,7 @@ class Unit:
     Cool Down:{}
     Pos: {}'''.format(
                 self.name,
+                self.id,
                 self.cost,
                 self.atk,
                 self.hp,
@@ -37,6 +44,7 @@ class Unit:
             )
 
     def add_event_listener(self,listener):
+        listener.host = self
         self.event_listener_list.append(listener)
 
     def deal_event(self,event):
