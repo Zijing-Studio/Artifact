@@ -64,7 +64,7 @@ emit(Event(<name>,[parameter_dict = {}],[priority = 0]))
 ```json
 {}
 
-Priority = -4
+Priority = 3 (when in move)
 ```
 
 ## Leave
@@ -84,3 +84,26 @@ Priority = -4
     "pos": Pos
 }
 ```
+
+## Summon
+
+```json
+{
+    "type": String,
+    "level": int,
+    "pos": Pos,
+    "camp": Camp(int)
+}
+```
+
+## Spawn
+
+召唤完成的事件
+
+```json
+{
+    "source": unit,
+    "pos": Pos
+}
+```
+
