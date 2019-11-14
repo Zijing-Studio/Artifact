@@ -191,5 +191,7 @@ to_xy((x, y ,z, ...))
 # 把三元坐标转化为x+y = -z的形式
 path(from, to, obstacles)
 # 给出从from到to的路径，不行就返回False, obstablcs为不能经过的点
+distance(pos1, pos2)
+# 给出两个位置之间的距离
 ```
 
