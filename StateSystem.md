@@ -21,7 +21,7 @@ unit_conflict(string type, pos)
 # 检查在pos位置如果产生种类为type的生物是否会发生重叠
 player.check_unit_cost(string type, int star)
 # 检查player召唤星级为star的生物生物槽是否够用
-player.check_magic_cost(string type, int star)
+player.check_mana_cost(string type, int star)
 # 检查player召唤星级为star的生物法力值是否够用
 path(mover, position)
 # 返回移动到position的路径，不行就返回False
