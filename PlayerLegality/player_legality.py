@@ -5,6 +5,7 @@
     player legality check api
 '''
 from . import operation
+from StateSystem import StateSystem
 
 class Parser:
     '''
@@ -23,14 +24,15 @@ class Parser:
             #return error message
             print(operation_object)
             return operation_object
-        if operation_object.check_legality():
+        legality = operation_object.check_legality()
+        if legality == True:
             #emit responding event
-            print("emit")
+            print("emit " + operation_object.name)
             operation_object.act()
         else:
             #return error message
-            print("error")
-            return "Illegal action"
+            print("error " + operation_object.name + str(legality))
+            return legality
     
     def to_object(self, operation_json):
         '''
@@ -41,9 +43,17 @@ class Parser:
             player_id = int(operation_json["player"])
             params = operation_json["operation_parameters"]
             if operation_type == "forbid":
-                operation_object = operation.Forbid(player_id, params, self.map)
+                operation_object = operation.Forbid(player_id, self.map, params)
             elif operation_type == "select":
-                operation_object = operation.Select(player_id, params, self.map)
+                operation_object = operation.Select(player_id, self.map, params)
+            elif operation_type == "summon":
+                operation_object = operation.Summon(player_id, self.map, params)
+            elif operation_type == "move":
+                operation_object = operation.Move(player_id, self.map, params)
+            elif operation_type == "attack":
+                operation_object = operation.Attack(player_id, self.map, params)
+            elif operation_type == "use":
+                operation_object = operation.Use(player_id, self.map, params)
             return operation_object
         except KeyError as error:
             return KeyError("KeyError: " + str(error))

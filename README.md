@@ -1,4 +1,7 @@
+[toc]
+
 # Player 合法性检测
+
 ## 接口
 
 ```python

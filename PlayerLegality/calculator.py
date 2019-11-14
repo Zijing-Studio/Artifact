@@ -5,11 +5,14 @@ calculator for hex-grids
 '''
 
 def cube_distance(a, b):
+    '''
+    return distance between two unit
+    '''
     try:
         distance = (abs(a[0] - b[0]) + abs(a[1] - b[1]) + abs(a[2] - b[2]))/2
     except KeyError:
-        raise ValueError("Point format wrong: a: %s, b:%s"%(str(a),str(b)))
-    return distance
+        raise ValueError("Point format wrong: a: %s, b:%s"%(str(a), str(b)))
+    return int(distance + 1e-8)
 
 def cube_neighbor(pos, dir):
     _dir = dir%6
@@ -34,7 +37,7 @@ class Node:
         self.H = H
         self.parent = parent
 
-def path(start, to, obstacles):
+def search_path(start, to, obstacles=[]):
     '''
     return shortest path
     '''
@@ -47,9 +50,9 @@ def path(start, to, obstacles):
     closed = {}
     opened[_start] =  Node(start, 0, cube_distance(start, to))
     while opened:
-        cur_node = min(opened, key=lambda x: x.G + x.H)
+        cur_node = opened[min(opened, key=lambda x: opened[x].G + opened[x].H)]
         for i in range(6):
-            neighbor = cube_neighbor(cur_node, i)
+            neighbor = cube_neighbor(cur_node.pos, i)
             if neighbor not in closed and neighbor not in obstacles:
                 if neighbor in opened:
                     if cur_node.G+1 < opened[neighbor].G:
@@ -85,6 +88,15 @@ def cube_reachable(start, movement, obstacles=[]):
                 if neighbor not in visited and neighbor not in obstacles:
                     visited.append(neighbor)
                     fringes[i+1].append(neighbor)
+
+def path(unit, dest, _map):
+    '''
+    public sdk for search_path
+    '''
+    obstacles = []
+    #obstacles += _map.get
+    result = search_path(unit.pos, dest, obstacles)
+    return result
 
 if __name__ == "__main__":
     cube_reachable(1,1)
