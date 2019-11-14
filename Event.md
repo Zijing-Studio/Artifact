@@ -1,3 +1,11 @@
+# Usage
+
+```python
+emit(Event(<name>,[parameter_dict = {}],[priority = 0]))
+```
+
+
+
 # Event protocol
 
 [toc]

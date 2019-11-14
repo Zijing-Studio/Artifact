@@ -57,7 +57,6 @@ class MoveListener(EventListener):
                         "source": event.parameter_dict["source"],
                         "pos": event.parameter_dict["source"].pos
                     }))
-                    self.host.emit(Event("UpdateRingBuff",priority = -4))
                     print("{} (ID: {}) moves to {}".format(
                         event.parameter_dict["source"].name,
                         event.parameter_dict["source"].id,

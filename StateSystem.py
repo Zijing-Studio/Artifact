@@ -56,4 +56,6 @@ if __name__ == "__main__":
     sys.start_event_processing()
     sys.emit(Event("Move",{"source":a,"dest":2}))
     sys.start_event_processing()
+    for item in sys.event_heap.record:
+        print(item)
     print(b)
