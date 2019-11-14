@@ -54,4 +54,6 @@ if __name__ == "__main__":
     sys.map.add_unit(b)
     sys.emit(Event("Attack",{"source":a,"target":b}))
     sys.start_event_processing()
+    sys.emit(Event("Move",{"source":a,"dest":2}))
+    sys.start_event_processing()
     print(b)

@@ -25,6 +25,7 @@ class Unit:
 
         self.add_event_listener(DamageListener())
         self.add_event_listener(AttackListener())
+        self.add_event_listener(MoveListener())
 
     def __str__(self):
         return '''{}

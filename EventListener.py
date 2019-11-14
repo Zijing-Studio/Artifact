@@ -42,3 +42,26 @@ class AttackListener(EventListener):
                     ))
             except:
                 print("Parameter Dict Error.")
+
+class MoveListener(EventListener):
+    def deal_event(self,event):
+        if event.name == "Move":
+            try:
+                if event.parameter_dict["source"] == self.host:
+                    self.host.emit(Event("Leave",{
+                        "source": event.parameter_dict["source"],
+                        "pos": event.parameter_dict["source"].pos
+                    }))
+                    self.host.pos = event.parameter_dict["dest"]
+                    self.host.emit(Event("Arrive",{
+                        "source": event.parameter_dict["source"],
+                        "pos": event.parameter_dict["source"].pos
+                    }))
+                    self.host.emit(Event("UpdateRingBuff",priority = -4))
+                    print("{} (ID: {}) moves to {}".format(
+                        event.parameter_dict["source"].name,
+                        event.parameter_dict["source"].id,
+                        event.parameter_dict["dest"]
+                    ))
+            except:
+                print("Parameter Dict Error.")
