@@ -37,6 +37,13 @@ class Node:
         self.H = H
         self.parent = parent
 
+    def __str__(self):
+        return '''
+                pos: {},
+                G: {},
+                F: {},
+               '''.format(self.pos, self.G, self.H)
+
 def search_path(start, to, obstacles=[]):
     '''
     return shortest path
@@ -46,6 +53,8 @@ def search_path(start, to, obstacles=[]):
     for i in range(3):
         _start += (start[i],)
         _to += (to[i],)
+    if to in obstacles:
+        return False
     opened = {}
     closed = {}
     opened[_start] =  Node(start, 0, cube_distance(start, to))
@@ -94,9 +103,11 @@ def path(unit, dest, _map):
     public sdk for search_path
     '''
     obstacles = []
-    #obstacles += _map.get
+    obstacle_object = _map.get_units()
+    for obstacle in obstacle_object:
+        obstacles.append(obstacle.pos)
     result = search_path(unit.pos, dest, obstacles)
     return result
 
 if __name__ == "__main__":
-    cube_reachable(1,1)
+    cube_reachable(1, 1)

@@ -74,3 +74,4 @@ class Archer(Unit):
             pos,
             state_system
         )
+        self.flying = False

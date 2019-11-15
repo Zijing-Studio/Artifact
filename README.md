@@ -5,7 +5,14 @@
 ## 接口
 
 ```python
-parse(operation)	#控制器传入符合Json格式的字符串或者字典，由合法性检测section进行处理
+Parser(game_map) 	#合法性检测器的构造函数，传入游戏状态系统对象
+Parser.parse(operation)	#控制器传入符合Json格式的字符串或者字典，由合法性检测section进行处理
+Parser.set_round(round) #修改合法性检测的round参数（在检测例如是否在本回合召唤时有用）
+
+# example
+parser = Parser(game_map)
+parser.set_round(1)
+parser.parse(operation)
 ```
 
 ## Operation Json格式
@@ -190,11 +197,10 @@ to be continue ...
 # 计算几何库
 
 ```python
-to_xy((x, y ,z, ...))
-# 把三元坐标转化为x+y = -z的形式
-path(from, to, obstacles)
-# 给出从from到to的路径，不行就返回False, obstablcs为不能经过的点
-distance(pos1, pos2)
+# 以下函数参数中的坐标均为立方坐标表示法下的坐标
+path(unit, dest, _map)
+# A*算法，给出从单位unit到dest点的路径，不行就返回False, _map为地图系统
+cube_distance(pos1, pos2)
 # 给出两个位置之间的距离
 ```
 

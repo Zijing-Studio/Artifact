@@ -1,10 +1,11 @@
 #!/usr/bin/python
 # -*- coding:utf-8 -*-
 
-import StateSystem
+from StateSystem import StateSystem
 from PlayerLegality.player_legality import Parser
 
-parser = Parser()
+game_map = StateSystem()
+parser = Parser(game_map)
 
 operations = [
     {

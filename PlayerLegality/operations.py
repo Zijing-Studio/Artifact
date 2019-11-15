@@ -31,7 +31,7 @@ class AbstractOperation:
         '''
         target = self.map.get_unit_at(pos)
         result = True
-        if target is None or unit.pos[-1] != target.pos[-1]:
+        if target is None or unit.flying != target.flying:
             result = False
         return result
 
@@ -114,15 +114,17 @@ class Move(AbstractOperation):
         result = True
         path = calculator.path(self.mover, self.position, self.map)
         if self.unit_conflict(self.mover, self.position):
-            result = "Unit conflict"
+            result = "Unit conflict: target: {}".format(self.position)
         elif not path:
             result = "No suitable path"
-        elif self.mover.max_move <= len(path)-1: # path include start point, so len need -1
+        elif self.mover.max_move < len(path)-1: # path include start point, so len need -1
             result = "Out of reach: max move: {}, shortest path: {}".format(self.mover.max_move, path)
         #elif self.mover.create_round == self.map.round:
         #    result = "Just summoned"
         #elif self.mover.has_acted():
         #    result = "Has acted this round"
+        if result is not True:
+            result = "start: {}, end: {}\n".format(self.mover.pos, self.position) + result
         return result
 
     def act(self):
