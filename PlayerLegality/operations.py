@@ -124,7 +124,7 @@ class Move(AbstractOperation):
         #elif self.mover.has_acted():
         #    result = "Has acted this round"
         if result is not True:
-            result = "start: {}, end: {}\n".format(self.mover.pos, self.position) + result
+            result += "\nstart: {}, end: {}\n".format(self.mover.pos, self.position)
         return result
 
     def act(self):

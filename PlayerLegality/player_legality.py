@@ -44,7 +44,7 @@ class Parser:
             return "OK"
         else:
             #return error message
-            print(operation_object.name + " error: " + str(legality))
+            print("emit " + operation_object.name + " error: " + str(legality))
             return legality
 
     def to_object(self, operation_json):

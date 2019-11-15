@@ -35,7 +35,7 @@ operations = [
             "position": [0, 1, -1]
             }
     },
-    # move successfully
+    # move out of range
     {
         "player": 0,
         "operation_type": "move",
@@ -44,6 +44,7 @@ operations = [
             "position": [0, 3, -3]
             }
     },
+    # attack out of range
     {
         "player": 0,
         "operation_type": "attack",
@@ -52,6 +53,24 @@ operations = [
             "target": 1
             }
     },
+    # move successfully
+    {
+        "player": 0,
+        "operation_type": "move",
+        "operation_parameters": {
+            "mover": 0,
+            "position": [0, -1, 1]
+            }
+    },
+    # attack successfully
+    {
+        "player": 0,
+        "operation_type": "attack",
+        "operation_parameters": {
+            "attacker": 0,
+            "target": 1
+            }
+    }
     ]
 
 for op in operations:
