@@ -81,16 +81,16 @@ class Game:
                     elif not parser_respond:
                         pass
                     else:
-                        media_events = ""
-                        for event in self.statesystem.event_heap.record:
-                            # 处理event
-                            pass
+                        media_info = self.get_media_info(self.statesystem.event_heap.record)
+                        if self.replay != "":
+                            with open(self.replay, 'wb') as replay_file:
+                                replay_file.write(media_info)
                         self.statesystem.event_heap.record.clear()
                         state_dict = {}
                         state_dict['state'] = self.state
                         state_dict['listen'] = [self.listen]
                         state_dict['player'] = self.media_player[:]
-                        state_dict['content'] = [media_events] * len(self.media_player)
+                        state_dict['content'] = [media_info] * len(self.media_player)
                         logic_python_SDK.send_state(state_dict)
 
             elif opt_dict['player'] == -1:
@@ -106,6 +106,42 @@ class Game:
                     # 回合结束，切换玩家回合
                     self.get_next_player()
                     self.state += 1
+
+    def get_media_info(self, events):
+        '''
+        把事件转为给播放器的二进制序列
+        '''
+        version = 0
+        media_info = version.to_bytes(4, byteorder= 'little', signed=True)
+        for event in events:
+            media_info += self.state.to_bytes(4, 'little', signed=True)  # currentTurn
+            if event.name == "Summon":
+                media_info += int(0).to_bytes(4, 'little', signed=True)
+                if event.parameter_dict['type'] == 'Archer':
+                    if event.parameter_dict['camp'] == 0:
+                        media_info += int(2).to_bytes(4, 'little', signed=True)
+                    elif event.parameter_dict['camp'] == 1:
+                         media_info += int(15).to_bytes(4, 'little', signed=True)
+                else:
+                    pass
+                media_info += event.parameter_dict['pos'][0].to_bytes(4, 'little', signed=True)  # posX
+                media_info += event.parameter_dict['pos'][2].to_bytes(4, 'little', signed=True)  # posZ
+                media_info += int(0).to_bytes(4, 'little', signed=True)  # 0
+            elif event.name == "Move":
+                media_info += int(1).to_bytes(4, 'little', signed=True)
+                media_info += event.parameter_dict['source'].id.to_bytes(4, 'little', signed=True)  # id
+                media_info += event.parameter_dict['dest'][0].to_bytes(4, 'little', signed=True)  # desX
+                media_info += event.parameter_dict['dest'][1].to_bytes(4, 'little', signed=True)  # desY
+                media_info += int(0).to_bytes(4, 'little', signed=True)  # 0
+            elif event.name == "Attack":
+                media_info += int(2).to_bytes(4, 'little', signed=True)
+                media_info += event.parameter_dict['source'].id.to_bytes(4, 'little', signed=True)  # id
+                media_info += event.parameter_dict['target'].id.to_bytes(4, 'little', signed=True)  # tarId
+                media_info += int(0).to_bytes(4, 'little', signed=True)  # 0
+                media_info += int(0).to_bytes(4, 'little', signed=True)  # 0             
+            else:
+                pass
+        return media_info
 
     def get_state_dict(self, content_str):
         '''
@@ -141,10 +177,11 @@ class Game:
             elif status == 4:
                 self.audience.append(player)
 
-        if self.player1 == -1:
+        if self.player0 == -1:
             # 没有玩家连入
             self.game_end(-1)
-        if self.player0 != -1 and self.player1 == -1:
+        elif self.player1 == -1:
+            # 只有一位玩家连入
             self.game_end(self.player0)
 
     def start(self):
