@@ -6,7 +6,7 @@ import sys
 import json
 import logic_python_SDK
 from PlayerLegality.player_legality import Parser
-from StateSystem import StateSystem
+from StateSystem.StateSystem import StateSystem
 
 # pylint: disable = R1702
 # pylint: disable = R0801

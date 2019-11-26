@@ -1,7 +1,7 @@
 import heapq
-import Event
-import Unit
-import EventListener
+from . import Event
+from . import Unit
+from . import EventListener
 
 class EventHeap:
     def __init__(self):

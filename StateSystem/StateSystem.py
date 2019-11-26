@@ -1,9 +1,9 @@
-from EventHeap import *
-from Event import *
-from EventListener import *
-from Unit import *
-from Map import *
-from Player import *
+from .EventHeap import EventHeap
+from .Event import Event
+from .EventListener import EventListener
+from .Unit import *
+from .Map import *
+from .Player import *
 
 class StateSystem:
     def __init__(self):
@@ -13,6 +13,7 @@ class StateSystem:
         self.event_listener_list = []
 
         self.add_event_listener(SummonListener())
+        self.add_event_listener(CheckDeathListener())
 
     def add_event_listener(self,listener):
         listener.host = self
@@ -33,6 +34,12 @@ class StateSystem:
                 player.deal_event(current_event)
             for unit in self.map.unit_list:
                 unit.deal_event(current_event)
+        # Check Death
+        new_unit_list = []
+        for unit in self.map.unit_list:
+            if not unit.death_flag:
+                new_unit_list.append(unit)
+        self.map.unit_list = new_unit_list
 
     def get_map(self):
         return self.map
@@ -92,18 +99,22 @@ class SummonListener(EventListener):
             except:
                 print("Parameter Dict Error.")
 
-if __name__ == "__main__":
-    sys=StateSystem()
-    sys.emit(Event("Summon",{"type":"Archer","level":3,"pos":0,"camp":0}))
-    sys.start_event_processing()
-    sys.emit(Event("Summon",{"type":"Archer","level":3,"pos":1,"camp":1}))
-    sys.start_event_processing()
-    a=sys.map.get_unit_at(0)
-    b=sys.map.get_unit_at(1)
-    sys.emit(Event("Attack",{"source":a,"target":b}))
-    sys.start_event_processing()
-    sys.emit(Event("Move",{"source":a,"dest":2}))
-    sys.start_event_processing()
-    for item in sys.event_heap.record:
-        print(item)
-    print(b)
+class CheckDeathListener(EventListener):
+    '''
+    Only State System register this listener
+    '''
+    def deal_event(self,event):
+        if event.name == "CheckDeath":
+            try:
+                for unit in self.host.map.unit_list:
+                    if unit.hp <= 0 and not unit.death_flag:
+                        unit.death_flag = True
+                        self.host.emit(Event("Death", {
+                            "source": unit
+                        }))
+                        print("{} (ID: {}) is announced to be dead.".format(
+                            unit.name,
+                            unit.id
+                        ))
+            except:
+                print("Parameter Dict Error.")

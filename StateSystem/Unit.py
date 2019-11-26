@@ -1,8 +1,8 @@
 '''
 Definition of unit classes
 '''
-from EventListener import *
-from UnitData import UNIT_DATA
+from .EventListener import *
+from .UnitData import UNIT_DATA
 
 UNIT_ID = 0
 
@@ -23,10 +23,7 @@ class Unit:
         self.pos = pos
         self.state_system = state_system
         self.event_listener_list = []
-
-        self.add_event_listener(DamageListener())
-        self.add_event_listener(AttackListener())
-        self.add_event_listener(MoveListener())
+        self.death_flag = False
 
     def __str__(self):
         return '''{}
@@ -75,3 +72,8 @@ class Archer(Unit):
             state_system
         )
         self.flying = False
+
+        self.add_event_listener(DamageListener())
+        self.add_event_listener(AttackListener())
+        self.add_event_listener(MoveListener())
+        self.add_event_listener(AttackBackListener())

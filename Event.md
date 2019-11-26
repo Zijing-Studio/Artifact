@@ -107,3 +107,21 @@ Priority = 3 (when in move)
 }
 ```
 
+## CheckDeath
+
+判断死亡的事件，交由**State System**处理
+
+```
+{}
+```
+
+## Death
+
+一个生物死亡的事件
+
+```
+{
+	"source": unit
+}
+```
+

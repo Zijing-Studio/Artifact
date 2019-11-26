@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding:utf-8 -*-
 
-from StateSystem import StateSystem
+from StateSystem.StateSystem import StateSystem
 from PlayerLegality.player_legality import Parser
 
 game_map = StateSystem()

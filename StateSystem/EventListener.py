@@ -1,4 +1,5 @@
-from Event import Event
+from .Event import Event
+from Geometry import calculator
 
 class EventListener:
     def __init__(self):
@@ -25,21 +26,40 @@ class AttackListener(EventListener):
             try:
                 if event.parameter_dict["source"] == self.host:
                     self.host.emit(Event("Attacking",event.parameter_dict))
-                    self.host.emit(Event("Attacked",event.parameter_dict))
                     self.host.emit(Event("Damage",{
                         "target": event.parameter_dict["target"],
                         "damage": event.parameter_dict["source"].atk
                     }))
-                    self.host.emit(Event("Damage",{
-                        "target": event.parameter_dict["source"],
-                        "damage": event.parameter_dict["target"].atk
-                    }))
+                    self.host.emit(Event("Attacked",event.parameter_dict))
                     print("{} (ID: {}) attacks {} (ID: {})".format(
                         event.parameter_dict["source"].name,
                         event.parameter_dict["source"].id,
                         event.parameter_dict["target"].name,
                         event.parameter_dict["target"].id
                     ))
+            except:
+                print("Parameter Dict Error.")
+
+class AttackBackListener(EventListener):
+    def deal_event(self,event):
+        if event.name == "Attacked":
+            try:
+                if event.parameter_dict["target"] == self.host:
+                    distance = calculator.cube_distance(
+                        event.parameter_dict["source"].pos,
+                        event.parameter_dict["target"].pos,
+                    )
+                    if self.host.atk_range[0] <= distance <= self.host.atk_range[1]:
+                        self.host.emit(Event("Damage",{
+                            "target": event.parameter_dict["source"],
+                            "damage": event.parameter_dict["target"].atk
+                        }))
+                        print("{} (ID: {}) attacks back on {} (ID: {})".format(
+                            event.parameter_dict["target"].name,
+                            event.parameter_dict["target"].id,
+                            event.parameter_dict["source"].name,
+                            event.parameter_dict["source"].id
+                        ))
             except:
                 print("Parameter Dict Error.")
 

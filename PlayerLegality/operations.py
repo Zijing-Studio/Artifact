@@ -4,8 +4,8 @@
 classes of operations
 '''
 
-from . import calculator
-from Event import Event
+from Geometry import calculator
+from StateSystem.Event import Event
 
 class AbstractOperation:
     '''
