@@ -8,6 +8,14 @@ class Map:
         self.obstacle_list = []
         self.barrack_list = []
         self.relic_list = []
+
+    def parse(self):
+        return {
+            "units": [unit.parse() for unit in self.unit_list],
+            "barracks": [barrack.parse() for barrack in self.barrack_list],
+            "relics": [relic.parse() for relic in self.relic_list],
+            "obstacles": [obstacle.parse() for obstacle in self.obstacle_list],
+        }
         
     def get_unit_at(self,pos):
         for unit in self.unit_list:

@@ -41,6 +41,12 @@ class StateSystem:
                 new_unit_list.append(unit)
         self.map.unit_list = new_unit_list
 
+    def parse(self):
+        return {
+            "map": self.map.parse(),
+            "players": [player.parse() for player in self.player_list]
+        }
+
     def get_map(self):
         return self.map
 

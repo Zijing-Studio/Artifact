@@ -12,6 +12,7 @@ class Unit:
         self.id = UNIT_ID
         UNIT_ID += 1
         self.camp = camp
+        self.level = level
         self.name = name + " (Level " + str(level) + ")"
         self.cost = UNIT_DATA[name]["cost"][level-1]
         self.atk = UNIT_DATA[name]["atk"][level-1]
@@ -48,6 +49,22 @@ class Unit:
                 self.cool_down,
                 self.pos
             )
+    
+    def parse(self):
+        return {
+            "id": self.id,
+            "camp": self.camp,
+            "name": self.name,
+            "cost": self.cost,
+            "atk": self.atk,
+            "max_hp": self.max_hp,
+            "hp": self.hp,
+            "atk_range": self.atk_range,
+            "max_move": self.max_move,
+            "cool_down": self.cool_down,
+            "pos": self.pos,
+            "level": self.level
+        }
 
     def add_event_listener(self,listener):
         listener.host = self
