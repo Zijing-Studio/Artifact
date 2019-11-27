@@ -3,6 +3,8 @@ from StateSystem.Event import Event
 
 if __name__ == "__main__":
     sys=StateSystem()
+    sys.emit(Event("Refresh"))
+    sys.start_event_processing()
     sys.emit(Event("Summon",{"type":"Archer","level":1,"pos":(0,0,0),"camp":0}))
     sys.start_event_processing()
     sys.emit(Event("Summon",{"type":"Archer","level":1,"pos":(-2,0,2),"camp":1}))

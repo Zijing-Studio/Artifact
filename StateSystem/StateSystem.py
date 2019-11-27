@@ -9,7 +9,7 @@ class StateSystem:
     def __init__(self):
         self.map = Map()
         self.event_heap = EventHeap()
-        self.player_list = [Player(0,self),Player(1,self)]
+        self.player_list = [Player(0,1,self),Player(1,2,self)]
         self.event_listener_list = []
 
         self.add_event_listener(SummonListener())
