@@ -5,17 +5,20 @@ class CreatureCapacity:
         self.type = name
         self.duplicate = UNIT_DATA[name]["duplicate"]
         self.cool_down_list = []
+        self.available_count = self.duplicate
 
     def cool_down(self):
-        for item in self.cool_down_list:
-            item -= 1
+        self.cool_down_list = [item - 1 for item in self.cool_down_list]
         new_list = []
         for item in self.cool_down_list:
             if item != 0:
                 new_list.append(item)
+            else:
+                self.available_count += 1
+        self.cool_down_list = new_list
 
-    def available_count(self):
-        return self.duplicate - len(self.cool_down_list)
+    def summon(self):
+        self.available_count -= 1
 
     def new_cool_down(self,level):
         self.cool_down_list.append(UNIT_DATA[self.type]["cool_down"][level])
@@ -23,6 +26,6 @@ class CreatureCapacity:
     def parse(self):
         return {
             "type": self.type,
-            "available_count": self.available_count(),
+            "available_count": self.available_count,
             "cool_down_list": self.cool_down_list
         }
