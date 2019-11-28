@@ -4,12 +4,14 @@ from .EventListener import EventListener
 from .Unit import *
 from .Map import *
 from .Player import *
+from .Relic import Relic
 
 class StateSystem:
     def __init__(self):
         self.map = Map()
         self.event_heap = EventHeap()
         self.player_list = [Player(0,1,self),Player(1,2,self)]
+        self.map.relic_list = [Relic(0,30,(0,0,0)),Relic(1,30,(1,1,-2))]
         self.event_listener_list = []
 
         self.add_event_listener(SummonListener())
