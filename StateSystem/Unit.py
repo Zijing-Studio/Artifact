@@ -13,6 +13,7 @@ class Unit:
         UNIT_ID += 1
         self.camp = camp
         self.level = level
+        self.type = name
         self.name = name + " (Level " + str(level) + ")"
         self.cost = UNIT_DATA[name]["cost"][level-1]
         self.atk = UNIT_DATA[name]["atk"][level-1]
