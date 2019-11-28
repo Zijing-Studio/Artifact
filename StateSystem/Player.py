@@ -83,6 +83,7 @@ class SummonListener(EventListener):
         if event.name == "Spawn":
             source = event.parameter_dict["source"]
             if source.camp == self.host.camp:
+                self.host.mana -= source.cost
                 for capacity in self.host.creature_capacity_list:
                     if capacity.type == source.type:
                         capacity.summon()
