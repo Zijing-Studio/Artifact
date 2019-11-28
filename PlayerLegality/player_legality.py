@@ -30,6 +30,9 @@ class Parser:
         '''
             parse operation, check legality and emit responding event
         '''
+        #check round number
+        if int(operation["round"]) != self.round:
+            return "Not the same round"
         #create operation object
         operation_object = self.to_object(operation)
         if isinstance(operation_object, BaseException):
@@ -56,17 +59,17 @@ class Parser:
             player_id = int(operation_json["player"])
             params = operation_json["operation_parameters"]
             if operation_type == "forbid":
-                operation_object = operations.Forbid(player_id, self.map, params)
+                operation_object = operations.Forbid(self, player_id, self.map, params)
             elif operation_type == "select":
-                operation_object = operations.Select(player_id, self.map, params)
+                operation_object = operations.Select(self, player_id, self.map, params)
             elif operation_type == "summon":
-                operation_object = operations.Summon(player_id, self.map, params)
+                operation_object = operations.Summon(self, player_id, self.map, params)
             elif operation_type == "move":
-                operation_object = operations.Move(player_id, self.map, params)
+                operation_object = operations.Move(self, player_id, self.map, params)
             elif operation_type == "attack":
-                operation_object = operations.Attack(player_id, self.map, params)
+                operation_object = operations.Attack(self, player_id, self.map, params)
             elif operation_type == "use":
-                operation_object = operations.Use(player_id, self.map, params)
+                operation_object = operations.Use(self, player_id, self.map, params)
             return operation_object
         except KeyError as error:
             return KeyError("KeyError: " + str(error))

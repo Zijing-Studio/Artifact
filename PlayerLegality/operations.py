@@ -6,12 +6,14 @@ classes of operations
 
 from Geometry import calculator
 from StateSystem.Event import Event
+from StateSystem.UnitData import UNIT_DATA
 
 class AbstractOperation:
     '''
     base class of all operations
     '''
-    def __init__(self, _id, _map):
+    def __init__(self, _parser, _id, _map):
+        self.parser = _parser
         self.player_id = _id
         self.map = _map
         self.player = _map.get_player_by_id(_id)
@@ -39,8 +41,8 @@ class Forbid(AbstractOperation):
     '''
     operation of forbiding artifact and so on
     '''
-    def __init__(self, _id, _map, _params):
-        AbstractOperation.__init__(self, _id, _map)
+    def __init__(self, _parser, _id, _map, _params):
+        AbstractOperation.__init__(self, _parser, _id, _map)
         self.name = "Forbid"
         self.type = _params["type"]
         self.target = _params["target"]
@@ -55,8 +57,8 @@ class Select(AbstractOperation):
     '''
     operation of selecting artifact and so on
     '''
-    def __init__(self, _id, _map,  _params):
-        AbstractOperation.__init__(self, _id, _map)
+    def __init__(self, _parser, _id, _map,  _params):
+        AbstractOperation.__init__(self, _parser, _id, _map)
         self.name = "Select"
         self.type = _params["type"]
         self.target = _params["target"]
@@ -67,16 +69,40 @@ class Select(AbstractOperation):
     def act(self):
         pass
 
-class Summon(AbstractOperation):
+class AbstractAct(AbstractOperation):
+    '''
+    abstract class for operations in battle(summon, move, attack)
+    '''
+    def __init__(self, _parser, _id, _map):
+        AbstractOperation.__init__(self, _parser, _id, _map)
+
+    def summoned_this_round(self, _id):
+        return _id in self.parser.summoned
+
+    def acted_this_round(self, _id):
+        return _id in self.parser.moved or _id in self.parser.attacked
+
+class Summon(AbstractAct):
     '''
     summon creature
     '''
-    def __init__(self, _id, _map, _params):
-        AbstractOperation.__init__(self, _id, _map)
+    def __init__(self, _parser, _id, _map, _params):
+        AbstractAct.__init__(self, _parser, _id, _map)
         self.name = "Summon"
         self.type = _params["type"]
         self.star = _params["star"]
         self.position = tuple(_params["position"])
+
+    def check_mana_cost(self):
+        '''
+        check mana cost
+        '''
+        return self.player.mana >= UNIT_DATA[self.type]["cost"][self.star-1]
+
+    def check_unit_cost(self):
+        '''
+        check if the creature is in cool-down time
+        '''
 
     def check_legality(self):
         result = True
@@ -84,10 +110,12 @@ class Summon(AbstractOperation):
         #    result = "No barrack at the point"
         if self.unit_conflict(self.type, self.position):
             result = "Unit conflict"
+        elif self.star not in [1, 2, 3]:
+            result = "Invalid level"
         #elif not self.player.check_unit_cost(self.type, self.star):
         #    result = "Unit cost too high"
-        #elif not self.player.check_magic_cost(self.type, self.star):
-        #    result = "Magic cost too high"
+        elif not self.check_mana_cost():
+            result = "Magic cost too high"
         return result
 
     def act(self):
@@ -100,12 +128,12 @@ class Summon(AbstractOperation):
             }))
         self.map.start_event_processing()
 
-class Move(AbstractOperation):
+class Move(AbstractAct):
     '''
     move creature
     '''
-    def __init__(self, _id, _map, _params):
-        AbstractOperation.__init__(self, _id, _map)
+    def __init__(self, _parser, _id, _map, _params):
+        AbstractAct.__init__(self, _parser, _id, _map)
         self.name = "Move"
         self.mover = self.map.get_unit_by_id(_params["mover"])
         self.position = tuple(_params["position"])
@@ -119,15 +147,16 @@ class Move(AbstractOperation):
             result = "No suitable path"
         elif self.mover.max_move < len(path)-1: # path include start point, so len need -1
             result = "Out of reach: max move: {}, shortest path: {}".format(self.mover.max_move, path)
-        #elif self.mover.create_round == self.map.round:
-        #    result = "Just summoned"
-        #elif self.mover.has_acted():
-        #    result = "Has acted this round"
+        elif self.summoned_this_round(self.mover.id):
+            result = "Just summoned"
+        elif self.acted_this_round(self.mover.id):
+            result = "Has acted this round"
         if result is not True:
             result += "\nstart: {}, end: {}\n".format(self.mover.pos, self.position)
         return result
 
     def act(self):
+        self.parser.moved.append(self.mover.id)
         self.map.emit(
             Event("Move", {
                 "source": self.mover,
@@ -135,12 +164,12 @@ class Move(AbstractOperation):
                 }))
         self.map.start_event_processing()
 
-class Attack(AbstractOperation):
+class Attack(AbstractAct):
     '''
     attack operation
     '''
-    def __init__(self, _id, _map, _params):
-        AbstractOperation.__init__(self, _id, _map)
+    def __init__(self, _parser, _id, _map, _params):
+        AbstractAct.__init__(self, _parser, _id, _map)
         self.name = "Attack"
         self.attacker = self.map.get_unit_by_id(_params["attacker"])
         self.target = self.map.get_unit_by_id(_params["target"])
@@ -150,10 +179,10 @@ class Attack(AbstractOperation):
         dist = calculator.cube_distance(self.attacker.pos, self.target.pos)
         if self.attacker.atk <= 0:
             result = "Attack below zero"
-        #elif self.create_round == self.map.round:
-        #    result = "Summoned this round"
-        #elif self.attacker.has_acted:
-        #    result = "Has acted"
+        elif self.summoned_this_round(self.attacker.id):
+            result = "Just summoned"
+        elif self.acted_this_round(self.attacker.id):
+            result = "Has acted this round"
         elif not self.attacker.atk_range[0] <= dist <= self.attacker.atk_range[-1]:
             result = "Out of range:\nattack range: {}, target distance: {}"\
                     .format(self.attacker.atk_range, dist)
@@ -165,6 +194,7 @@ class Attack(AbstractOperation):
         return result
 
     def act(self):
+        self.parser.attacked.append(self.attacker.id)
         self.map.emit(
             Event("Attack", {
                 "source": self.attacker,
@@ -176,8 +206,8 @@ class Use(AbstractOperation):
     '''
     use artifact or trap card
     '''
-    def __init__(self, _id, _map, _params):
-        AbstractOperation.__init__(self, _id, _map)
+    def __init__(self, _parser, _id, _map, _params):
+        AbstractOperation.__init__(self, _parser, _id, _map)
         self.name = "Use"
         self.type = _params["type"]
         self.card = _params["card"]
