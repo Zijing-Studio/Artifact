@@ -3,7 +3,7 @@ from StateSystem.Event import Event
 
 if __name__ == "__main__":
     sys=StateSystem()
-    sys.emit(Event("Refresh"))
+    sys.emit(Event("Refresh",{"camp":0}))
     sys.start_event_processing()
     sys.emit(Event("Summon",{"type":"Archer","level":1,"pos":(0,0,0),"camp":0}))
     sys.start_event_processing()
@@ -14,7 +14,12 @@ if __name__ == "__main__":
     sys.emit(Event("Attack",{"source":a,"target":b}))
     sys.emit(Event("CheckDeath",{},4))
     sys.start_event_processing()
+    print("----------------")
     print(a.parse())
     print(b.parse())
     print("----------------")
+    print(sys.parse())
+    print("----------------")
+    sys.emit(Event("Refresh",{"camp":0}))
+    sys.start_event_processing()
     print(sys.parse())

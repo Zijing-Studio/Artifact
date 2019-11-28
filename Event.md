@@ -125,3 +125,13 @@ Priority = 3 (when in move)
 }
 ```
 
+## Refresh
+
+玩家回合开始刷新事件，会刷新法力水晶和生物冷却
+
+```
+{
+	"camp": camp
+}
+```
+
