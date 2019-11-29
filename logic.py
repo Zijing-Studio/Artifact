@@ -38,17 +38,19 @@ class Game:
 
     def get_game_end(self):
         '''
-        获取游戏终局信息并结束对局
+        判断游戏是否结束，若结束则结束对局
         '''
-        if 0 == 0:  # 0号玩家胜利条件
-            self.is_end = True
-            self.game_end(self.player0)
-        elif 1 == 1:  # 1号玩家胜利条件
-            self.is_end = True
-            self.game_end(self.player1)
-        else:
+        hp0 = self.statesystem.get_relic_by_id(0).hp
+        hp1 = self.statesystem.get_relic_by_id(1).hp
+        if hp0 == hp1 == 0:
             self.is_end = True
             self.game_end(-1)
+        elif hp0 == 0:  # 0号玩家胜利条件
+            self.is_end = True
+            self.game_end(self.player0)
+        elif hp1 == 1:  # 1号玩家胜利条件
+            self.is_end = True
+            self.game_end(self.player1)
 
     def get_next_player(self):
         '''
@@ -59,11 +61,10 @@ class Game:
             self.listen = self.player1
         elif self.listen == self.player1:
             self.listen = self.player0
-        # 判断胜利情况，若游戏结束，则self.get_game_end()
 
     def get_state_opt(self):
         '''
-        监听循环
+        在一个游戏回合内的监听循环
         '''
         while True:
             self.state += 1
@@ -77,29 +78,31 @@ class Game:
                     continue
                 elif opt["round"] != self._round:
                     continue
+                # 结束回合
                 if opt["operation_type"] == "end":
                     break
                 # 输入操作指令
+                if self.player0 == self.listen:
+                    opt['player'] = 0
                 else:
-                    opt['player'] = self.listen
-                    parser_respond = self.parser.parse(opt)
-                    if isinstance(parser_respond, BaseException):
-                        pass
-                    elif not parser_respond:
-                        pass
-                    else:
-                        media_info = self.get_media_info(
-                            self.statesystem.event_heap.record)
-                        if self.replay != "":
-                            with open(self.replay, 'wb') as replay_file:
-                                replay_file.write(media_info)
-                        self.statesystem.event_heap.record.clear()
-                        state_dict = {}
-                        state_dict['state'] = self.state
-                        state_dict['listen'] = [self.listen]
-                        state_dict['player'] = self.media_player[:]
-                        state_dict['content'] = [media_info] * len(self.media_player)
-                        logic_python_SDK.send_state(state_dict)
+                    opt['player'] = 1
+                parser_respond = self.parser.parse(opt)
+                if isinstance(parser_respond, BaseException):
+                    pass
+                elif not parser_respond:
+                    pass
+                else:
+                    media_info = self.get_media_info(self.statesystem.event_heap.record)
+                    if self.replay != "":
+                        with open(self.replay, 'wb') as replay_file:
+                            replay_file.write(media_info)
+                    self.statesystem.event_heap.record.clear()
+                    state_dict = {}
+                    state_dict['state'] = self.state
+                    state_dict['listen'] = [self.listen]
+                    state_dict['player'] = self.media_player[:]
+                    state_dict['content'] = [media_info] * len(self.media_player)
+                    logic_python_SDK.send_state(state_dict)
 
             elif opt_dict['player'] == -1:
                 opt = json.loads(opt_dict['content'])
@@ -243,6 +246,7 @@ class Game:
             logic_python_SDK.send_state(self.get_state_dict(self.board_message()))
             self.get_state_opt()
             self.get_next_player()
+            self.get_game_end()
 
     def game_end(self, winner):
         '''
