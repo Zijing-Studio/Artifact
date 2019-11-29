@@ -8,6 +8,22 @@ from Geometry import calculator
 from StateSystem.Event import Event
 from StateSystem.UnitData import UNIT_DATA
 
+def to_position(src):
+    '''
+    turn a variable to postion (x, y, z)
+    '''
+    try:
+        position = list(src)
+        sum_up = 0
+        for i in range(3):
+            position[i] = int(position[i])
+            sum_up += position[i]
+        position = tuple(position)
+        assert sum_up == 0
+        return position
+    except Exception:
+        raise ValueError("Invalid postion: {}".format(src))
+
 class AbstractOperation:
     '''
     base class of all operations
@@ -17,6 +33,8 @@ class AbstractOperation:
         self.player_id = _id
         self.map = _map
         self.player = _map.get_player_by_id(_id)
+        if self.player is None:
+            raise ValueError("Invalid player id: {}".format(_id))
 
     def check_legality(self):
         '''
@@ -36,6 +54,18 @@ class AbstractOperation:
         if target is None or unit.flying != target.flying:
             result = False
         return result
+
+    def get_unit_by_id(self, unit_id):
+        '''
+        get unit by id
+        '''
+        try:
+            _id = int(unit_id)
+            unit = self.map.get_unit_by_id(_id)
+            assert unit is not None
+            return unit
+        except Exception:
+            raise ValueError("Invalid unit id: {}".format(unit_id))
 
 class Forbid(AbstractOperation):
     '''
@@ -57,7 +87,7 @@ class Select(AbstractOperation):
     '''
     operation of selecting artifact and so on
     '''
-    def __init__(self, _parser, _id, _map,  _params):
+    def __init__(self, _parser, _id, _map, _params):
         AbstractOperation.__init__(self, _parser, _id, _map)
         self.name = "Select"
         self.type = _params["type"]
@@ -76,11 +106,18 @@ class AbstractAct(AbstractOperation):
     def __init__(self, _parser, _id, _map):
         AbstractOperation.__init__(self, _parser, _id, _map)
 
-    def summoned_this_round(self, _id):
-        return _id in self.parser.summoned
+    def summoned_this_round(self, creature_id):
+        '''
+        judge if target is summoned this round
+        '''
+        return creature_id in self.player.newly_summoned_id_list
 
-    def acted_this_round(self, _id):
-        return _id in self.parser.moved or _id in self.parser.attacked
+    def acted_this_round(self, creature_id):
+        '''
+        check if the creature has acted this round
+        '''
+        return creature_id in self.parser.moved or creature_id in self.parser.attacked
+
 
 class Summon(AbstractAct):
     '''
@@ -91,7 +128,8 @@ class Summon(AbstractAct):
         self.name = "Summon"
         self.type = _params["type"]
         self.star = _params["star"]
-        self.position = tuple(_params["position"])
+        self.position = to_position(_params["position"])
+        self.all_type = [creature.type for creature in UNIT_DATA]
 
     def check_mana_cost(self):
         '''
@@ -99,21 +137,27 @@ class Summon(AbstractAct):
         '''
         return self.player.mana >= UNIT_DATA[self.type]["cost"][self.star-1]
 
-    def check_unit_cost(self):
+    def check_unit_cool_down(self, _type):
         '''
         check if the creature is in cool-down time
         '''
+        for creature in self.player.creature_capacity:
+            if creature.type == _type and creature.available_count > 0:
+                return True
+        return False
 
     def check_legality(self):
         result = True
-        #if self.position not in self.map.get_barracks(self.player_id):
-        #    result = "No barrack at the point"
-        if self.unit_conflict(self.type, self.position):
-            result = "Unit conflict"
+        if self.type not in self.all_type:
+            result = "Invalid creature type"
         elif self.star not in [1, 2, 3]:
             result = "Invalid level"
-        #elif not self.player.check_unit_cost(self.type, self.star):
-        #    result = "Unit cost too high"
+        elif self.position not in self.map.get_barracks(self.player_id):
+            result = "No barrack at the point"
+        elif self.unit_conflict(self.type, self.position):
+            result = "Unit conflict"
+        elif not self.check_unit_cool_down(self.type):
+            result = "Unit in cooling down"
         elif not self.check_mana_cost():
             result = "Magic cost too high"
         return result
@@ -135,18 +179,19 @@ class Move(AbstractAct):
     def __init__(self, _parser, _id, _map, _params):
         AbstractAct.__init__(self, _parser, _id, _map)
         self.name = "Move"
-        self.mover = self.map.get_unit_by_id(_params["mover"])
-        self.position = tuple(_params["position"])
+        self.mover = self.get_unit_by_id(_params["mover"])
+        self.position = to_position(_params["position"])
 
     def check_legality(self):
         result = True
         path = calculator.path(self.mover, self.position, self.map)
         if self.unit_conflict(self.mover, self.position):
             result = "Unit conflict: target: {}".format(self.position)
-        elif not path:
+        elif not path:  # no path found
             result = "No suitable path"
         elif self.mover.max_move < len(path)-1: # path include start point, so len need -1
-            result = "Out of reach: max move: {}, shortest path: {}".format(self.mover.max_move, path)
+            result = "Out of reach: max move: {}, shortest path: {}"\
+                     .format(self.mover.max_move, path)
         elif self.summoned_this_round(self.mover.id):
             result = "Just summoned"
         elif self.acted_this_round(self.mover.id):
@@ -171,8 +216,8 @@ class Attack(AbstractAct):
     def __init__(self, _parser, _id, _map, _params):
         AbstractAct.__init__(self, _parser, _id, _map)
         self.name = "Attack"
-        self.attacker = self.map.get_unit_by_id(_params["attacker"])
-        self.target = self.map.get_unit_by_id(_params["target"])
+        self.attacker = self.get_unit_by_id(_params["attacker"])
+        self.target = self.get_unit_by_id(_params["target"])
 
     def check_legality(self):
         result = True
