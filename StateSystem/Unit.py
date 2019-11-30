@@ -23,9 +23,10 @@ class Unit:
         self.max_move = UNIT_DATA[name]["max_move"][level-1]
         self.cool_down = UNIT_DATA[name]["cool_down"][level-1]
         self.pos = pos
-        self.flying = False
+        self.flying = UNIT_DATA[name]["flying"]
+        self.atk_flying = UNIT_DATA[name]["atk_flying"]
         self.death_flag = False
-        
+
         self.state_system = state_system
         self.event_listener_list = []
 
@@ -66,7 +67,9 @@ class Unit:
             "max_move": self.max_move,
             "cool_down": self.cool_down,
             "pos": self.pos,
-            "level": self.level
+            "level": self.level,
+            "flying": self.flying,
+            "atk_flying": self.atk_flying
         }
 
     def add_event_listener(self,listener):
@@ -83,6 +86,40 @@ class Unit:
 class Archer(Unit):
     def __init__(self,camp,level,pos,state_system):
         name = "Archer"
+        Unit.__init__(
+            self,
+            camp,
+            name,
+            level,
+            pos,
+            state_system
+        )
+
+        self.add_event_listener(DamageListener())
+        self.add_event_listener(AttackListener())
+        self.add_event_listener(MoveListener())
+        self.add_event_listener(AttackBackListener())
+
+class Swordman(Unit):
+    def __init__(self,camp,level,pos,state_system):
+        name = "Swordman"
+        Unit.__init__(
+            self,
+            camp,
+            name,
+            level,
+            pos,
+            state_system
+        )
+
+        self.add_event_listener(DamageListener())
+        self.add_event_listener(AttackListener())
+        self.add_event_listener(MoveListener())
+        self.add_event_listener(AttackBackListener())
+
+class BlackBat(Unit):
+    def __init__(self,camp,level,pos,state_system):
+        name = "BlackBat"
         Unit.__init__(
             self,
             camp,

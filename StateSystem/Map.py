@@ -17,10 +17,14 @@ class Map:
             "obstacles": [obstacle.parse() for obstacle in self.obstacle_list],
         }
         
-    def get_unit_at(self,pos):
+    def get_unit_at(self,pos,flying = None):
         for unit in self.unit_list:
             if pos == unit.pos:
-                return unit
+                if flying == None:
+                    return unit
+                else:
+                    if unit.flying == flying:
+                        return unit
         return None
 
     def get_unit_by_id(self,id):

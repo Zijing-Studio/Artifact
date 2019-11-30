@@ -100,6 +100,20 @@ class SummonListener(EventListener):
                         event.parameter_dict["pos"],
                         self.host
                     )
+                elif event.parameter_dict["type"] == "Swordman":
+                    unit = Swordman(
+                        event.parameter_dict["camp"],
+                        event.parameter_dict["level"],
+                        event.parameter_dict["pos"],
+                        self.host
+                    )
+                elif event.parameter_dict["type"] == "BlackBat":
+                    unit = BlackBat(
+                        event.parameter_dict["camp"],
+                        event.parameter_dict["level"],
+                        event.parameter_dict["pos"],
+                        self.host
+                    )
                 if unit:
                     self.host.map.add_unit(unit)
                     self.host.emit(Event("Spawn",{
