@@ -11,7 +11,7 @@ if __name__ == "__main__":
     sys.start_event_processing()
     a=sys.map.get_unit_at((0,0,0))
     b=sys.map.get_unit_at((-2,0,2))
-    sys.emit(Event("Attack",{"source":a,"target":b}))
+    sys.emit(Event("Attack",{"source":a,"target":sys.map.get_relic_by_id(0)}))
     sys.emit(Event("CheckDeath",{},4))
     sys.start_event_processing()
     print("----------------")

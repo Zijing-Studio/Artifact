@@ -3,7 +3,7 @@ from .Event import Event
 from .EventListener import EventListener
 from .Unit import *
 from .Map import *
-from .Player import *
+from .Player import Player
 from .Relic import Relic
 
 class StateSystem:
@@ -11,7 +11,7 @@ class StateSystem:
         self.map = Map()
         self.event_heap = EventHeap()
         self.player_list = [Player(0,1,self),Player(1,2,self)]
-        self.map.relic_list = [Relic(0,30,(0,0,0)),Relic(1,30,(1,1,-2))]
+        self.map.relic_list = [Relic(0,30,(0,0,0),self),Relic(1,30,(1,1,-2),self)]
         self.event_listener_list = []
 
         self.add_event_listener(SummonListener())
@@ -36,6 +36,8 @@ class StateSystem:
                 player.deal_event(current_event)
             for unit in self.map.unit_list:
                 unit.deal_event(current_event)
+            for relic in self.map.relic_list:
+                relic.deal_event(current_event)
         # Check Death
         new_unit_list = []
         for unit in self.map.unit_list:
