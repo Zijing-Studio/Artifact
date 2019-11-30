@@ -135,3 +135,6 @@ Priority = 3 (when in move)
 }
 ```
 
+## CheckBarrack
+
+回合开始刷新驻扎点占领情况，没有参数，交由**State System**处理

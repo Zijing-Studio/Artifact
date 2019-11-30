@@ -5,6 +5,8 @@ from .Unit import *
 from .Map import *
 from .Player import Player
 from .Relic import Relic
+from .Obstacle import *
+from .Barrack import *
 
 class StateSystem:
     def __init__(self):
@@ -12,10 +14,13 @@ class StateSystem:
         self.event_heap = EventHeap()
         self.player_list = [Player(0,1,self),Player(1,2,self)]
         self.map.relic_list = [Relic(0,30,(0,0,0),self),Relic(1,30,(1,1,-2),self)]
+        self.map.obstacle_list = [Obstacle("Abyss",ob_pos) for ob_pos in ABYSS_INIT_LIST]
+        self.map.barrack_list = [Barrack(br[0],br[1]) for br in BARRACK_INIT_LIST]
         self.event_listener_list = []
 
         self.add_event_listener(SummonListener())
         self.add_event_listener(CheckDeathListener())
+        self.add_event_listener(CheckBarrackListener())
 
     def add_event_listener(self,listener):
         listener.host = self
@@ -126,5 +131,20 @@ class CheckDeathListener(EventListener):
                             unit.name,
                             unit.id
                         ))
+            except:
+                print("Parameter Dict Error.")
+
+class CheckBarrackListener(object):
+    '''
+    Only State System register this listener
+    '''
+    def deal_event(self,event):
+        if event.name == "CheckBarrack":
+            try:
+                for barrack in self.host.map.barrack_list:
+                    for unit in self.host.map.unit_list:
+                        if unit.pos == barrack.pos and unit.flying == False:
+                            barrack.camp = unit.camp
+                            break                    
             except:
                 print("Parameter Dict Error.")

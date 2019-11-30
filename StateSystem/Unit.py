@@ -23,9 +23,11 @@ class Unit:
         self.max_move = UNIT_DATA[name]["max_move"][level-1]
         self.cool_down = UNIT_DATA[name]["cool_down"][level-1]
         self.pos = pos
+        self.flying = False
+        self.death_flag = False
+        
         self.state_system = state_system
         self.event_listener_list = []
-        self.death_flag = False
 
     def __str__(self):
         return '''{}
@@ -89,7 +91,6 @@ class Archer(Unit):
             pos,
             state_system
         )
-        self.flying = False
 
         self.add_event_listener(DamageListener())
         self.add_event_listener(AttackListener())
