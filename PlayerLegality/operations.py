@@ -129,7 +129,7 @@ class Summon(AbstractAct):
         self.type = _params["type"]
         self.star = _params["star"]
         self.position = to_position(_params["position"])
-        self.all_type = [creature.type for creature in UNIT_DATA]
+        self.all_type = UNIT_DATA.keys()
 
     def check_mana_cost(self):
         '''
