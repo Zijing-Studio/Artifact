@@ -125,7 +125,11 @@ Priority = 3 (when in move)
 }
 ```
 
-## Refresh
+## TurnStart
+
+依次触发如下事件，没有参数
+
+### Refresh
 
 玩家回合开始刷新事件，会刷新法力水晶和生物冷却
 
@@ -135,6 +139,10 @@ Priority = 3 (when in move)
 }
 ```
 
-## CheckBarrack
+### CheckBarrack
 
 回合开始刷新驻扎点占领情况，没有参数，交由**State System**处理
+
+### NewTurn
+
+供生物接受，触发回合开始的触发器

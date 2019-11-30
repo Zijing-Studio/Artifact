@@ -134,7 +134,7 @@ class CheckDeathListener(EventListener):
             except:
                 print("Parameter Dict Error.")
 
-class CheckBarrackListener(object):
+class CheckBarrackListener(EventListener):
     '''
     Only State System register this listener
     '''
@@ -148,3 +148,17 @@ class CheckBarrackListener(object):
                             break                    
             except:
                 print("Parameter Dict Error.")
+
+class TurnStartListener(EventListener):
+    '''
+    Only State System register this listener
+    '''
+    def deal_event(self,event):
+        if event.name == "TurnStart":
+            try:
+                self.host.emit(Event("Refresh",{},4))
+                self.host.emit(Event("CheckBarrack",{},4))
+                self.host.emit(Event("NewTurn",{},4))
+            except:
+                print("Parameter Dict Error.")
+    
