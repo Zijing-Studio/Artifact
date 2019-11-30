@@ -7,6 +7,8 @@ import sys
 
 # pylint: disable = R0801
 
+DEBUG = True  # debug状态下直接由命令行输入json串
+
 
 def logic_convert_byte(data_str):
     '''
@@ -32,9 +34,12 @@ def read_opt():
     '''
     读取发过来的操作
     '''
-    read_buffer = sys.stdin.buffer
-    data_len = int.from_bytes(read_buffer.read(4), byteorder='big', signed=True)
-    data = read_buffer.read(data_len)
+    if DEBUG:
+        data = input()
+    else:
+        read_buffer = sys.stdin.buffer
+        data_len = int.from_bytes(read_buffer.read(4), byteorder='big', signed=True)
+        data = read_buffer.read(data_len)
     return json.loads(data)
 
 

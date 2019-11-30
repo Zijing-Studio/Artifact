@@ -11,8 +11,6 @@ from StateSystem.StateSystem import StateSystem
 # pylint: disable = R1702
 # pylint: disable = R0801
 
-DEBUG = True
-
 
 class Game:
     '''
@@ -68,13 +66,13 @@ class Game:
         '''
         while True:
             self.state += 1
-            logic_python_SDK.send_state(self.get_state_dict(self.board_message()))
+            logic_python_SDK.send_state(self.get_state_dict())
             opt_dict = logic_python_SDK.read_opt()
             if opt_dict['player'] == self.listen:
                 opt = opt_dict['content']
                 # 查询当前游戏信息
                 if opt["operation_type"] == "gameinfo":
-                    logic_python_SDK.send_state(self.get_state_dict(self.board_message()))
+                    # logic_python_SDK.send_state(self.get_state_dict(self.game_message()))
                     continue
                 elif opt["round"] != self._round:
                     continue
@@ -105,7 +103,7 @@ class Game:
                     logic_python_SDK.send_state(state_dict)
 
             elif opt_dict['player'] == -1:
-                opt = json.loads(opt_dict['content'])
+                opt = opt_dict['content']
                 # AI异常退出
                 if opt['error'] == 0:
                     if opt['player'] == self.player0:
@@ -192,32 +190,32 @@ class Game:
                 pass
         return media_info
 
-    def get_state_dict(self, content_str):
+    def get_state_dict(self):
         '''
-        获取局面描述的字典
+        获取游戏当前局面信息 整合成字典
         '''
         state_dict = {}
         state_dict['state'] = self.state
         state_dict['listen'] = [self.listen]
         state_dict['player'] = [self.listen]
-        state_dict['content'] = [content_str]
+        message = self.statesystem.parse()
+        message['round'] = self._round
+        if self.listen == self.player0:
+            message['player'] = 0
+        else:
+            message['player'] = 1
+        state_dict['content'] = [message]
         return state_dict
-
-    def board_message(self):
-        '''
-        返回局面描述的字典
-        '''
-        return self.statesystem.parse()
 
     def game_init(self, player_list):
         '''
-        游戏初始化处理
+        根据玩家列表进行初始化处理
         '''
         for player, status in enumerate(player_list):
             if status in (1, 2):
-                if self.player0 != -1:
+                if self.player0 == -1:
                     self.player0 = player
-                elif self.player1 != -1:
+                elif self.player1 == -1:
                     self.player1 = player
             elif status == 3:
                 self.media_player.append(player)
@@ -243,7 +241,7 @@ class Game:
 
         while not self.is_end:
             # 每个游戏回合
-            logic_python_SDK.send_state(self.get_state_dict(self.board_message()))
+            print("ROUND ", self._round)
             self.get_state_opt()
             self.get_next_player()
             self.get_game_end()
