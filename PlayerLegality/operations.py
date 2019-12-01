@@ -67,6 +67,18 @@ class AbstractOperation:
         except Exception:
             raise ValueError("Invalid unit id: {}".format(unit_id))
 
+    def get_artifact_by_id(self, artifact_id):
+        '''
+        get artifact by id
+        '''
+        try:
+            _id = int(artifact_id)
+            artifact = self.map.get_artifact_by_id(_id)
+            assert artifact is not None
+            return artifact
+        except Exception:
+            raise ValueError("Invalid artifact id: {}".format(artifact_id))
+
 class Forbid(AbstractOperation):
     '''
     operation of forbiding artifact and so on
@@ -249,17 +261,35 @@ class Attack(AbstractAct):
 
 class Use(AbstractOperation):
     '''
-    use artifact or trap card
+    use artifact
     '''
     def __init__(self, _parser, _id, _map, _params):
         AbstractOperation.__init__(self, _parser, _id, _map)
         self.name = "Use"
-        self.type = _params["type"]
-        self.card = _params["card"]
-        self.target = _params["target"]
+        # self.type = _params["type"]
+        self.artifact = self.get_artifact_by_id(_params["card"])
+        if self.artifact.target_type == "Pos":
+            self.target = to_position(_params["target"])
+        elif self.artifact.target_type == "Unit":
+            self.target = self.get_unit_by_id(_params["target"])
+        else:
+            self.target = None
 
     def check_legality(self):
-        return True
+        result = True
+        if self.artifact.camp != self.player_id:
+            result = "That's not your artifact"
+        elif self.artifact.state != "Ready":
+            result = "The artifact is " + self.artifact.state
+        elif self.artifact.cost > self.player.mana:
+            result = "Insufficient mana"
+        return result
 
     def act(self):
-        pass
+        self.map.emit(
+            Event("ActivateArtifact", {
+                "camp": self.player_id,
+                "name": self.artifact.name,
+                "target": self.target
+                }))
+        self.map.start_event_processing()
