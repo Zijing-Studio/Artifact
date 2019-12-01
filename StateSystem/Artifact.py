@@ -33,7 +33,8 @@ class Artifact:
             "cost": self.cost,
             "max_cool_down": self.max_cool_down,
             "cool_down_time": self.cool_down_time,
-            "state": self.state
+            "state": self.state,
+            "target_type": self.target_type
         }
 
     def activate(self,target):
