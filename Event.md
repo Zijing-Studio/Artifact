@@ -31,7 +31,7 @@ emit(Event(<name>,[parameter_dict = {}],[priority = 0]))
 
 ## Attacking
 
-发动攻击触发器
+发动攻击前触发器
 
 ```json
 {
@@ -42,7 +42,7 @@ emit(Event(<name>,[parameter_dict = {}],[priority = 0]))
 
 ## Attacked
 
-被指定为攻击目标
+发动攻击后触发器
 
 ```json
 {
@@ -147,3 +147,20 @@ Priority = 3 (when in move)
 ### NewTurn
 
 供生物接受，触发回合开始的触发器
+
+## TurnEnd
+
+回合结束事件，会触发所有回合结束事件
+
+## Heal
+
+治疗事件
+
+```
+{
+    "source": Unit,
+    "target": Unit,
+    "heal": int
+}
+```
+

@@ -1,5 +1,6 @@
 from .Event import Event
 from Geometry import calculator
+from .Buff import PriestAtkBuff
 
 class EventListener:
     def __init__(self):
@@ -32,6 +33,7 @@ class AttackListener(EventListener):
                         "damage": event.parameter_dict["source"].atk
                     }))
                     self.host.emit(Event("Attacked",event.parameter_dict))
+                    self.host.emit(Event("CheckDeath",priority=4))
                     print("{} (ID: {}) attacks {} (ID: {})".format(
                         event.parameter_dict["source"].name,
                         event.parameter_dict["source"].id,
@@ -88,3 +90,76 @@ class MoveListener(EventListener):
                     ))
             except:
                 print("Parameter Dict Error.")
+
+class HealListener(EventListener):
+    def deal_event(self,event):
+        if event.name == "Heal":
+            try:
+                if event.parameter_dict["target"] == self.host:
+                    if self.host.hp <= self.host.max_hp:
+                        self.host.hp += event.parameter_dict["heal"]
+                        self.host.hp = min(self.host.hp, self.host.max_hp)
+                        print("Heal {} HP on {} (ID: {})".format(
+                            event.parameter_dict["heal"],self.host.name,self.host.id
+                        ))
+            except:
+                print("Parameter Dict Error.")
+
+class PriestHealListener(EventListener):
+    def deal_event(self,event):
+        if event.name == "TurnEnd":
+            try:
+                for unit in self.host.state_system.map.unit_list:
+                    if calculator.cube_distance(unit.pos,self.host.pos) <= 2 and unit.camp == self.host.camp:
+                        self.host.emit(Event("Heal",{
+                            "source": self.host,
+                            "target": unit,
+                            "heal": 1
+                        },-3))
+            except:
+                print("Parameter Dict Error.")
+
+class PriestAtkListener(EventListener):
+    def deal_event(self,event):
+        if event.name == "UpdateRingBuff":
+            try:
+                # Add buff
+                for unit in self.host.state_system.map.unit_list:
+                    if calculator.cube_distance(unit.pos,self.host.pos) <= 1 and unit.camp == self.host.camp:
+                        if not unit in self.host.priest_buff_list:
+                            new_buff = PriestAtkBuff(self.host.state_system)
+                            new_buff.add_on(unit)
+                            self.host.priest_buff_list.append(new_buff)
+                # Delete Buff
+                for buff in self.host.priest_buff_list:
+                    if calculator.cube_distance(buff.host.pos,self.host.pos) > 1:
+                        buff.delete()
+                        self.host.priest_buff_list.remove(buff)
+            except:
+                print("Parameter Dict Error.")
+        if event.name == "Death":
+            try:
+                if event.parameter_dict["source"] == self.host:
+                    for buff in self.host.priest_buff_list:
+                        buff.delete()
+            except:
+                print("Parameter Dict Error.")
+
+
+class VolcanoDragonAtkListener(EventListener):
+    def deal_event(self,event):
+        if event.name == "Attacked":
+            try:
+                if event.parameter_dict["source"] == self.host:
+                    for unit in self.host.state_system.map.unit_list:
+                        if (calculator.cube_distance(unit.pos,self.host.pos) == 2 or
+                            calculator.cube_distance(unit.pos,event.parameter_dict["target"].pos) == 1) and \
+                            unit.camp != self.host.camp:
+                            self.host.emit(Event("Damage",{
+                                "source": self.host,
+                                "target": unit,
+                                "damage": self.host.level + 2
+                            },priority=-1))
+            except:
+                print("Parameter Dict Error.")
+                

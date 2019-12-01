@@ -25,10 +25,19 @@ class Unit:
         self.pos = pos
         self.flying = UNIT_DATA[name]["flying"]
         self.atk_flying = UNIT_DATA[name]["atk_flying"]
+
         self.death_flag = False
+
+        self.buff_list = []
 
         self.state_system = state_system
         self.event_listener_list = []
+
+        self.add_event_listener(DamageListener())
+        self.add_event_listener(AttackListener())
+        self.add_event_listener(MoveListener())
+        self.add_event_listener(AttackBackListener())
+        self.add_event_listener(HealListener())
 
     def __str__(self):
         return '''{}
@@ -95,11 +104,6 @@ class Archer(Unit):
             state_system
         )
 
-        self.add_event_listener(DamageListener())
-        self.add_event_listener(AttackListener())
-        self.add_event_listener(MoveListener())
-        self.add_event_listener(AttackBackListener())
-
 class Swordman(Unit):
     def __init__(self,camp,level,pos,state_system):
         name = "Swordman"
@@ -111,11 +115,6 @@ class Swordman(Unit):
             pos,
             state_system
         )
-
-        self.add_event_listener(DamageListener())
-        self.add_event_listener(AttackListener())
-        self.add_event_listener(MoveListener())
-        self.add_event_listener(AttackBackListener())
 
 class BlackBat(Unit):
     def __init__(self,camp,level,pos,state_system):
@@ -129,7 +128,38 @@ class BlackBat(Unit):
             state_system
         )
 
-        self.add_event_listener(DamageListener())
-        self.add_event_listener(AttackListener())
-        self.add_event_listener(MoveListener())
-        self.add_event_listener(AttackBackListener())
+class Priest(Unit):
+    def __init__(self,camp,level,pos,state_system):
+        name = "Priest"
+        Unit.__init__(
+            self,
+            camp,
+            name,
+            level,
+            pos,
+            state_system
+        )
+        self.priest_buff_list = []
+
+        if level == 1 or level == 3:
+            self.add_event_listener(PriestHealListener())
+
+        if level == 2 or level == 3:
+            self.add_event_listener(PriestAtkListener())
+
+class VolcanoDragon(Unit):
+    def __init__(self,camp,level,pos,state_system):
+        name = "VolcanoDragon"
+        Unit.__init__(
+            self,
+            camp,
+            name,
+            level,
+            pos,
+            state_system
+        )
+
+        self.add_event_listener(VolcanoDragonAtkListener())
+
+
+

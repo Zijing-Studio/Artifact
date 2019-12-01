@@ -31,5 +31,27 @@ UNIT_DATA = {
         "duplicate": 4,
         "flying": True,
         "atk_flying": True
+    },
+    "Priest": {
+        "cost": [2,3,5],
+        "atk": [0,0,0],
+        "hp": [2,2,3],
+        "atk_range": [(0,0),(0,0),(0,0)],
+        "max_move": [3,3,3],
+        "cool_down": [4,4,5],
+        "duplicate": 4,
+        "flying": False,
+        "atk_flying": False
+    },
+    "VolcanoDragon": {
+        "cost": [5,7,9],
+        "atk": [3,4,5],
+        "hp": [5,7,9],
+        "atk_range": [(1,2),(1,2),(1,2)],
+        "max_move": [3,3,3],
+        "cool_down": [5,5,5],
+        "duplicate": 3,
+        "flying": True,
+        "atk_flying": True
     }
 }

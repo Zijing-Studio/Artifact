@@ -114,6 +114,20 @@ class SummonListener(EventListener):
                         event.parameter_dict["pos"],
                         self.host
                     )
+                elif event.parameter_dict["type"] == "Priest":
+                    unit = Priest(
+                        event.parameter_dict["camp"],
+                        event.parameter_dict["level"],
+                        event.parameter_dict["pos"],
+                        self.host
+                    )
+                elif event.parameter_dict["type"] == "VolcanoDragon":
+                    unit = VolcanoDragon(
+                        event.parameter_dict["camp"],
+                        event.parameter_dict["level"],
+                        event.parameter_dict["pos"],
+                        self.host
+                    )
                 if unit:
                     self.host.map.add_unit(unit)
                     self.host.emit(Event("Spawn",{
