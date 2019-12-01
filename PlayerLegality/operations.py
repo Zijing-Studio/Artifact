@@ -141,7 +141,7 @@ class Summon(AbstractAct):
         '''
         check if the creature is in cool-down time
         '''
-        for creature in self.player.creature_capacity:
+        for creature in self.player.creature_capacity_list:
             if creature.type == _type and creature.available_count > 0:
                 return True
         return False
@@ -231,7 +231,7 @@ class Attack(AbstractAct):
         elif not self.attacker.atk_range[0] <= dist <= self.attacker.atk_range[-1]:
             result = "Out of range:\nattack range: {}, target distance: {}"\
                     .format(self.attacker.atk_range, dist)
-        elif self.target.pos[-1] == 1 and self.attacker.pos[-1] == 0:
+        elif self.target.flying and not self.attacker.flying and not self.attacker.atk_flying:
             result = "Cannot reach unit in sky"
         if result is not True:
             result += "\nattacker: {}\n, target: {}"\
