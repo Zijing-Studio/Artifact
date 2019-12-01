@@ -13,6 +13,7 @@ class Artifact:
         self.state = "Ready"
         self.camp = camp
         self.name = ""
+        self.target_type = None
     
     def add_event_listener(self,listener):
         listener.host = self
@@ -56,6 +57,7 @@ class HolyLightArtifact(Artifact):
     def __init__(self,camp,state_system):
         Artifact.__init__(self,camp,6,6,state_system)
         self.name = "HolyLight"
+        self.target_type = "Pos"
 
     def effect(self,target):
         for unit in self.state_system.map.unit_list:
