@@ -55,3 +55,12 @@ UNIT_DATA = {
         "atk_flying": False
     }
 }
+
+ARTIFACTS = [
+    {
+        "name": "HolyLight",
+        "target_type": "Pos",
+        "cost": 6,
+        "cool_down": 6
+    }
+]

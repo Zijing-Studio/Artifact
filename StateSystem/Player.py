@@ -56,7 +56,9 @@ class RefreshListener(EventListener):
                 ))
             for capacity in self.host.creature_capacity_list:
                 capacity.cool_down()
-            print("Player {}'s creature cooled down".format(
+            for artifact in self.host.artifact_list:
+                artifact.cool_down()
+            print("Player {}'s creatures and artifacts cool down".format(
                 self.host.camp
             ))
             self.host.newly_summoned_id_list = []
