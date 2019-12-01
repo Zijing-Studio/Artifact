@@ -96,7 +96,7 @@ class HealListener(EventListener):
         if event.name == "Heal":
             try:
                 if event.parameter_dict["target"] == self.host:
-                    if self.host.hp <= self.host.max_hp:
+                    if self.host.hp < self.host.max_hp:
                         self.host.hp += event.parameter_dict["heal"]
                         self.host.hp = min(self.host.hp, self.host.max_hp)
                         print("Heal {} HP on {} (ID: {})".format(

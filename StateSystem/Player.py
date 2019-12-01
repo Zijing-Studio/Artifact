@@ -1,5 +1,6 @@
 from StateSystem.EventListener import EventListener
 from StateSystem.CreatureCapacity import CreatureCapacity
+from StateSystem.Artifact import HolyLightArtifact
 
 class Player:
     def __init__(self,camp,mana,state_system):
@@ -7,9 +8,6 @@ class Player:
         self.artifact_list = []
         self.creature_capacity_list = []
         self.newly_summoned_id_list = []
-        # Debug
-        self.creature_capacity_list.append(CreatureCapacity("Archer"))    
-        # Debug
         self.max_mana = mana
         self.mana = mana
         self.state_system = state_system
@@ -18,6 +16,12 @@ class Player:
         self.add_event_listener(RefreshListener())
         self.add_event_listener(IntoCoolDownListener())
         self.add_event_listener(SummonListener())
+        self.add_event_listener(ActivateArtifactListener())
+
+        # Debug
+        self.creature_capacity_list.append(CreatureCapacity("Archer"))
+        self.artifact_list.append(HolyLightArtifact(self.camp,self.state_system))
+        # Debug
     
     def add_event_listener(self,listener):
         listener.host = self
@@ -88,3 +92,12 @@ class SummonListener(EventListener):
                     if capacity.type == source.type:
                         capacity.summon()
                 self.host.newly_summoned_id_list.append(source.id)
+
+class ActivateArtifactListener(EventListener):
+    def deal_event(self,event):
+        if event.name == "ActivateArtifact":
+            if event.parameter_dict["camp"] == self.host.camp:
+                for artifact in self.host.artifact_list:
+                    if artifact.name == event.parameter_dict["name"]:
+                        artifact.activate(event.parameter_dict["target"])
+                        print("Player {} activate {} !!!".format(self.host.camp,artifact.name))

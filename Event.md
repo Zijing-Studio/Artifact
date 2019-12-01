@@ -164,3 +164,15 @@ Priority = 3 (when in move)
 }
 ```
 
+## ActivateArtifact
+
+使用神器
+
+```
+{
+	"camp": camp,
+	"name": String,
+	"target": pos/unit
+}
+```
+

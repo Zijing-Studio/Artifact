@@ -51,7 +51,7 @@ UNIT_DATA = {
         "max_move": [3,3,3],
         "cool_down": [5,5,5],
         "duplicate": 3,
-        "flying": True,
-        "atk_flying": True
+        "flying": False,
+        "atk_flying": False
     }
 }

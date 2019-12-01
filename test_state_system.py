@@ -14,14 +14,18 @@ if __name__ == "__main__":
     sys.start_event_processing()
     a=sys.map.get_unit_at((0,0,0),True)
     b=sys.map.get_unit_at((0,1,-1),False)
-    sys.emit(Event("Attack",{"source":a,"target":b}))
+    # sys.emit(Event("Attack",{"source":a,"target":b}))
+    sys.emit(Event("ActivateArtifact",{
+        "camp": 0,
+        "name": "HolyLight",
+        "target": (0,1,-1)
+    }))
     sys.start_event_processing()
+    print("----------------")
+    print(b)
     sys.emit(Event("TurnEnd",{"camp":0}))
     sys.start_event_processing()
-    print(sys.parse())
     print("----------------")
-    sys.emit(Event("CheckBarrack"))
-    sys.start_event_processing()
-    print(sys.parse())
+    print(b)
     print("----------------")
 

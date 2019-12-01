@@ -88,6 +88,8 @@ class Unit:
     def deal_event(self,event):
         for listener in self.event_listener_list:
             listener.deal_event(event)
+        for buff in self.buff_list:
+            buff.deal_event(event)
 
     def emit(self,event):
         self.state_system.emit(event)
