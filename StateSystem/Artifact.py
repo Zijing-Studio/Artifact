@@ -3,8 +3,13 @@ from StateSystem.Event import Event
 from StateSystem.Buff import Buff
 from StateSystem.EventListener import EventListener
 
+ARTIFACT_ID = 0
+
 class Artifact:
     def __init__(self,camp,cost,cool_down,state_system):
+        global ARTIFACT_ID
+        self.id = ARTIFACT_ID
+        ARTIFACT_ID += 1
         self.state_system = state_system
         self.event_listener_list = []
         self.cost = cost
@@ -28,6 +33,7 @@ class Artifact:
 
     def parse(self):
         return {
+            "id": self.id,
             "name": self.name,
             "camp": self.camp,
             "cost": self.cost,
@@ -39,6 +45,7 @@ class Artifact:
 
     def activate(self,target):
         self.state = "In Use"
+        self.state_system.get_player_by_id(self.camp).mana -= self.cost
         self.effect(target)
         
     def effect(self,target):

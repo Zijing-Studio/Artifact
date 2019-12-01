@@ -74,6 +74,13 @@ class StateSystem:
                 return player
         return None
 
+    def get_artifact_by_id(self,id):
+        for player in self.player_list:
+            for artifact in player.artifact_list:
+                if artifact.id == id:
+                    return artifact
+        return None
+
     def get_barracks(self,player_camp):
         return [barrack
             for barrack in self.map.barrack_list
