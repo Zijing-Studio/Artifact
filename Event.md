@@ -14,6 +14,7 @@ emit(Event(<name>,[parameter_dict = {}],[priority = 0]))
 
 ```json
 {
+    "source": Unit,
     "target": Unit,
     "damage": int
 }

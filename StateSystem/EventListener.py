@@ -27,6 +27,7 @@ class AttackListener(EventListener):
                 if event.parameter_dict["source"] == self.host:
                     self.host.emit(Event("Attacking",event.parameter_dict))
                     self.host.emit(Event("Damage",{
+                        "source": event.parameter_dict["source"],
                         "target": event.parameter_dict["target"],
                         "damage": event.parameter_dict["source"].atk
                     }))
@@ -52,6 +53,7 @@ class AttackBackListener(EventListener):
                     if self.host.atk_range[0] <= distance <= self.host.atk_range[1] and \
                         (not event.parameter_dict["source"].flying or self.host.atk_flying):
                         self.host.emit(Event("Damage",{
+                            "source": event.parameter_dict["target"],
                             "target": event.parameter_dict["source"],
                             "damage": event.parameter_dict["target"].atk
                         }))
