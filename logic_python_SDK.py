@@ -52,7 +52,6 @@ def send_end_info(end_info):
     end_dict['end_info'] = end_info
     sys.stdout.buffer.write(logic_convert_byte(json.dumps(end_dict)))
     sys.stdout.flush()
-    sys.exit()
 
 
 def send_init(time, length):

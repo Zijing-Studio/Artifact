@@ -55,6 +55,7 @@ class Game:
         回合转换，切换到下一个玩家
         '''
         self._round += 1
+        self.parser.set_round(self._round)
         if self.listen == self.player0:
             self.listen = self.player1
         elif self.listen == self.player1:
@@ -66,7 +67,7 @@ class Game:
         '''
         while True:
             self.state += 1
-            logic_python_SDK.send_state(self.get_state_dict())
+            self.send_state_dict()
             opt_dict = logic_python_SDK.read_opt()
             if opt_dict['player'] == self.listen:
                 opt = opt_dict['content']
@@ -91,16 +92,8 @@ class Game:
                     pass
                 else:
                     media_info = self.get_media_info(self.statesystem.event_heap.record)
-                    if self.replay != "":
-                        with open(self.replay, 'wb') as replay_file:
-                            replay_file.write(media_info)
                     self.statesystem.event_heap.record.clear()
-                    state_dict = {}
-                    state_dict['state'] = self.state
-                    state_dict['listen'] = [self.listen]
-                    state_dict['player'] = self.media_player[:]
-                    state_dict['content'] = [media_info] * len(self.media_player)
-                    logic_python_SDK.send_state(state_dict)
+                    self.send_media_dict(media_info)
 
             elif opt_dict['player'] == -1:
                 opt = opt_dict['content']
@@ -118,35 +111,43 @@ class Game:
         '''
         把事件转为给播放器的二进制序列
         '''
-        version = 0
-        media_info = version.to_bytes(4, byteorder='big', signed=True)
+        media_info = bytes()
         for event in events:
-            # currentRound
-            media_info += self._round.to_bytes(4, 'big', signed=True)
-            if event.name == "Summon":
+            if event.name == "Spawn":
+                # currentRound
+                media_info += self._round.to_bytes(4, 'big', signed=True)
+                # event
                 media_info += int(0).to_bytes(4, 'big', signed=True)
                 # type
-                if event.parameter_dict['type'] == 'Archer':
-                    if event.parameter_dict['camp'] == 0:
-                        media_info += int(2).to_bytes(4, 'big', signed=True)
-                    elif event.parameter_dict['camp'] == 1:
-                        media_info += int(15).to_bytes(4, 'big', signed=True)
-                elif event.parameter_dict['type'] == 'Swordsman':
-                    if event.parameter_dict['camp'] == 0:
+                if event.parameter_dict['source'].type == 'Swordman':
+                    if event.parameter_dict['source'].camp == 0:
                         media_info += int(1).to_bytes(4, 'big', signed=True)
-                    elif event.parameter_dict['camp'] == 1:
+                    elif event.parameter_dict['source'].camp == 1:
                         media_info += int(14).to_bytes(4, 'big', signed=True)
+                elif event.parameter_dict['source'].type == 'Archer':
+                    if event.parameter_dict['source'].camp == 0:
+                        media_info += int(2).to_bytes(4, 'big', signed=True)
+                    elif event.parameter_dict['source'].camp == 1:
+                        media_info += int(15).to_bytes(4, 'big', signed=True)
+                elif event.parameter_dict['source'].type == 'BlackBat':
+                    if event.parameter_dict['source'].camp == 0:
+                        media_info += int(5).to_bytes(4, 'big', signed=True)
+                    elif event.parameter_dict['source'].camp == 1:
+                        media_info += int(18).to_bytes(4, 'big', signed=True)
                 else:
                     pass
                 # level
-                media_info += int(event.parameter_dict['level']).to_bytes(4, 'big', signed=True)
+                media_info += int(event.parameter_dict['source'].level).to_bytes(4, 'big', signed=True)
                 # posX
                 media_info += event.parameter_dict['pos'][0].to_bytes(4, 'big', signed=True)
                 # posY
                 media_info += event.parameter_dict['pos'][1].to_bytes(4, 'big', signed=True)
-                # 0
-                media_info += int(0).to_bytes(4, 'big', signed=True)
+                # id
+                media_info += event.parameter_dict['source'].id.to_bytes(4, 'big', signed=True)
             elif event.name == "Move":
+                # currentRound
+                media_info += self._round.to_bytes(4, 'big', signed=True)
+                # event
                 media_info += int(1).to_bytes(4, 'big', signed=True)
                 # id
                 media_info += event.parameter_dict['source'].id.to_bytes(4, 'big', signed=True)
@@ -158,6 +159,9 @@ class Game:
                 media_info += int(0).to_bytes(4, 'big', signed=True)
                 media_info += int(0).to_bytes(4, 'big', signed=True)
             elif event.name == "Attack":
+                # currentRound
+                media_info += self._round.to_bytes(4, 'big', signed=True)
+                # event
                 media_info += int(2).to_bytes(4, 'big', signed=True)
                 # id
                 media_info += event.parameter_dict['source'].id.to_bytes(4, 'big', signed=True)
@@ -168,16 +172,23 @@ class Game:
                 media_info += int(0).to_bytes(4, 'big', signed=True)
                 media_info += int(0).to_bytes(4, 'big', signed=True)
             elif event.name == "Damage":
+                # currentRound
+                media_info += self._round.to_bytes(4, 'big', signed=True)
+                # event
                 media_info += int(3).to_bytes(4, 'big', signed=True)
-                # id
+                # id2
                 media_info += event.parameter_dict['target'].id.to_bytes(4, 'big', signed=True)
+                # id1
+                media_info += event.parameter_dict['source'].id.to_bytes(4, 'big', signed=True)
                 # damage
                 media_info += event.parameter_dict['damage'].to_bytes(4, 'big', signed=True)
                 # 0
                 media_info += int(0).to_bytes(4, 'big', signed=True)
                 media_info += int(0).to_bytes(4, 'big', signed=True)
-                media_info += int(0).to_bytes(4, 'big', signed=True)
             elif event.name == "Death":
+                # currentRound
+                media_info += self._round.to_bytes(4, 'big', signed=True)
+                # event
                 media_info += int(4).to_bytes(4, 'big', signed=True)
                 # id
                 media_info += event.parameter_dict['source'].id.to_bytes(4, 'big', signed=True)
@@ -190,9 +201,29 @@ class Game:
                 pass
         return media_info
 
-    def get_state_dict(self):
+    def send_media_dict(self, media_info, file="old"):
         '''
-        获取游戏当前局面信息 整合成字典
+        把信息发给播放器及记录
+        '''
+        if media_info == b'':
+            return
+        if self.replay != "":
+            if file == "old":
+                with open(self.replay, 'ab') as replay_file:
+                    replay_file.write(media_info)
+            elif file == "new":
+                with open(self.replay, 'wb') as replay_file:
+                    replay_file.write(media_info)
+        media_dict = {}
+        media_dict['state'] = self.state
+        media_dict['listen'] = [self.listen]
+        media_dict['player'] = self.media_player[:]
+        media_dict['content'] = [media_info] * len(self.media_player)
+        logic_python_SDK.send_state(media_dict)
+
+    def send_state_dict(self):
+        '''
+        发送游戏当前局面信息
         '''
         state_dict = {}
         state_dict['state'] = self.state
@@ -205,7 +236,7 @@ class Game:
         else:
             message['player'] = 1
         state_dict['content'] = [message]
-        return state_dict
+        logic_python_SDK.send_state(state_dict)
 
     def game_init(self, player_list):
         '''
@@ -239,6 +270,9 @@ class Game:
         logic_python_SDK.send_init(3, 1024)
         # 处理初始卡组
 
+        # 播放器版本号
+        self.send_media_dict(int(0).to_bytes(4, 'big', signed=True), file="new")
+
         while not self.is_end:
             # 每个游戏回合
             print("ROUND ", self._round)
@@ -250,10 +284,24 @@ class Game:
         '''
         游戏终局处理
         '''
+        media_info = bytes()
+        media_info += self._round.to_bytes(4, 'big', signed=True)
+        media_info += int(5).to_bytes(4, 'big', signed=True)
         if winner == -1:
+            media_info += int(2).to_bytes(4, 'big', signed=True)
             logic_python_SDK.send_end_info("draw!")
         else:
+            if winner == self.player0:
+                media_info += int(0).to_bytes(4, 'big', signed=True)
+            else:
+                media_info += int(1).to_bytes(4, 'big', signed=True)
             logic_python_SDK.send_end_info("player " + str(winner) + " win!")
+        media_info += int(0).to_bytes(4, 'big', signed=True)
+        media_info += int(0).to_bytes(4, 'big', signed=True)
+        media_info += int(0).to_bytes(4, 'big', signed=True)
+        media_info += int(0).to_bytes(4, 'big', signed=True)
+        media_info += int(-1).to_bytes(4, 'big', signed=True)
+        self.send_media_dict(media_info)
         sys.exit()
 
 
