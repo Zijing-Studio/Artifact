@@ -4,7 +4,7 @@ Definition of unit classes
 from .EventListener import *
 from .UnitData import UNIT_DATA
 
-UNIT_ID = 0
+UNIT_ID = 3
 
 class Unit:
     def __init__(self,camp,name,level,pos,state_system):
