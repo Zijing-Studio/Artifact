@@ -2,7 +2,7 @@
 #include <vector>
 #include <cstdio>
 
-#include "aiclient.h"
+#include "api.h"
 
 class PlayerAi
 {
@@ -17,13 +17,12 @@ public:
     void play()
     {
         if (round < 20)
-            client.end(round);
+            api::end(round);
         else
             exit(0);
     }
 
 private:
-    AiClient client;
     int round;
     int my_camp;
     json map;
@@ -32,10 +31,9 @@ private:
 
 int main()
 {
-    AiClient client = AiClient();
     while (true)
     {
-        json game_info= client.read();
+        json game_info= api::read();
         PlayerAi *ai = new PlayerAi(game_info);
         ai->play();
         delete ai;

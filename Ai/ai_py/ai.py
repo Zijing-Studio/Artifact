@@ -43,7 +43,7 @@ def read_opt():
     return json.loads(data)
 
 
-class LogicAPI:
+class API:
     '''SDK提供的接口
     '''
 
@@ -146,7 +146,7 @@ class PlayerAI:
 
     属性:
 
-    logic_api: 玩家调用的api
+    api: 玩家调用的api
 
     game_info: 游戏目前局面信息
     举例:
@@ -189,8 +189,8 @@ class PlayerAI:
     }
     '''
 
-    def __init__(self, logic_api, game_info):
-        self.logic_api = logic_api
+    def __init__(self, api, game_info):
+        self.api = api
         self.round = game_info['round']         # 当前回合
         self.my_camp = game_info['camp']        # 己方阵营
         self.map = game_info['map']             # 地图信息
@@ -200,7 +200,7 @@ class PlayerAI:
         '''用户需要编写的ai操作函数
         '''
         if self.round < 20:
-            self.logic_api.end(self.round)
+            self.api.end(self.round)
         else:
             exit(0)
         '''
@@ -225,10 +225,10 @@ def start():
     '''
     循环入口
     '''
-    logic_api = LogicAPI()
+    api = API()
     while True:
         game_info = read_opt()
-        player_ai = PlayerAI(logic_api, game_info)
+        player_ai = PlayerAI(api, game_info)
         player_ai.play()
 
 
