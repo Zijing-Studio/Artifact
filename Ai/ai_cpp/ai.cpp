@@ -2,7 +2,7 @@
 #include <vector>
 #include <cstdio>
 
-#include "api.h"
+#include "api.hpp"
 
 class PlayerAi
 {
