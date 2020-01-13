@@ -4,29 +4,34 @@
 namespace game
 {
 
+struct Pos
+{
+    int x,y,z;
+};
+
 struct Unit
 {
     int id;
     int camp;
     std::string name;
-    cost;
-    atk;
+    int cost;
+    int atk;
     int max_hp;
     int hp;
-    atk_range;
-    max_move;
-    cool_down;
-    int pos[3];
-    level;
-    flying;
-    atk_flying;
+    std::pair<int,int> atk_range;
+    int max_move;
+    int cool_down;
+    Pos pos;
+    int level;
+    bool flying;
+    bool atk_flying;
 };
 
 struct Barrack
 {
-    int pos[3];
+    Pos pos;
     int camp;
-    summon_pos_list;
+    std::vector<Pos> summon_pos_list;
 };
 
 struct Relic
@@ -34,16 +39,16 @@ struct Relic
     int camp;
     int max_hp;
     int hp;
-    int pos[3];
+    Pos pos;
     std::string name;
     int id;
 };
 
 struct Obstacle
 {
-    type;
-    int pos[3];
-    allow_flying;
+    std::string type;
+    Pos pos;
+    bool allow_flying;
 };
 
 struct Artifact
@@ -51,11 +56,11 @@ struct Artifact
     int id;
     std::string name;
     int camp;
-    cost;
-    max_cool_down;
-    cool_down_time;
+    int cost;
+    int max_cool_down;
+    int cool_down_time;
     std::string state;
-    target_type;
+    std::string target_type;
 };
 
 struct Creature
