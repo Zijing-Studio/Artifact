@@ -79,7 +79,6 @@ def summon(_round, _type, star, position):
     }
     send_opt(json.dumps(message))
 
-
 def move(_round, mover, position):
     '''将地图上id为mover的单位移动到地图position处
 

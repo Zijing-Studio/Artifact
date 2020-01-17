@@ -1,19 +1,19 @@
-#include <string>
-#include <vector>
-#include <cstdio>
-
 #include "api.hpp"
+#include "gameunit.hpp"
 
-class PlayerAi
+class AI
 {
 public:
-    PlayerAi(json game_info)
+    void updateGameInfo()
     {
+        json game_info = api::read();
         game_info["round"].get_to(round);
         game_info["camp"].get_to(my_camp);
-        map = game_info["map"];
-        players = game_info["players"];
+        game_info["map"].get_to(map);
+        game_info["players"][0].get_to(players[0]);
+        game_info["players"][1].get_to(players[1]);
     }
+
     void play()
     {
         if (round < 20)
@@ -25,18 +25,17 @@ public:
 private:
     int round;
     int my_camp;
-    json map;
-    json players;
+    gameunit::Map map;
+    gameunit::Player players[2];
 };
 
 int main()
 {
+    AI player_ai;
     while (true)
     {
-        json game_info= api::read();
-        PlayerAi *ai = new PlayerAi(game_info);
-        ai->play();
-        delete ai;
+        player_ai.updateGameInfo();
+        player_ai.play();
     }
     return 0;
 }

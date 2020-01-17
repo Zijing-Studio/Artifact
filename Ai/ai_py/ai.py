@@ -6,59 +6,25 @@ import api
 import random
 
 
-class PlayerAI:
+class AI:
     '''玩家编写的ai
-
-    属性:
-
-    api: 玩家调用的api
-
-    game_info: 游戏目前局面信息
-    举例:
-
-    {
-
-        'map': {
-            'units': [],
-            'barracks': [],
-            'relics': [
-                {'camp': 0, 'max_hp': 30, 'hp': 30, 'pos': (0, 0, 0)},
-                {'camp': 1, 'max_hp': 30, 'hp': 30, 'pos': (1, 1, -2)}
-            ],
-            'obstacles': []
-        },
-        'players': [
-            {
-                'camp': 0,
-                'artifact': [],
-                'mana': 2,
-                'max_mana': 2,
-                'creature_capacity': [
-                    {'type': 'Archer', 'available_count': 2, 'cool_down_list': [4]}
-                ],
-                'newly_summoned_id_list': [0]
-            },
-            {
-                'camp': 1,
-                'artifact': [],
-                'mana': 2,
-                'max_mana': 2,
-                'creature_capacity': [
-                    {'type': 'Archer', 'available_count': 2, 'cool_down_list': [4]}
-                ],
-                'newly_summoned_id_list': [1]
-            }
-        ],
-        'round': round,
-        'camp': camp
-    }
     '''
 
-    def __init__(self, game_info):
+    def __init__(self):
+        self.round = 0                          # 当前回合
+        self.my_camp = -1                       # 己方阵营
+        self.map = dict()                       # 地图信息
+        self.players = list()                   # 两名玩家的信息
+
+    def update_game_info(self):
+        '''更新游戏信息
+        '''
+        game_info = api.read_opt()
         self.round = game_info['round']         # 当前回合
         self.my_camp = game_info['camp']        # 己方阵营
         self.map = game_info['map']             # 地图信息
         self.players = game_info['players']     # 两名玩家的信息
+
 
     def play(self):
         '''用户需要编写的ai操作函数
@@ -85,15 +51,15 @@ class PlayerAI:
         '''
 
 
-def start():
+def main():
     '''
-    循环入口
+    启动AI
     '''
+    player_ai = AI()
     while True:
-        game_info = api.read_opt()
-        player_ai = PlayerAI(game_info)
+        player_ai.update_game_info()
         player_ai.play()
 
 
 if __name__ == '__main__':
-    start()
+    main()
