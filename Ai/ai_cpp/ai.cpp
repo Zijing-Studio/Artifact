@@ -1,4 +1,4 @@
-#include "api.hpp"
+#include "ai_sdk.hpp"
 #include "gameunit.hpp"
 
 class AI
@@ -6,7 +6,7 @@ class AI
 public:
     void updateGameInfo()
     {
-        json game_info = api::read();
+        json game_info = ai_sdk::read();
         game_info["round"].get_to(round);
         game_info["camp"].get_to(my_camp);
         game_info["map"].get_to(map);
@@ -17,7 +17,7 @@ public:
     void play()
     {
         if (round < 20)
-            api::end(round);
+            ai_sdk::end(round);
         else
             exit(0);
     }

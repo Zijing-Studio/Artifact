@@ -1,3 +1,6 @@
+#ifndef GAMEUNIT_HPP_
+#define GAMEUNIT_HPP_
+
 #include <vector>
 #include <string>
 #include "json.hpp"
@@ -168,3 +171,5 @@ void from_json(const json &j, Player &p)
 }
 
 } // namespace gameunit
+
+#endif

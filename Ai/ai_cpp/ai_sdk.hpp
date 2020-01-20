@@ -1,4 +1,5 @@
-#pragma once
+#ifndef AI_SDK_HPP_
+#define AI_SDK_HPP_
 
 #include <vector>
 #include <iostream>
@@ -6,7 +7,7 @@
 #include "json.hpp"
 using json = nlohmann::json;
 
-namespace api
+namespace ai_sdk
 {
 
 void sendLen(std::string s)
@@ -101,4 +102,6 @@ void end(int round)
     json operation_parameters;
     sendMsg(round, "end", operation_parameters);
 }
-}; // namespace api
+}; // namespace ai_sdk
+
+#endif

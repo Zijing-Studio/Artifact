@@ -2,7 +2,7 @@
 AI
 '''
 
-import api
+import ai_sdk
 import random
 
 
@@ -19,7 +19,7 @@ class AI:
     def update_game_info(self):
         '''更新游戏信息
         '''
-        game_info = api.read_opt()
+        game_info = ai_sdk.read_opt()
         self.round = game_info['round']         # 当前回合
         self.my_camp = game_info['camp']        # 己方阵营
         self.map = game_info['map']             # 地图信息
@@ -30,7 +30,7 @@ class AI:
         '''用户需要编写的ai操作函数
         '''
         if self.round < 20:
-            api.end(self.round)
+            ai_sdk.end(self.round)
         else:
             exit(0)
         '''
@@ -52,8 +52,7 @@ class AI:
 
 
 def main():
-    '''
-    启动AI
+    '''启动AI
     '''
     player_ai = AI()
     while True:
