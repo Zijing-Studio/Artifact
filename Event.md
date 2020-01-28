@@ -184,12 +184,12 @@ Priority = 3 (when in move)
 {
 	"first":
 	{
-		"artifact": String,
+		"artifact": [String],
 		"creatures": [String, String, String]
 	},
 	"second":
 	{
-		"artifact": String,
+		"artifact": [String],
 		"creatures": [String, String, String]
 	}
 }
