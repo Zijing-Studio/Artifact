@@ -39,6 +39,7 @@ class Parser:
             #return error message
             print(operation_object)
             return operation_object
+        # check legality
         legality = operation_object.check_legality()
         if legality is True:
             #emit responding event
@@ -70,6 +71,10 @@ class Parser:
                 operation_object = operations.Attack(self, player_id, self.map, params)
             elif operation_type == "use":
                 operation_object = operations.Use(self, player_id, self.map, params)
+            elif operation_type == "startround":
+                operation_object = operations.StartRound(self, player_id, self.map, params)
+            elif operation_type == "endround":
+                operation_object = operations.EndRound(self, player_id, self.map, params)
             return operation_object
         except KeyError as error:
             return KeyError("KeyError: " + str(error))
