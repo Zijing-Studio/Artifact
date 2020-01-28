@@ -23,7 +23,7 @@ parser.parse(operation)
 
 ```json
 {
-  "player": 1,				//操作方
+  "player": 1,				//玩家id，0为先手玩家，1为后手玩家
   "operation_type": "move",	//操作方法
   "round": 1,				//该操作对应的逻辑回合
   "operation_parameters": {}//具体参数
@@ -39,6 +39,8 @@ parser.parse(operation)
 
 #### 游戏中
 
+- startround
+- endround
 - summon
 - move
 - attack
@@ -110,6 +112,20 @@ parser.parse(operation)
 #### 游戏中
 
 ---
+
+##### 开始回合
+
+```json
+//operation_type: "startround"
+null（不需要额外参数）
+```
+
+##### 结束回合
+
+```json
+//operation_type: "endround"
+null（不需要额外参数）
+```
 
 ##### 移动
 

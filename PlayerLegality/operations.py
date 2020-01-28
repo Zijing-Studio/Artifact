@@ -111,6 +111,38 @@ class Select(AbstractOperation):
     def act(self):
         pass
 
+class StartRound(AbstractOperation):
+    '''
+    start stage of a new round
+    '''
+    def __init__(self, _parser, _id, _map):
+        AbstractOperation.__init__(self, _parser, _id, _map)
+    
+    def check_legality(self):
+        return True
+
+    def act(self):
+        # 法力上限增大1
+        # 法力值设置为法力上限
+        # 占领驻扎点
+        # 回合开始阶段的触发器
+        pass
+
+class EndRound(AbstractOperation):
+    '''
+    end of a round
+    '''
+    def __init__(self, _parser, _id, _map):
+        AbstractOperation.__init__(self, _parser, _id, _map)
+
+    def check_legality
+        return True
+
+    def act(self):
+        # 回合结束阶段的触发器
+        pass
+    
+
 class AbstractAct(AbstractOperation):
     '''
     abstract class for operations in battle(summon, move, attack)
