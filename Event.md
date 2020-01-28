@@ -176,3 +176,22 @@ Priority = 3 (when in move)
 }
 ```
 
+## GameStart
+
+游戏开始的事件，此时状态系统初始化玩家卡组和神器，first代表先手玩家，second代表后手玩家，先手玩家的camp是0，后手玩家是1
+
+```
+{
+	"first":
+	{
+		"artifact": String,
+		"creatures": [String, String, String]
+	},
+	"second":
+	{
+		"artifact": String,
+		"creatures": [String, String, String]
+	}
+}
+```
+
