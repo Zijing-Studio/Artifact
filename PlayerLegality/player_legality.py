@@ -48,20 +48,20 @@ class Parser:
         operation_object = self.to_object(operation)
         if isinstance(operation_object, BaseException):
             #return error message
-            print(operation_object)
+            #print(operation_object)
             #return operation_object
             return False
         # check legality
         legality = operation_object.check_legality()
         if legality is True:
             #emit responding event
-            print("emit " + operation_object.name)
+            #print("emit " + operation_object.name)
             operation_object.act()
             #return "OK"
             return True
         else:
             #return error message
-            print("emit " + operation_object.name + " error: " + str(legality))
+            #print("emit " + operation_object.name + " error: " + str(legality))
             #return legality
             return False
 
