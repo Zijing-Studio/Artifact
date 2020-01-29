@@ -7,6 +7,7 @@ classes of operations
 from Geometry import calculator
 from StateSystem.Event import Event
 from StateSystem.UnitData import UNIT_DATA
+from StateSystem.UnitData import ARTIFACTS
 
 def to_position(src):
     '''
@@ -122,14 +123,38 @@ class Init(AbstractOperation):
         self.artifacts = _params["artifacts"]
         self.creatures = _params["creatures"]
 
+    def creature_legality(self):
+        all_creatures = list(UNIT_DATA)
+        for item in self.creatures:
+            if item not in all_creatures:
+                return False
+        return True
+
+    def artifact_legality(self):
+        all_artifacts = []
+        for art in ARTIFACTS:
+            all_artifacts.append(art["name"])
+        for item in self.artifacts:
+            if item not in all_artifacts:
+                return False
+        return True
+
     def check_legality(self):
-        # 是否已经初始化过了
+        # 是否已经初始化过了?
+        if len(self.artifacts) != 1 or len(self.creatures) != 3: # 1张神器，3张生物
+            return "Wrong number of cards"
+        elif len(self.creatures) != len(set(self.creatures)):    # 生物互不相同
+            return "Duplicate creatures"
+        elif not creature_legality():       # 生物是否存在
+            return "Wrong creature name"
+        elif not artifact_legality():       # 神器是否存在
+            return "Wrong artifact name"
         return True
 
     def act(self):
         self.map.emit(
             Event("GameStart", {
-                str(self.player_id): {
+                int(self.player_id): {
                         "artifacts": self.artifacts,
                         "creatures": self.creatures
                     }
@@ -139,7 +164,7 @@ class Init(AbstractOperation):
 class StartRound(AbstractOperation):
     '''
     start stage of a new round
-    unfinished
+    unchecked
     '''
     def __init__(self, _parser, _id, _map):
         AbstractOperation.__init__(self, _parser, _id, _map)
