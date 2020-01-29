@@ -127,7 +127,14 @@ class Init(AbstractOperation):
         return True
 
     def act(self):
-        pass
+        self.map.emit(
+            Event("GameStart", {
+                str(self.player_id): {
+                        "artifacts": self.artifacts,
+                        "creatures": self.creatures
+                    }
+            }))
+        self.map.start_event_processing()
 
 class StartRound(AbstractOperation):
     '''
@@ -141,11 +148,8 @@ class StartRound(AbstractOperation):
         return True
 
     def act(self):
-        # 法力上限增大1
-        # 法力值设置为法力上限
-        # 占领驻扎点
-        # 回合开始阶段的触发器
-        pass
+        self.map.emit(Event("TurnStart"))
+        self.map.start_event_processing()
 
 class EndRound(AbstractOperation):
     '''
@@ -155,12 +159,12 @@ class EndRound(AbstractOperation):
     def __init__(self, _parser, _id, _map):
         AbstractOperation.__init__(self, _parser, _id, _map)
 
-    def check_legality
+    def check_legality(self):
         return True
 
     def act(self):
-        # 回合结束阶段的触发器
-        pass
+        self.map.emit(Event("TurnEnd"))
+        self.map.start_event_processing()
     
 
 class AbstractAct(AbstractOperation):
