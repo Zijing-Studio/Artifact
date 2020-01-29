@@ -4,6 +4,15 @@
 calculator for hex-grids
 '''
 
+# left-up, right-up, left-down, right-down, left-right, up, down
+MAPBORDER = [(-15+i, 9, 6-i) for i in range(0, 14)] + \
+            [(15-i, -6+i, -9) for i in range(0, 14)] + \
+            [(-15+i, 6-i, 9) for i in range(0, 14)] + \
+            [(15-i, -9, -6+i) for i in range(0, 14)] + \
+            [(-15, 8, 7), (-15, 7, 8), (15, -7, -8), (15, -8, -7)] + \
+            [(-1, 8, -7), (0, 8, -8), (1, 7, -8)] + \
+            [(-1, -7, 8), (0, -8, 8), (1, -8,  7)]
+
 def cube_distance(a, b):
     '''
     return distance between two unit
@@ -97,6 +106,7 @@ def cube_reachable(start, movement, obstacles=[]):
                 if neighbor not in visited and neighbor not in obstacles:
                     visited.append(neighbor)
                     fringes[i+1].append(neighbor)
+    return fringes
 
 def path(unit, dest, _map):
     '''
@@ -110,4 +120,5 @@ def path(unit, dest, _map):
     return result
 
 if __name__ == "__main__":
-    cube_reachable(1, 1)
+    print(cube_reachable((0, 0, 0), 1, MAPBORDER))
+    print(MAPBORDER)
