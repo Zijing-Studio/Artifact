@@ -82,6 +82,8 @@ class Parser:
             return KeyError("KeyError: " + str(error))
         except ValueError as error:
             return ValueError("ValueError: " + str(error).split(':')[-1])
+        except Exception as error:
+            return Exception(str(error))
 
 if __name__ == "__main__":
     example = {
