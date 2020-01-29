@@ -14,12 +14,42 @@ class DamageListener(EventListener):
         if event.name == "Damage":
             try:
                 if event.parameter_dict["target"] == self.host:
+                    if self.host.holy_shield:
+                        event.parameter_dict["damage"] = 0
+                        self.host.emit(Event("HolyShieldBreak", {"source": self.host}, -1))
                     self.host.hp -= event.parameter_dict["damage"]
                     print("Deal {} damage on {} (ID: {})".format(
                         event.parameter_dict["damage"],self.host.name,self.host.id
                     ))
             except:
                 print("Parameter Dict Error.")
+
+class HolyShieldAddListener(EventListener):
+    def deal_event(self,event):
+        if event.name == "HolyShieldAdd":
+            try:
+                if event.parameter_dict["source"] == self.host and not self.host.holy_shield:
+                    self.host.holy_shield = True
+                    print("{} (ID: {}) gains Holy Shield".format(
+                        self.host.name,self.host.id
+                    ))
+            except:
+                print("Parameter Dict Error.")
+
+
+class HolyShieldBreakListener(EventListener):
+    def deal_event(self,event):
+        if event.name == "HolyShieldBreak":
+            try:
+                if event.parameter_dict["source"] == self.host:
+                    if not self.host.holy_shield:
+                        raise BaseException()
+                    self.host.holy_shield = False
+                    print("{} (ID: {})'s Holy Shield is broken".format(
+                        self.host.name,self.host.id
+                    ))
+            except:
+                print("Parameter Dict Error")
 
 class AttackListener(EventListener):
     def deal_event(self,event):

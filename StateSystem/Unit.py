@@ -25,6 +25,8 @@ class Unit:
         self.pos = pos
         self.flying = UNIT_DATA[name]["flying"]
         self.atk_flying = UNIT_DATA[name]["atk_flying"]
+        self.agility = UNIT_DATA[name]["agility"]
+        self.holy_shield = UNIT_DATA[name]["holy_shield"]
 
         self.death_flag = False
 
@@ -38,6 +40,8 @@ class Unit:
         self.add_event_listener(MoveListener())
         self.add_event_listener(AttackBackListener())
         self.add_event_listener(HealListener())
+        self.add_event_listener(HolyShieldAddListener())
+        self.add_event_listener(HolyShieldBreakListener())
 
     def __str__(self):
         return '''{}
@@ -78,7 +82,9 @@ class Unit:
             "pos": self.pos,
             "level": self.level,
             "flying": self.flying,
-            "atk_flying": self.atk_flying
+            "atk_flying": self.atk_flying,
+            "agility": self.agility,
+            "holy_shield": self.holy_shield
         }
 
     def add_event_listener(self,listener):

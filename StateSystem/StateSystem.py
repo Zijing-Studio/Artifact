@@ -7,6 +7,7 @@ from StateSystem.Player import Player
 from StateSystem.Relic import Relic
 from StateSystem.Obstacle import *
 from StateSystem.Barrack import *
+from StateSystem.CreatureCapacity import *
 
 class StateSystem:
     def __init__(self):
@@ -213,3 +214,16 @@ class ChangeCurrentPlayerListener(EventListener):
             print("Current Player changed to {}".format(
                 self.host.player_list[self.host.current_player_id].camp
             ))
+
+class GameStartListener(EventListener):
+    '''
+    Only State System register this listener
+    '''
+    def deal_event(self,event):
+        if event.name == "GameStart":
+            camp = event.parameter_dict["camp"]
+            player = self.host.get_player_by_id(camp)
+            player.creature_capacity_list = [
+                CreatureCapacity(name) \
+                for name in event.parameter_dict["cards"]["creatures"]
+            ]
