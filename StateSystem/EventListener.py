@@ -22,7 +22,7 @@ class DamageListener(EventListener):
                         event.parameter_dict["damage"],self.host.name,self.host.id
                     ))
             except:
-                print("Parameter Dict Error.")
+                print("An Error appears while handling Damage event.")
 
 class HolyShieldAddListener(EventListener):
     def deal_event(self,event):
@@ -34,7 +34,7 @@ class HolyShieldAddListener(EventListener):
                         self.host.name,self.host.id
                     ))
             except:
-                print("Parameter Dict Error.")
+                print("An Error appears while handling HolyShieldAdd event.")
 
 
 class HolyShieldBreakListener(EventListener):
@@ -49,7 +49,7 @@ class HolyShieldBreakListener(EventListener):
                         self.host.name,self.host.id
                     ))
             except:
-                print("Parameter Dict Error")
+                print("An Error appears while handling HolyShieldBreak event.")
 
 class AttackListener(EventListener):
     def deal_event(self,event):
@@ -71,7 +71,7 @@ class AttackListener(EventListener):
                         event.parameter_dict["target"].id
                     ))
             except:
-                print("Parameter Dict Error.")
+                print("An Error appears while handling Attack event..")
 
 class AttackBackListener(EventListener):
     def deal_event(self,event):
@@ -96,7 +96,7 @@ class AttackBackListener(EventListener):
                             event.parameter_dict["source"].id
                         ))
             except:
-                print("Parameter Dict Error.")
+                print("An Error appears while handling Attacked event..")
 
 class MoveListener(EventListener):
     def deal_event(self,event):
@@ -119,7 +119,7 @@ class MoveListener(EventListener):
                         event.parameter_dict["dest"]
                     ))
             except:
-                print("Parameter Dict Error.")
+                print("An Error appears while handling Move event..")
 
 class HealListener(EventListener):
     def deal_event(self,event):
@@ -133,7 +133,7 @@ class HealListener(EventListener):
                             event.parameter_dict["heal"],self.host.name,self.host.id
                         ))
             except:
-                print("Parameter Dict Error.")
+                print("An Error appears while handling Heal event..")
 
 class PriestHealListener(EventListener):
     def deal_event(self,event):
@@ -147,7 +147,7 @@ class PriestHealListener(EventListener):
                             "heal": 1
                         },-3))
             except:
-                print("Parameter Dict Error.")
+                print("An Error appears while handling PriestHeal event..")
 
 class PriestAtkListener(EventListener):
     def deal_event(self,event):
@@ -166,14 +166,14 @@ class PriestAtkListener(EventListener):
                         buff.delete()
                         self.host.priest_buff_list.remove(buff)
             except:
-                print("Parameter Dict Error.")
+                print("An Error appears while handling PriestAtk event..")
         if event.name == "Death":
             try:
                 if event.parameter_dict["source"] == self.host:
                     for buff in self.host.priest_buff_list:
                         buff.delete()
             except:
-                print("Parameter Dict Error.")
+                print("An Error appears while handling ??? event..")
 
 
 class VolcanoDragonAtkListener(EventListener):
@@ -191,5 +191,5 @@ class VolcanoDragonAtkListener(EventListener):
                                 "damage": self.host.level + 2
                             },priority=-1))
             except:
-                print("Parameter Dict Error.")
+                print("An Error appears while handling VolcanoDragonAtk event..")
                 
