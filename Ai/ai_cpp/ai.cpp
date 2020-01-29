@@ -4,6 +4,11 @@
 class AI
 {
 public:
+    AI(std::vector<std::string> artifacts, std::vector<std::string> creatures)
+    {
+        ai_sdk::init(artifacts, creatures);
+    }
+
     void updateGameInfo()
     {
         json game_info = ai_sdk::read();
@@ -17,7 +22,7 @@ public:
     void play()
     {
         if (round < 20)
-            ai_sdk::end(round);
+            ai_sdk::endRound(round);
         else
             exit(0);
     }
@@ -31,7 +36,7 @@ private:
 
 int main()
 {
-    AI player_ai;
+    AI player_ai({"artifact"}, {"creature0", "creature1", "creature2"});
     while (true)
     {
         player_ai.updateGameInfo();
