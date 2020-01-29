@@ -53,7 +53,8 @@ class Unit:
     Atk Range: {}
     Max Move: {}
     Cool Down:{}
-    Pos: {}'''.format(
+    Pos: {}
+    Holy Shield: {}'''.format(
                 self.name,
                 self.id,
                 self.camp,
@@ -64,7 +65,8 @@ class Unit:
                 self.atk_range,
                 self.max_move,
                 self.cool_down,
-                self.pos
+                self.pos,
+                self.holy_shield
             )
     
     def parse(self):

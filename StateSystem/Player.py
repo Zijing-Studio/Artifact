@@ -1,6 +1,6 @@
 from StateSystem.EventListener import EventListener
 from StateSystem.CreatureCapacity import CreatureCapacity
-from StateSystem.Artifact import HolyLightArtifact
+from StateSystem.Artifact import HolyLightArtifact, SalamanderShieldArtifact
 
 class Player:
     def __init__(self,camp,mana,state_system):
@@ -21,6 +21,7 @@ class Player:
         # Debug
         self.creature_capacity_list.append(CreatureCapacity("Archer"))
         self.artifact_list.append(HolyLightArtifact(self.camp,self.state_system))
+        self.artifact_list.append(SalamanderShieldArtifact(self.camp,self.state_system))
         # Debug
     
     def add_event_listener(self,listener):
@@ -103,3 +104,4 @@ class ActivateArtifactListener(EventListener):
                     if artifact.name == event.parameter_dict["name"]:
                         artifact.activate(event.parameter_dict["target"])
                         print("Player {} activate {} !!!".format(self.host.camp,artifact.name))
+                        return

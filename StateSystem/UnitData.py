@@ -49,7 +49,7 @@ UNIT_DATA = {
         "flying": False,
         "atk_flying": False,
         "agility": False,
-        "holy_shield": True
+        "holy_shield": False
     },
     "VolcanoDragon": {
         "cost": [5,7,9],
@@ -70,6 +70,12 @@ ARTIFACTS = [
     {
         "name": "HolyLight",
         "target_type": "Pos",
+        "cost": 6,
+        "cool_down": 6
+    },
+    {
+        "name": "SalamanderShield",
+        "target_type": "Unit",
         "cost": 6,
         "cool_down": 6
     }

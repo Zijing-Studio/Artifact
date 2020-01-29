@@ -94,3 +94,41 @@ class HolyLightAtkBuff(Buff):
 
     def debuff(self):
         self.host.atk -= 2
+
+class SalamanderShieldArtifact(Artifact):
+    def __init__(self,camp,state_system):
+        Artifact.__init__(self,camp,6,6,state_system)
+        self.name = "SalamanderShield"
+        self.target_type = "Unit"
+
+    def effect(self,target):
+        new_buff = SalamanderShieldBuff(self.state_system, self)
+        new_buff.add_on(target)
+        self.recycle()
+
+class SalamanderShieldRefreshListener(EventListener):
+    def deal_event(self,event):
+        if event.name == "TurnStart":
+            self.host.emit(Event("HolyShieldAdd",{"source": self.host.host},-1))
+
+class SalamanderShieldDeathRecycleListener(EventListener):
+    def deal_event(self,event):
+        if event.name == "Death" and event.parameter_dict["source"] == self.host.host:
+            self.host.artifact_host.recycle()
+            self.host.delete()
+
+class SalamanderShieldBuff(Buff):
+    def __init__(self,state_system,artifact_host):
+        self.artifact_host = artifact_host
+        Buff.__init__(self,state_system)
+        self.add_event_listener(SalamanderShieldRefreshListener())
+        self.add_event_listener(SalamanderShieldDeathRecycleListener())
+
+    def buff(self):
+        self.host.max_hp += 4
+        self.host.hp += 4
+        self.host.holy_shield = True
+
+    def debuff(self):
+        self.host.max_hp -= 4
+        self.host.hp = min(self.host.hp, self.host.max_hp)
