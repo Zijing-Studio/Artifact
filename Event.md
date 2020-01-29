@@ -182,8 +182,8 @@ Priority = 3 (when in move)
 
 ```
 {
-	0:	//玩家id
-	{
+	"camp": 0,	//玩家id
+	"cards": {
 		"artifacts": [String],
 		"creatures": [String, String, String]
 	}

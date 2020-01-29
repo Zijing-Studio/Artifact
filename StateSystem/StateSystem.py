@@ -1,12 +1,12 @@
-from .EventHeap import EventHeap
-from .Event import Event
-from .EventListener import EventListener
-from .Unit import *
-from .Map import *
-from .Player import Player
-from .Relic import Relic
-from .Obstacle import *
-from .Barrack import *
+from StateSystem.EventHeap import EventHeap
+from StateSystem.Event import Event
+from StateSystem.EventListener import EventListener
+from StateSystem.Unit import *
+from StateSystem.Map import *
+from StateSystem.Player import Player
+from StateSystem.Relic import Relic
+from StateSystem.Obstacle import *
+from StateSystem.Barrack import *
 
 class StateSystem:
     def __init__(self):
