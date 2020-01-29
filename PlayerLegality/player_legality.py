@@ -5,6 +5,7 @@
     player legality check api
 '''
 from . import operations
+import json
 
 class Parser:
     '''
@@ -26,30 +27,43 @@ class Parser:
         self.attacked = []
         self.round = _round
 
-    def parse(self, operation):
+    def parse(self, operation_json):
         '''
             parse operation, check legality and emit responding event
         '''
+        try:
+            operation = json.loads(operation_json)
+        except json.decoder.JSONDecodeError:
+            return False
+        try:
+            _round = int(operation["round"])
+        except KeyError or ValueError:
+            return False
+
         #check round number
-        if int(operation["round"]) != self.round:
-            return "Not the same round"
+        if _round != self.round:
+            # return "Not the same round"
+            return False
         #create operation object
         operation_object = self.to_object(operation)
         if isinstance(operation_object, BaseException):
             #return error message
             print(operation_object)
-            return operation_object
+            #return operation_object
+            return False
         # check legality
         legality = operation_object.check_legality()
         if legality is True:
             #emit responding event
             print("emit " + operation_object.name)
             operation_object.act()
-            return "OK"
+            #return "OK"
+            return True
         else:
             #return error message
             print("emit " + operation_object.name + " error: " + str(legality))
-            return legality
+            #return legality
+            return False
 
     def to_object(self, operation_json):
         '''
@@ -87,7 +101,7 @@ class Parser:
 
 if __name__ == "__main__":
     example = {
-        "player": "fuck",
+        "player": "0",
         "operation_type": "Forbid",
         "operation_parameters":{
             }
