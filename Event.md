@@ -182,9 +182,9 @@ Priority = 3 (when in move)
 
 ```
 {
-	"0":	//玩家id
+	0:	//玩家id
 	{
-		"artifact": [String],
+		"artifacts": [String],
 		"creatures": [String, String, String]
 	}
 }
