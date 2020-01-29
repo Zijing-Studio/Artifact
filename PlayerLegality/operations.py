@@ -111,9 +111,28 @@ class Select(AbstractOperation):
     def act(self):
         pass
 
+class Init(AbstractOperation):
+    '''
+    initialize status of a player
+    unfinished
+    '''
+    def __init__(self, _parser, _id, _map, _params):
+        AbstractOperation.__init__(self, _parser, _id, _map)
+        self.name = "Init"
+        self.artifacts = _params["artifacts"]
+        self.creatures = _params["creatures"]
+
+    def check_legality(self):
+        # 是否已经初始化过了
+        return True
+
+    def act(self):
+        pass
+
 class StartRound(AbstractOperation):
     '''
     start stage of a new round
+    unfinished
     '''
     def __init__(self, _parser, _id, _map):
         AbstractOperation.__init__(self, _parser, _id, _map)
@@ -131,6 +150,7 @@ class StartRound(AbstractOperation):
 class EndRound(AbstractOperation):
     '''
     end of a round
+    unfinished
     '''
     def __init__(self, _parser, _id, _map):
         AbstractOperation.__init__(self, _parser, _id, _map)

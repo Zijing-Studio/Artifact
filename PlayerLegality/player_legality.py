@@ -72,9 +72,11 @@ class Parser:
             elif operation_type == "use":
                 operation_object = operations.Use(self, player_id, self.map, params)
             elif operation_type == "startround":
-                operation_object = operations.StartRound(self, player_id, self.map, params)
+                operation_object = operations.StartRound(self, player_id, self.map)
             elif operation_type == "endround":
-                operation_object = operations.EndRound(self, player_id, self.map, params)
+                operation_object = operations.EndRound(self, player_id, self.map)
+            elif operation_type == "init":
+                operation_object = operations.Init(self, player_id, self.map, params)
             return operation_object
         except KeyError as error:
             return KeyError("KeyError: " + str(error))

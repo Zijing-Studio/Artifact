@@ -34,6 +34,7 @@ parser.parse(operation)
 
 #### 游戏开始
 
+- init
 - forbid
 - select
 
@@ -51,6 +52,16 @@ parser.parse(operation)
 #### 游戏开始
 
 ---
+
+##### 选手分别初始化
+
+```json
+//operation_type: "init"
+{
+	"artifacts": [String],	//神器名字的列表（按目前的策划每人只有一个神器）
+	"creatures": [String, String, String]	//生物名字的列表（按目前的策划每人三种生物）
+}
+```
 
 ##### 神器禁用
 
