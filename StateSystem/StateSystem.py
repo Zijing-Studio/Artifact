@@ -13,6 +13,7 @@ class StateSystem:
         self.map = Map()
         self.event_heap = EventHeap()
         self.player_list = [Player(0,1,self),Player(1,2,self)]
+        self.current_player_id = 0
         self.map.relic_list = [Relic(0,30,(0,0,0),self),Relic(1,30,(1,1,-2),self)]
         self.map.obstacle_list = [Obstacle("Abyss",ob_pos) for ob_pos in ABYSS_INIT_LIST]
         self.map.barrack_list = [Barrack(br[0],br[1]) for br in BARRACK_INIT_LIST]
@@ -21,6 +22,8 @@ class StateSystem:
         self.add_event_listener(SummonListener())
         self.add_event_listener(CheckDeathListener())
         self.add_event_listener(CheckBarrackListener())
+        self.add_event_listener(TurnStartListener())
+        self.add_event_listener(ChangeCurrentPlayerListener())
 
     def add_event_listener(self,listener):
         listener.host = self
@@ -191,9 +194,22 @@ class TurnStartListener(EventListener):
     def deal_event(self,event):
         if event.name == "TurnStart":
             try:
-                self.host.emit(Event("Refresh",{},4))
+                self.host.emit(Event("Refresh",{
+                    "camp": self.host.player_list[self.host.current_player_id].camp
+                },4))
                 self.host.emit(Event("CheckBarrack",{},4))
                 self.host.emit(Event("NewTurn",{},4))
             except:
                 print("Parameter Dict Error.")
     
+class ChangeCurrentPlayerListener(EventListener):
+    '''
+    Only State System register this listener
+    '''
+    def deal_event(self,event):
+        if event.name == "TurnEnd":
+            self.host.current_player_id += 1
+            self.host.current_player_id %= len(self.host.player_list)
+            print("Current Player changed to {}".format(
+                self.host.player_list[self.host.current_player_id].camp
+            ))
