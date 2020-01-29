@@ -20,6 +20,26 @@ emit(Event(<name>,[parameter_dict = {}],[priority = 0]))
 }
 ```
 
+## HolyShieldAdd
+
+圣盾加持事件
+
+```
+{
+	"source": Unit
+}
+```
+
+## HolyShieldBreak
+
+圣盾被击破的事件
+
+```
+{
+	"source": Unit
+}
+```
+
 ## Attack
 
 ```json

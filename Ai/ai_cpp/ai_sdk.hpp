@@ -44,13 +44,12 @@ json read()
     return json::parse(recv_msg);
 }
 
-json getGameInfo()
+void init(std::vector<std::string> artifacts, std::vector<std::string> creatures)
 {
-    /*没必要用这个接口*/
     json operation_parameters;
-    sendMsg(0, "gameinfo", operation_parameters);
-    json game_info = read();
-    return game_info;
+    operation_parameters["artifacts"] = artifacts;
+    operation_parameters["creatures"] = creatures;
+    sendMsg(0, "init", operation_parameters);
 }
 
 void summon(int round, int type, int star, int x, int y, int z)
@@ -97,10 +96,10 @@ void attack(int round, int attacker, int target)
     sendMsg(round, "attack", operation_parameters);
 }
 
-void end(int round)
+void endRound(int round)
 {
     json operation_parameters;
-    sendMsg(round, "end", operation_parameters);
+    sendMsg(round, "endround", operation_parameters);
 }
 }; // namespace ai_sdk
 

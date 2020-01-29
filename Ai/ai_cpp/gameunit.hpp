@@ -27,6 +27,8 @@ struct Unit
     int level;
     bool flying;
     bool atk_flying;
+    bool agility;
+    bool holy_shield;
 };
 
 struct Barrack
@@ -105,6 +107,8 @@ void from_json(const json &j, Unit &u)
     j.at("level").get_to(u.level);
     j.at("flying").get_to(u.flying);
     j.at("atk_flying").get_to(u.atk_flying);
+    j.at("agility").get_to(u.agility);
+    j.at("holy_shield").get_to(u.holy_shield);
 }
 
 void from_json(const json &j, Barrack &b)

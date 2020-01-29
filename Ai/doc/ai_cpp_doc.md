@@ -16,25 +16,39 @@
 
 其中round参数均指代当前的回合数。如果round不等于实际当前回合数，则操作无效。
 ```cpp
+void init(std::vector<std::string> artifacts, std::vector<std::string> creatures)
+```
+
+​		选择初始神器(**artifacts**数组里包含其名字)和生物(**creatures**数组里包含其名字)
+
+
+
+```cpp
 void summon(int round, int type, int star, int x, int y, int z)
 ```
 
-​		在地图(x, y, z)处召唤一个本方类型为type，星级为star的单位
+​		在地图(**x**, **y**, **z**)处召唤一个本方类型为**type**，星级为**star**的单位
+
+
 
 ```cpp
 void move(int round, int mover, int x, int y, int z)
 ```
 
-​		将地图上id为**mover**的单位移动到地图(x, y, z)处
+​		将地图上id为**mover**的单位移动到地图(**x**, **y**, **z**)处
+
+
 
 ```cpp
 void attack(int round, int attacker, int target)
 ```
 
-​		令地图上id为attacker的单位攻击地图上id为target的单位
+​		令地图上id为**attacker**的单位攻击地图上id为**target**的单位
+
+
 
 ```cpp
-void end(int round)
+void endRound(int round)
 ```
 
 ​		结束当前回合。
