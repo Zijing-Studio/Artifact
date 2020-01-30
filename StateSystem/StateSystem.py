@@ -8,6 +8,7 @@ from StateSystem.Relic import Relic
 from StateSystem.Obstacle import *
 from StateSystem.Barrack import *
 from StateSystem.CreatureCapacity import *
+from StateSystem.Artifact import gen_artifact_by_name
 
 class StateSystem:
     def __init__(self):
@@ -25,6 +26,7 @@ class StateSystem:
         self.add_event_listener(CheckBarrackListener())
         self.add_event_listener(TurnStartListener())
         self.add_event_listener(ChangeCurrentPlayerListener())
+        self.add_event_listener(GameStartListener())
 
     def add_event_listener(self,listener):
         listener.host = self
@@ -227,3 +229,11 @@ class GameStartListener(EventListener):
                 CreatureCapacity(name) \
                 for name in event.parameter_dict["cards"]["creatures"]
             ]
+            player.artifact_list = [
+                gen_artifact_by_name(name,camp,self.host) \
+                for name in event.parameter_dict["cards"]["artifacts"]
+            ]
+            for index, item in enumerate(self.host.player_list):
+                if item.camp == player:
+                    self.host.player_list[index] = player
+                    break

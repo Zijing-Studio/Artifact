@@ -18,12 +18,6 @@ class Player:
         self.add_event_listener(SummonListener())
         self.add_event_listener(ActivateArtifactListener())
 
-        # Debug
-        self.creature_capacity_list.append(CreatureCapacity("Archer"))
-        self.artifact_list.append(HolyLightArtifact(self.camp,self.state_system))
-        self.artifact_list.append(SalamanderShieldArtifact(self.camp,self.state_system))
-        # Debug
-    
     def add_event_listener(self,listener):
         listener.host = self
         self.event_listener_list.append(listener)

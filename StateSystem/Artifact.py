@@ -5,6 +5,14 @@ from StateSystem.EventListener import EventListener
 
 ARTIFACT_ID = 0
 
+def gen_artifact_by_name(name,camp,state_system):
+    if name == "HolyLight":
+        return HolyLightArtifact(camp,state_system)
+    elif name == "SalamanderShield":
+        return SalamanderShieldArtifact(camp,state_system)
+    else:
+        return None
+
 class Artifact:
     def __init__(self,camp,cost,cool_down,state_system):
         global ARTIFACT_ID

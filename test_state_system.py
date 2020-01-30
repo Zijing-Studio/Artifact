@@ -3,6 +3,21 @@ from StateSystem.Event import Event
 
 if __name__ == "__main__":
     sys=StateSystem()
+    sys.emit(Event("GameStart",{
+        "camp": 0,
+        "cards": {
+            "artifacts": ["SalamanderShield", "HolyLight"],
+            "creatures": ["BlackBat", "Priest", "Archer"]
+        }
+    }))
+    sys.emit(Event("GameStart",{
+        "camp": 1,
+        "cards": {
+            "artifacts": ["SalamanderShield", "HolyLight"],
+            "creatures": ["BlackBat", "Priest", "Archer"]
+        }
+    }))
+    sys.start_event_processing()
     sys.emit(Event("Summon",{"type":"BlackBat","level":1,"pos":(0,0,0),"camp":1}))
     sys.start_event_processing()
     sys.emit(Event("Summon",{"type":"BlackBat","level":1,"pos":(0,1,-1),"camp":0}))
