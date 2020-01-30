@@ -2,6 +2,7 @@ from Geometry import calculator
 from StateSystem.Event import Event
 from StateSystem.Buff import Buff
 from StateSystem.EventListener import EventListener
+from StateSystem.Unit import Unit
 
 ARTIFACT_ID = 0
 
@@ -10,6 +11,8 @@ def gen_artifact_by_name(name,camp,state_system):
         return HolyLightArtifact(camp,state_system)
     elif name == "SalamanderShield":
         return SalamanderShieldArtifact(camp,state_system)
+    elif name == "InfernoFlame":
+        return InfernoFlameArtifact(camp,state_system)
     else:
         return None
 
@@ -112,7 +115,6 @@ class SalamanderShieldArtifact(Artifact):
     def effect(self,target):
         new_buff = SalamanderShieldBuff(self.state_system, self)
         new_buff.add_on(target)
-        self.recycle()
 
 class SalamanderShieldRefreshListener(EventListener):
     def deal_event(self,event):
@@ -140,3 +142,46 @@ class SalamanderShieldBuff(Buff):
     def debuff(self):
         self.host.max_hp -= 4
         self.host.hp = min(self.host.hp, self.host.max_hp)
+
+class InfernoFlameArtifact(Artifact):
+    def __init__(self,camp,state_system):
+        Artifact.__init__(self,camp,6,6,state_system)
+        self.name = "InfernoFlame"
+        self.target_type = "Pos"
+
+    def effect(self,target):
+        for unit in self.state_system.map.unit_list:
+            if calculator.cube_distance(unit.pos,target) <= 2 and unit.camp != self.camp:
+                self.emit(Event("Damage",{
+                    "source": self,
+                    "target": unit,
+                    "damage": 2
+                },-3))
+        self.emit(Event("Summon",{
+            "type": "Inferno",
+            "level": 1,
+            "pos": target,
+            "camp": self.camp,
+            "artifact_host": self
+        }))
+        self.emit(Event("CheckDeath",priority=4))
+        
+class Inferno(Unit):
+    def __init__(self,camp,level,pos,state_system,artifact_host):
+        name = "Inferno"
+        self.artifact_host = artifact_host
+        Unit.__init__(
+            self,
+            camp,
+            name,
+            level, # Only a single level
+            pos,
+            state_system
+        )
+
+        self.add_event_listener(InfernoRecycleListener())
+
+class InfernoRecycleListener(EventListener):
+    def deal_event(self,event):
+        if event.name == "Death" and event.parameter_dict["source"] == self.host:
+            self.host.artifact_host.recycle()

@@ -8,7 +8,7 @@ from StateSystem.Relic import Relic
 from StateSystem.Obstacle import *
 from StateSystem.Barrack import *
 from StateSystem.CreatureCapacity import *
-from StateSystem.Artifact import gen_artifact_by_name
+from StateSystem.Artifact import gen_artifact_by_name,Inferno
 
 class StateSystem:
     def __init__(self):
@@ -140,6 +140,14 @@ class SummonListener(EventListener):
                         event.parameter_dict["level"],
                         event.parameter_dict["pos"],
                         self.host
+                    )
+                elif event.parameter_dict["type"] == "Inferno":
+                    unit = Inferno(
+                        event.parameter_dict["camp"],
+                        event.parameter_dict["level"],
+                        event.parameter_dict["pos"],
+                        self.host,
+                        event.parameter_dict["artifact_host"]
                     )
                 if unit:
                     self.host.map.add_unit(unit)

@@ -170,6 +170,3 @@ class VolcanoDragon(Unit):
         )
 
         self.add_event_listener(VolcanoDragonAtkListener())
-
-
-

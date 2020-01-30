@@ -63,6 +63,19 @@ UNIT_DATA = {
         "atk_flying": False,
         "agility": False,
         "holy_shield": False
+    },
+    "Inferno": {
+        "cost": [8],
+        "atk": [8],
+        "hp": [8],
+        "atk_range": [(1,1)],
+        "max_move": [3],
+        "cool_down": [999],
+        "duplicate": 1,
+        "flying": False,
+        "atk_flying": False,
+        "agility": False,
+        "holy_shield": False
     }
 }
 
@@ -77,6 +90,12 @@ ARTIFACTS = [
         "name": "SalamanderShield",
         "target_type": "Unit",
         "cost": 6,
+        "cool_down": 6
+    },
+    {
+        "name": "InfernoFlame",
+        "target_type": "Pos",
+        "cost": 8,
         "cool_down": 6
     }
 ]
