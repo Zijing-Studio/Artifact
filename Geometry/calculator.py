@@ -132,6 +132,10 @@ def get_obstacles_by_unit(unit, _map):
                 obstacles.append(cube_neighbor(obstacle.pos, i))
     return obstacles
 
+'''
+below are public sdk
+'''
+
 def path(unit, dest, _map):
     '''
     public sdk for search_path
@@ -147,6 +151,24 @@ def reachable(unit, _map):
     obstacles = get_obstacles_by_unit(unit, _map)
     result = cube_reachable(unit.pos, unit.max_move, obstacles)
     return result
+
+def units_in_range(pos, dist, _map, camp=-1, flyingIncluded=True, onlandIncluded=True):
+    '''
+    return list of units whose distance to the pos is less than dist
+    default camp = -1, return units of both camp, 0 for the first camp, 1 for the second
+    flyingIncluded = True will include flying units,
+    onlandIncluded = True will include onland units
+    '''
+    units = []
+    all_units = _map.get_units()
+    for _unit in all_units:
+        if cube_distance(_unit.pos, pos) <= dist and \
+           (camp == -1 or camp == _unit.camp) and \
+           ((_unit.flying and flyingIncluded) or \
+           (not _unit.flying and onlandIncluded)):
+               units.append(_unit)
+    return units
+
 
 if __name__ == "__main__":
     print(cube_reachable((0, 0, 0), 1, MAPBORDER))
