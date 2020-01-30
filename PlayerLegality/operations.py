@@ -115,7 +115,7 @@ class Select(AbstractOperation):
 class Init(AbstractOperation):
     '''
     initialize status of a player
-    unfinished
+    unchecked
     '''
     def __init__(self, _parser, _id, _map, _params):
         AbstractOperation.__init__(self, _parser, _id, _map)
@@ -154,7 +154,8 @@ class Init(AbstractOperation):
     def act(self):
         self.map.emit(
             Event("GameStart", {
-                int(self.player_id): {
+                "camp": int(self.player_id), 
+                "cards": {
                         "artifacts": self.artifacts,
                         "creatures": self.creatures
                     }

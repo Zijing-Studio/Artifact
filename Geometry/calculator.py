@@ -15,7 +15,7 @@ MAPBORDER = [(-15+i, 9, 6-i) for i in range(0, 14)] + \
 
 def cube_distance(a, b):
     '''
-    return distance between two unit
+    return distance between two unit, a/b is position
     '''
     try:
         distance = (abs(a[0] - b[0]) + abs(a[1] - b[1]) + abs(a[2] - b[2]))/2
@@ -24,8 +24,11 @@ def cube_distance(a, b):
     return int(distance + 1e-8)
 
 def cube_neighbor(pos, dir):
+    '''
+    neighbor of pos, dir ranges from 0 to 5
+    '''
     _dir = dir%6
-    if _dir == 0:
+    if _dir == 0:   # first neighbor
         neighbor = (pos[0]+1, pos[1], pos[2]-1)
     elif _dir == 1:
         neighbor = (pos[0]+1, pos[1]-1, pos[2])
@@ -93,30 +96,56 @@ def cube_reachable(start, movement, obstacles=[]):
     '''
     return reachable position from start point in steps limited by movement
     '''
-    visited = []
+    visited = []    # positions that have been visited
     visited.append(start)
-    fringes = []
+    fringes = []    # list of list of reachable points in certain steps(subscripts means steps)
     fringes.append([start])
+    can_pass = []   # list of list of can-pass points in certain steps
+    can_pass.append([start])
 
     for i in range(0, movement):
         fringes.append([])
+        can_pass.append([])
         for pos in fringes[i]:
+            if pos not in can_pass[i]:
+                pass
             for j in range(0, 6):
                 neighbor = cube_neighbor(pos, j)
-                if neighbor not in visited and neighbor not in obstacles:
+                if neighbor not in visited:
                     visited.append(neighbor)
                     fringes[i+1].append(neighbor)
+                    if neighbor not in obstacles:
+                        can_pass[i+1].append(neighbor)
     return fringes
+
+def get_obstacles_by_unit(unit, _map):
+    '''
+    returns all obstacles for a unit
+    unfinished, currently only units have been taken into account
+    '''
+    obstacles = MAPBORDER
+    obstacle_unit = _map.get_units()
+    for obstacle in obstacle_unit:
+        if obstacle.camp != unit.camp:
+            obstacles.append(obstacle.pos)
+            for i in range(0, 6):
+                obstacles.append(cube_neighbor(obstacle.pos, i))
+    return obstacles
 
 def path(unit, dest, _map):
     '''
     public sdk for search_path
     '''
-    obstacles = []
-    obstacle_object = _map.get_units()
-    for obstacle in obstacle_object:
-        obstacles.append(obstacle.pos)
+    obstacles = get_obstacles_by_unit(unit, _map)
     result = search_path(unit.pos, dest, obstacles)
+    return result
+
+def reachable(unit, _map):
+    '''
+    public sdk for cube_reachable
+    '''
+    obstacles = get_obstacles_by_unit(unit, _map)
+    result = cube_reachable(unit.pos, unit.max_move, obstacles)
     return result
 
 if __name__ == "__main__":
