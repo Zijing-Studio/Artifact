@@ -1,5 +1,4 @@
-'''
-logic_sdk
+'''包含logic需要用到的各种读写操作
 '''
 
 import json
@@ -10,8 +9,7 @@ DEBUG = True  # DEBUG时会生成一个log.txt记录logic收发的信息
 
 
 def logic_convert_byte(data_str, send_goal):
-    '''
-    传输数据的时候加数据长度作为数据头
+    '''传输数据的时候加数据长度作为数据头
     '''
     message_len = len(data_str)
     message = message_len.to_bytes(4, byteorder='big', signed=True)
@@ -24,8 +22,7 @@ def logic_convert_byte(data_str, send_goal):
 
 
 def read_opt():
-    '''
-    读取发过来的操作
+    '''读取发过来的操作
     '''
     read_buffer = sys.stdin.buffer
     data_len = int.from_bytes(read_buffer.read(4), byteorder='big', signed=True)
@@ -33,17 +30,12 @@ def read_opt():
     if DEBUG:
         with open('log.txt', 'a') as logfile:
             logfile.write('judger->logic:\n'+str(json.loads(data))+'\n')
-    try:
-        opt = json.loads(data)
-    except json.decoder.JSONDecodeError:
-        return False
-    else:
-        return opt
+    opt = json.loads(data)
+    return opt
 
 
 def send_end_info(end_info):
-    '''
-    发送终局信息
+    '''发送终局信息
     '''
     end_dict = {}
     end_dict['state'] = -1
@@ -56,8 +48,7 @@ def send_end_info(end_info):
 
 
 def send_init(time, length):
-    '''
-    发送初始化信息
+    '''发送初始化信息
     '''
     init_dict = {"time": time, "length": length}
     sys.stdout.buffer.write(logic_convert_byte(json.dumps({"state": 0, "content": init_dict}), -1))
@@ -65,8 +56,10 @@ def send_init(time, length):
 
 
 def send_state(state_dict):
-    '''
-    发送回合信息
+    '''发送回合信息
+
+    Args:
+        state_dict: dict
     '''
     if DEBUG:
         with open('log.txt', 'a') as logfile:
@@ -76,8 +69,7 @@ def send_state(state_dict):
 
 
 def send_message_goal(message_str, send_goal):
-    '''
-    发送二进制流
+    '''发送二进制流
     '''
     if DEBUG:
         with open('log.txt', 'a') as logfile:
