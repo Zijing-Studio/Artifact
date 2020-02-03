@@ -3,6 +3,7 @@
 #include<tuple>
 #include<map>
 #include<algorithm>
+#include"gameunit.hpp"
 
 namespace calculator {
 typedef std::tuple<int, int, int> Point;
@@ -189,45 +190,49 @@ std::vector<std::vector<Point>> cube_reachable(Point start, int movement, std::v
     return fringes;
 }
 
-std::vector<Point> get_obstacles_by_unit(unit, _map) {
+std::vector<Point> get_obstacles_by_unit(gameunit::Unit unit, gameunit::Map _map) {
     /*returns all obstacles for a unit
     unfinished, currently only units have been taken into account*/
-    obstacles = MAPBORDER();
-    obstacle_unit = _map.get_units();
-    for obstacle in obstacle_unit:
-        if obstacle.camp != unit.camp:
-            obstacles.append(obstacle.pos)
-            for i in range(0, 6):
-                obstacles.append(cube_neighbor(obstacle.pos, i))
+    std::vector<Point> obstacles = MAPBORDER();
+    std::vector<gameunit::Unit> obstacle_unit = _map.units;
+    for (int i = 0; i < obstacle_unit.size(); i++) {
+        gameunit::Unit obstacle = obstacle_unit[i];
+        if (obstacle.camp != unit.camp) {
+            obstacles.push_back(obstacle.pos);
+            for (int j = 0; j < 6; j++) {
+                obstacles.push_back(cube_neighbor(obstacle.pos, j));
+            }
+        }
+    }
     return obstacles;
 }
 
 //below are public sdk
 
-std::vector<Point> path(unit, Point dest, _map) {
+std::vector<Point> path(gameunit::Unit unit, Point dest, gameunit::Map _map) {
     //public sdk for search_path
     std::vector<Point> obstacles = get_obstacles_by_unit(unit, _map);
     std::vector<Point> result = search_path(unit.pos, dest, obstacles);
     return result;
 }
 
-std::vector<std::vector<Point>> reachable(unit, _map) {
+std::vector<std::vector<Point>> reachable(gameunit::Unit unit, gameunit::Map _map) {
     //public sdk for cube_reachable
     std::vector<Point> obstacles = get_obstacles_by_unit(unit, _map);
     std::vector<std::vector<Point>> result = cube_reachable(unit.pos, unit.max_move, obstacles);
     return result;
 }
 
-std::vector<unit> units_in_range(Point pos, Point dist, _map, int camp=-1,
-                                bool flyingIncluded=True, bool onlandIncluded=True) {
+std::vector<gameunit::Unit> units_in_range(Point pos, int dist, gameunit::Map _map, int camp=-1,
+                                bool flyingIncluded=true, bool onlandIncluded=true) {
     /*return list of units whose distance to the pos is less than dist
     default camp = -1, return units of both camp, 0 for the first camp, 1 for the second
     flyingIncluded = True will include flying units,
     onlandIncluded = True will include onland units*/
-    std::vector<unit> units;
-    all_units = _map.get_units()
+    std::vector<gameunit::Unit> units;
+    std::vector<gameunit::Unit> all_units = _map.units;
     for (int i = 0; i < all_units.size(); i++) {
-        _unit = all_units[i];
+        gameunit::Unit _unit = all_units[i];
         if (cube_distance(_unit.pos, pos) <= dist) &&
            (camp == -1 || camp == _unit.camp) &&
            ((_unit.flying && flyingIncluded) ||
