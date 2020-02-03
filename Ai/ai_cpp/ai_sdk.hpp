@@ -96,6 +96,22 @@ void attack(int round, int attacker, int target)
     sendMsg(round, "attack", operation_parameters);
 }
 
+void use(int round, int artifact, int target)
+{
+    json operation_parameters;
+    operation_parameters["card"] = artifact;
+    operation_parameters["target"] = target;
+    sendMsg(round, "attack", operation_parameters);
+}
+
+void use(int round, int artifact, std::vector<int> target)
+{
+    json operation_parameters;
+    operation_parameters["card"] = artifact;
+    operation_parameters["target"] = target;
+    sendMsg(round, "attack", operation_parameters);
+}
+
 void endRound(int round)
 {
     json operation_parameters;

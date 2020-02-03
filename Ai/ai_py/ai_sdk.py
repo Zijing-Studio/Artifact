@@ -1,5 +1,4 @@
-'''
-AI相关的SDK
+'''AI相关的SDK
 '''
 
 import sys
@@ -18,7 +17,6 @@ def convert_byte(data_str):
     message += bytes(data_str, encoding="utf8")
     return message
 
-
 def send_opt(data_str):
     '''发送操作
 
@@ -30,7 +28,6 @@ def send_opt(data_str):
     sys.stdout.buffer.write(convert_byte(data_str))
     sys.stdout.flush()
 
-
 def read_opt():
     '''读取发过来的操作
 
@@ -40,7 +37,6 @@ def read_opt():
     data_length = read_buffer.read(4)
     data = read_buffer.read(int(data_length.decode()))
     return json.loads(data)
-
 
 def init(artifacts, creatures):
     '''选择初始神器和生物
@@ -110,7 +106,6 @@ def move(_round, mover, position):
     }
     send_opt(json.dumps(message))
 
-
 def attack(_round, attacker, target):
     '''令地图上id为attacker的单位攻击地图上id为target的单位
 
@@ -133,6 +128,27 @@ def attack(_round, attacker, target):
     }
     send_opt(json.dumps(message))
 
+def use(_round, artifact, target):
+    '''对target目标使用artifact神器
+
+    Args:
+
+    _round: 当前回合(若游戏实际回合不等于_round，则指令无效)
+
+    artifact: 使用的神器的id
+
+    target: 目标单位的id / 目标的[x,y,z]位置
+    '''
+    message = {
+        "round": _round,
+        "operation_type": "use",
+        "operation_parameters":
+        {
+            "card": artifact,
+            "target": target,
+        }
+    }
+    send_opt(json.dumps(message))
 
 def end_round(_round):
     '''结束当前回合
