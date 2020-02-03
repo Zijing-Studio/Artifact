@@ -18,7 +18,7 @@
 ```python
  summon(_round, _type, star, position)
 ```
-​		在地图**position**处召唤一个本方类型为**\_type**，星级为**star**的单位
+​		在地图**position**位置处召唤一个本方类型为**\_type**，星级为**star**的单位
 
 
 
@@ -34,6 +34,13 @@ move(_round, mover, position)
 attack(_round, attacker, target)
 ```
 ​		令地图上id为**attacker**的单位攻击地图上id为**target**的单位
+
+
+
+```python
+use(_round, artifact, target)
+```
+​		对id为**target**的单位/**target**位置使用id为**artifact**的神器
 
 
 
