@@ -16,9 +16,9 @@ class StateSystem:
         self.event_heap = EventHeap()
         self.player_list = [Player(0,1,self),Player(1,2,self)]
         self.current_player_id = 0
-        self.map.relic_list = [Relic(0,30,(0,0,0),self),Relic(1,30,(1,1,-2),self)]
+        self.map.relic_list = [Relic(0,30,(-7,7,0),self),Relic(1,30,(7,-7,0),self)]
         self.map.obstacle_list = [Obstacle("Abyss",ob_pos) for ob_pos in ABYSS_INIT_LIST]
-        self.map.barrack_list = [Barrack(br[0],br[1]) for br in BARRACK_INIT_LIST]
+        self.map.barrack_list = [Barrack(br[0],br[1],br[2]) for br in BARRACK_INIT_LIST]
         self.event_listener_list = []
 
         self.add_event_listener(SummonListener())
