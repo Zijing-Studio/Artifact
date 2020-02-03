@@ -115,7 +115,7 @@ public:
                 G: {},
                 F: {},
                '''.format(self.pos, self.G, self.H)*/
-}
+};
 
 std::vector<Point> search_path(Point start, Point to, std::vector<Point> obstacles={}) {
     //return shortest path
