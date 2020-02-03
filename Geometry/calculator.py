@@ -5,13 +5,13 @@ calculator for hex-grids
 '''
 
 # left-up, right-up, left-down, right-down, left-right, up, down
-MAPBORDER = [(-15+i, 9, 6-i) for i in range(0, 14)] + \
-            [(15-i, -6+i, -9) for i in range(0, 14)] + \
-            [(-15+i, 6-i, 9) for i in range(0, 14)] + \
-            [(15-i, -9, -6+i) for i in range(0, 14)] + \
-            [(-15, 8, 7), (-15, 7, 8), (15, -7, -8), (15, -8, -7)] + \
-            [(-1, 8, -7), (0, 8, -8), (1, 7, -8)] + \
-            [(-1, -7, 8), (0, -8, 8), (1, -8,  7)]
+MAPBORDER = [(-6+i, -9, 15-i) for i in range(0, 14)] + \
+            [(9, 6-i, -15+i) for i in range(0, 14)] + \
+            [(-9, -6+i, 15-i) for i in range(0, 14)] + \
+            [(6-i, 9, -15+i) for i in range(0, 14)] + \
+            [(-7, -8, 15), (-8, -7, 15), (8, 7, -15), (7, 8, -15)] + \
+            [(7, -8, 1), (8, -8, 0), (8, -7, -1)] + \
+            [(-8, 7, 1), (-8, 8, 0), (-7, 8,  -1)]
 
 def cube_distance(a, b):
     '''
