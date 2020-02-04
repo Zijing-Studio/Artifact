@@ -121,12 +121,15 @@ def get_obstacles_by_unit(unit, _map):
     unfinished, currently only units have been taken into account
     '''
     obstacles = MAPBORDER
+    if unit.flying:
+        obstacles += _map.get_flying_obstacles
+    else:
+        obstacles += __map.get_ground_obstacles
     obstacle_unit = _map.get_units()
     for obstacle in obstacle_unit:
         if obstacle.camp != unit.camp:
-            obstacles.append(obstacle.pos)
-            for i in range(0, 6):
-                obstacles.append(cube_neighbor(obstacle.pos, i))
+            if unit.flying == obstacle.flying:
+                obstacles.append(obstacle.pos)
     return obstacles
 
 def get_obstructs_by_unit(unit, _map):

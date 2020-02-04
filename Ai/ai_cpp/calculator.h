@@ -192,14 +192,12 @@ std::vector<Point> get_obstacles_by_unit(gameunit::Unit unit, gameunit::Map _map
     /*returns all obstacles for a unit
     unfinished, currently only units have been taken into account*/
     std::vector<Point> obstacles = MAPBORDER();
+    std::vector<Point> obstacles_on_map = unit.flying ? _map.flying_obstacles : _map.ground_obstacles;
     std::vector<gameunit::Unit> obstacle_unit = _map.units;
     for (int i = 0; i < obstacle_unit.size(); i++) {
         gameunit::Unit obstacle = obstacle_unit[i];
-        if (obstacle.camp != unit.camp) {
+        if (obstacle.camp != unit.camp && obstacle.flying == unit.flying) {
             obstacles.push_back(obstacle.pos);
-            for (int j = 0; j < 6; j++) {
-                obstacles.push_back(cube_neighbor(obstacle.pos, j));
-            }
         }
     }
     return obstacles;
