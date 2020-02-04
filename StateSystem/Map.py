@@ -14,6 +14,7 @@ class Map:
             "units": [unit.parse() for unit in self.unit_list],
             "barracks": [barrack.parse() for barrack in self.barrack_list],
             "relics": [relic.parse() for relic in self.relic_list],
+            "obstacles": [obstacle.parse() for obstacle in self.obstacle_list],
             "ground_obstacles": [obstacle.parse() for obstacle in self.obstacle_list 
                 if not obstacle.allow_ground],
             "flying_obstacles": [obstacle.parse() for obstacle in self.obstacle_list 
