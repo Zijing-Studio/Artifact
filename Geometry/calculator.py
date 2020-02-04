@@ -124,7 +124,7 @@ def get_obstacles_by_unit(unit, _map):
     if unit.flying:
         obstacles += _map.get_flying_obstacles
     else:
-        obstacles += __map.get_ground_obstacles
+        obstacles += _map.get_ground_obstacles
     obstacle_unit = _map.get_units()
     for obstacle in obstacle_unit:
         if obstacle.camp != unit.camp:
@@ -140,9 +140,9 @@ def get_obstructs_by_unit(unit, _map):
     obstructs = MAPBORDER
     obstacle_unit = _map.get_units()
     for obstruct in obstacle_unit:
-        if obstacle.camp != unit.camp:
+        if obstruct.camp != unit.camp:
             for i in range(0, 6):
-                obstructs.append(cube_neighbor(obstacle.pos, i))
+                obstructs.append(cube_neighbor(obstruct.pos, i))
     return obstructs
 
 '''
