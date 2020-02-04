@@ -93,21 +93,13 @@ class StateSystem:
             if barrack.camp == player_camp]
 
     def get_obstacles(self):
-        return self.map.obstacle_list
+        return self.map.get_obstacles()
 
     def get_ground_obstacles(self):
-        result = []
-        for item in self.map.obstacle_list:
-            if not item.allow_ground:
-                result.append(item)
-        return result
+        return self.map.get_ground_obstacles()
 
     def get_flying_obstacles(self):
-        result = []
-        for item in self.map.obstacle_list:
-            if not item.allow_flying:
-                result.append(item)
-        return result
+        return self.map.get_flying_obstacles()
 
     def get_relic_by_id(self,player_camp):
         return self.map.get_relic_by_id(player_camp)

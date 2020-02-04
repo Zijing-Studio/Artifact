@@ -14,7 +14,10 @@ class Map:
             "units": [unit.parse() for unit in self.unit_list],
             "barracks": [barrack.parse() for barrack in self.barrack_list],
             "relics": [relic.parse() for relic in self.relic_list],
-            "obstacles": [obstacle.parse() for obstacle in self.obstacle_list],
+            "ground_obstacles": [obstacle.parse() for obstacle in self.obstacle_list 
+                if not obstacle.allow_ground],
+            "flying_obstacles": [obstacle.parse() for obstacle in self.obstacle_list 
+                if not obstacle.allow_flying]
         }
         
     def get_unit_at(self,pos,flying = None):
@@ -44,3 +47,20 @@ class Map:
 
     def remove_unit(self,unit):
         self.unit_list.remove(unit)
+
+    def get_obstacles(self):
+        return self.obstacle_list
+
+    def get_ground_obstacles(self):
+        result = []
+        for item in self.obstacle_list:
+            if not item.allow_ground:
+                result.append(item)
+        return result
+
+    def get_flying_obstacles(self):
+        result = []
+        for item in self.obstacle_list:
+            if not item.allow_flying:
+                result.append(item)
+        return result
