@@ -3,7 +3,7 @@
 ```python
 # 以下函数参数中的坐标均为立方坐标表示法下的坐标
 
-# 通过起点、终点、障碍列表、阻挡列表寻找路径，obstacles代表不能停留也不能经过的点，obstructs代表可以停留但不能经过的点
+# 通过起点、终点、阻挡列表、拦截列表寻找路径，obstacles代表不能停留也不能经过的点，obstructs代表可以停留但不能经过的点
 search_path(start, end, obstacles, obstructs)
 
 # A*算法，给出从单位unit到dest点的路径（包含起点），不行就返回False, _map为地图系统

@@ -3,13 +3,14 @@
 
 #include <vector>
 #include <string>
+#include <tuple>
 #include "json.hpp"
 using json = nlohmann::json;
 
 namespace gameunit
 {
 
-typedef std::vector<int> Pos;
+typedef std::tuple<int, int, int> Pos;
 
 struct Unit
 {
