@@ -94,7 +94,7 @@ def search_path(start, to, obstacles=[], obstructs=[]):
         del opened[cur_node.pos]
     return False
 
-def cube_reachable(start, movement, obstacles=[]):
+def cube_reachable(start, movement, obstacles=[], obstructs=[]):
     '''
     return reachable position from start point in steps limited by movement
     '''
@@ -102,22 +102,17 @@ def cube_reachable(start, movement, obstacles=[]):
     visited.append(start)
     fringes = []    # list of list of reachable points in certain steps(subscripts means steps)
     fringes.append([start])
-    can_pass = []   # list of list of can-pass points in certain steps
-    can_pass.append([start])
 
     for i in range(0, movement):
         fringes.append([])
-        can_pass.append([])
         for pos in fringes[i]:
-            if pos not in can_pass[i]:
+            if pos in obstructs:
                 pass
             for j in range(0, 6):
                 neighbor = cube_neighbor(pos, j)
-                if neighbor not in visited:
+                if neighbor not in visited and neighbor not in obstacles:
                     visited.append(neighbor)
                     fringes[i+1].append(neighbor)
-                    if neighbor not in obstacles:
-                        can_pass[i+1].append(neighbor)
     return fringes
 
 def get_obstacles_by_unit(unit, _map):
@@ -165,7 +160,8 @@ def reachable(unit, _map):
     public sdk for cube_reachable
     '''
     obstacles = get_obstacles_by_unit(unit, _map)
-    result = cube_reachable(unit.pos, unit.max_move, obstacles)
+    obstructs = get_obstructs_by_unit(unit, _map)
+    result = cube_reachable(unit.pos, unit.max_move, obstacles, obstructs)
     return result
 
 def units_in_range(pos, dist, _map, camp=-1, flyingIncluded=True, onlandIncluded=True):

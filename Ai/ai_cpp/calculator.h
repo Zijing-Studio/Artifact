@@ -163,28 +163,24 @@ std::vector<Point> search_path(Point start, Point to,
     return std::vector<Point>();
 }
 
-std::vector<std::vector<Point>> cube_reachable(Point start, int movement, std::vector<Point> obstacles={}) {
+std::vector<std::vector<Point>> cube_reachable(Point start, int movement, 
+        std::vector<Point> obstacles={}, std::vector<Point> obstructs={}) {
     //return reachable position from start Point in steps limited by movement
     std::vector<Point> visited = {};    // positions that have been visited
     visited.push_back(start);
     std::vector<std::vector<Point>> fringes = {};    // list of list of reachable Points in certain steps(subscripts means steps)
     fringes.push_back(std::vector<Point>({start}));
-    std::vector<std::vector<Point>> can_pass = {};   // list of list of can-pass Points in certain steps
-    can_pass.push_back(std::vector<Point>({start}));
 
     for (int i = 0; i < movement; i++) {
         fringes.push_back(std::vector<Point>());
-        can_pass.push_back(std::vector<Point>());
         for (int j = 0; j < fringes[i].size(); j++) {
             Point pos = fringes[i][j];
-            if (!contained(pos, can_pass[i])) continue;
+            if (contained(pos, obstructs)) continue;
             for (int k = 0; k < 6; k++) {
                 Point neighbor = cube_neighbor(pos, k);
-                if (!contained(neighbor, visited)) {
+                if (!contained(neighbor, visited) && !contained(neighbor, obstacles)) {
                     visited.push_back(neighbor);
                     fringes[i+1].push_back(neighbor);
-                    if (!contained(neighbor, obstacles))
-                        can_pass[i+1].push_back(neighbor);
                 }
             }
         }
@@ -244,7 +240,9 @@ std::vector<Point> path(gameunit::Unit unit, Point dest, gameunit::Map _map) {
 std::vector<std::vector<Point>> reachable(gameunit::Unit unit, gameunit::Map _map) {
     //public sdk for cube_reachable
     std::vector<Point> obstacles = get_obstacles_by_unit(unit, _map);
-    std::vector<std::vector<Point>> result = cube_reachable(unit.pos, unit.max_move, obstacles);
+    std::vector<Point> obstructs = get_obstructs_by_unit(unit, _map);
+    std::vector<std::vector<Point>> result =
+        cube_reachable(unit.pos, unit.max_move, obstacles, obstructs);
     return result;
 }
 
@@ -258,13 +256,14 @@ std::vector<gameunit::Unit> units_in_range(Point pos, int dist, gameunit::Map _m
     std::vector<gameunit::Unit> all_units = _map.units;
     for (int i = 0; i < all_units.size(); i++) {
         gameunit::Unit _unit = all_units[i];
-        if (cube_distance(_unit.pos, pos) <= dist) &&
+        if (cube_distance(_unit.pos, pos) <= dist &&
            (camp == -1 || camp == _unit.camp) &&
            ((_unit.flying && flyingIncluded) ||
-           (!(_unit.flying) && onlandIncluded)):
-               units.push_back(_unit)
-    return units;
+           (!(_unit.flying) && onlandIncluded))) {
+               units.push_back(_unit);
+        }
     }
+    return units;
 }
 
 }
