@@ -56,7 +56,7 @@ class Node:
                 F: {},
                '''.format(self.pos, self.G, self.H)
 
-def search_path(start, to, obstacles=[]):
+def search_path(start, to, obstacles=[], obstructs=[]):
     '''
     return shortest path
     '''
@@ -88,6 +88,8 @@ def search_path(start, to, obstacles=[]):
                             final_path.insert(0, node.pos)
                             node = node.parent
                         return final_path
+                    elif neighbor in obstructs:
+                        del opened[neighbor]
         closed[cur_node.pos] = cur_node
         del opened[cur_node.pos]
     return False
@@ -132,6 +134,19 @@ def get_obstacles_by_unit(unit, _map):
                 obstacles.append(cube_neighbor(obstacle.pos, i))
     return obstacles
 
+def get_obstructs_by_unit(unit, _map):
+    '''
+    returns all obstructs for a unit, obstructs means the unit can
+    stay at that point but cannot pass it
+    '''
+    obstructs = MAPBORDER
+    obstacle_unit = _map.get_units()
+    for obstruct in obstacle_unit:
+        if obstacle.camp != unit.camp:
+            for i in range(0, 6):
+                obstructs.append(cube_neighbor(obstacle.pos, i))
+    return obstructs
+
 '''
 below are public sdk
 '''
@@ -141,7 +156,8 @@ def path(unit, dest, _map):
     public sdk for search_path
     '''
     obstacles = get_obstacles_by_unit(unit, _map)
-    result = search_path(unit.pos, dest, obstacles)
+    obstructs = get_obstructs_by_unit(unit, _map)
+    result = search_path(unit.pos, dest, obstacles, obstructs)
     return result
 
 def reachable(unit, _map):

@@ -118,7 +118,8 @@ public:
                '''.format(self.pos, self.G, self.H)*/
 };
 
-std::vector<Point> search_path(Point start, Point to, std::vector<Point> obstacles={}) {
+std::vector<Point> search_path(Point start, Point to,
+    std::vector<Point> obstacles={}, std::vector<Point> obstructs={}) {
     //return shortest path
     Point _start = start;
     Point _to = to;
@@ -151,7 +152,8 @@ std::vector<Point> search_path(Point start, Point to, std::vector<Point> obstacl
                             node = node->parent();
                         }
                         return final_path;
-                    }
+                    } else if (contained(neighbor, obstructs))
+                        opened.erase(neighbor);
                 }
             }
         }
@@ -207,12 +209,35 @@ std::vector<Point> get_obstacles_by_unit(gameunit::Unit unit, gameunit::Map _map
     return obstacles;
 }
 
+std::vector<Point> get_obstructs_by_unit(gameunit::Unit unit, gameunit::Map _map) {
+    /*returns all obstructs for a unit
+    obstruct means a point which the unit can stay but cannot pass*/
+    std::vector<Point> obstructs;
+    std::vector<gameunit::Unit> obstacle_unit = _map.units;
+    for (int i = 0; i < obstacle_unit.size(); i++) {
+        gameunit::Unit obstacle = obstacle_unit[i];
+        if (obstacle.camp != unit.camp) {
+            for (int j = 0; j < 6; j++) {
+                obstructs.push_back(cube_neighbor(obstacle.pos, j));
+            }
+        }
+    }
+    return obstructs;
+}
+
 //below are public sdk
+
+int distance_between(Point a, Point b) {
+    //return Manhattan distance between point a and b
+    return cube_distance(a, b);
+}
 
 std::vector<Point> path(gameunit::Unit unit, Point dest, gameunit::Map _map) {
     //public sdk for search_path
+    //return an empty vector if failed
     std::vector<Point> obstacles = get_obstacles_by_unit(unit, _map);
-    std::vector<Point> result = search_path(unit.pos, dest, obstacles);
+    std::vector<Point> obstructs = get_obstructs_by_unit(unit, _map);
+    std::vector<Point> result = search_path(unit.pos, dest, obstacles, obstructs);
     return result;
 }
 
