@@ -368,6 +368,8 @@ class Use(AbstractOperation):
                 if len(calculator.units_in_range(barrack.pos, 3, flyingIncluded=False)) != 0:
                     return False
             return len(calculator.units_in_range(relic.pos, 5, flyingIncluded=False)) != 0
+        elif self.artifact.name == "HolyLight":
+            return calculator.in_map(self.target)
         return True
 
     def check_legality(self):
