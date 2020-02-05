@@ -21,7 +21,7 @@ struct Unit
     int atk;
     int max_hp;
     int hp;
-    std::vector<int> atk_range;
+    std::pair<int, int> atk_range;
     int max_move;
     int cool_down;
     Pos pos;
@@ -68,7 +68,7 @@ struct Artifact
     std::string target_type;
 };
 
-struct Creature
+struct CreatureCapacity
 {
     std::string type;
     int available_count;
@@ -80,16 +80,18 @@ struct Map
     std::vector<Barrack> barracks;
     std::vector<Relic> relics;
     std::vector<Obstacle> obstacles;
+    std::vector<Obstacle> flying_obstacles;
+    std::vector<Obstacle> ground_obstacles;
 };
 
 struct Player
 {
     int camp;
-    std::vector<Artifact> artifacts;
+    std::vector<Artifact> artifact;
     int mana;
     int max_mana;
-    std::vector<Creature> creature_capacity;
-    std::vector<int> new_summoned;
+    std::vector<CreatureCapacity> creature_capacity;
+    std::vector<int> new_summoned_id_list;
 };
 
 void from_json(const json &j, Unit &u)
@@ -151,7 +153,7 @@ void from_json(const json &j, Artifact &a)
     j.at("target_type").get_to(a.target_type);
 }
 
-void from_json(const json &j, Creature &c)
+void from_json(const json &j, CreatureCapacity &c)
 {
     j.at("type").get_to(c.type);
     j.at("available_count").get_to(c.available_count);
@@ -162,17 +164,19 @@ void from_json(const json &j, Map &m)
     j.at("units").get_to(m.units);
     j.at("barracks").get_to(m.barracks);
     j.at("obstacles").get_to(m.obstacles);
+    j.at("ground_obstacles").get_to(m.ground_obstacles);
+    j.at("flying_obstacles").get_to(m.flying_obstacles);
     j.at("relics").get_to(m.relics);
 }
 
 void from_json(const json &j, Player &p)
 {
     j.at("camp").get_to(p.camp);
-    j.at("artifact").get_to(p.artifacts);
+    j.at("artifact").get_to(p.artifact);
     j.at("mana").get_to(p.mana);
     j.at("max_mana").get_to(p.max_mana);
     j.at("creature_capacity").get_to(p.creature_capacity);
-    j.at("newly_summoned_id_list").get_to(p.new_summoned);
+    j.at("newly_summoned_id_list").get_to(p.new_summoned_id_list);
 }
 
 } // namespace gameunit
