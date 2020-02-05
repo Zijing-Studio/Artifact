@@ -184,6 +184,17 @@ def units_in_range(pos, dist, _map, camp=-1, flyingIncluded=True, onlandIncluded
                units.append(_unit)
     return units
 
+def in_map(pos):
+    '''
+    return if the position in inside the map
+    '''
+    if pos[0] > 8 or pos[0] < -8 or \
+       pos[1] > 8 or pos[1] < -8 or \
+       pos[2] >14 or pos[2] < -14:
+        return False
+    elif pos == (-7, 7, 0) or pos == (7, -7, 0):
+        return False
+    return True
 
 if __name__ == "__main__":
     print(cube_reachable((0, 0, 0), 1, MAPBORDER))

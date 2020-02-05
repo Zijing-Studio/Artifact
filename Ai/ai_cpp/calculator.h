@@ -266,4 +266,15 @@ std::vector<gameunit::Unit> units_in_range(Point pos, int dist, gameunit::Map _m
     return units;
 }
 
+bool in_map(Point pos) {
+	if (std::get<0>(pos) > 8 || std::get<0>(pos) < -8 ||
+		std::get<1>(pos) > 8 || std::get<1>(pos) < -8 ||
+		std::get<2>(pos) > 14 || std::get<2>(pos) < -14) {
+		return false;
+	} else if (pos == Point(8, -8, 0) || pos == Point(-8, 8 ,0)) {
+		return false;
+	}
+	return true;
+}
+
 }
