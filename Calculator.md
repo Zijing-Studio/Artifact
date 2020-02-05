@@ -17,5 +17,8 @@ reachable(unit, _map)
 
 # 给出某点pos在给定范围内存在的单位,dist为给定的范围（步数），camp默认为-1，将会返回所有阵营的单位，0为先手阵营，1为后手阵营；flyingIncluded表示将飞行单位包含其中，onlandIncluded为将地面单位包含其中，默认两者都包含
 units_in_range(pos, dist, _map, camp=-1, flyingIncluded=True, onlandIncluded=True)
+
+# 判断某个点pos是否在地图范围之内，返回布尔值
+in_map(pos)
 ```
 
