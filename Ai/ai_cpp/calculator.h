@@ -30,13 +30,6 @@ bool contained(const Point& pos, std::vector<Point> list) {
     return false;
 }
 
-bool contained(const Point& pos, std::map<Point, Node> map) {
-    for (auto it = map.begin(); it != map.end(); it++) {
-        if (pos == it->first) return true;
-    }
-    return false;
-}
-
 int cube_distance(Point a, Point b) {
     //return distance between two unit, a/b is position
     int distance = (abs(std::get<0>(a) - std::get<0>(b)) +
@@ -72,6 +65,8 @@ private:
     Node* _parent;
 
 public:
+	Node() {}
+
     Node(Point pos, int G, int H, Node* parent=nullptr) :
         _pos(pos), _G(G), _H(H), _parent(parent) {}
 
@@ -117,6 +112,13 @@ public:
                 F: {},
                '''.format(self.pos, self.G, self.H)*/
 };
+
+bool contained(const Point& pos, std::map<Point, Node> map) {
+    for (auto it = map.begin(); it != map.end(); it++) {
+        if (pos == it->first) return true;
+    }
+    return false;
+}
 
 std::vector<Point> search_path(Point start, Point to,
     std::vector<Point> obstacles={}, std::vector<Point> obstructs={}) {
