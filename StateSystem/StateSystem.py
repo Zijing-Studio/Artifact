@@ -1,26 +1,32 @@
-from .EventHeap import EventHeap
-from .Event import Event
-from .EventListener import EventListener
-from .Unit import *
-from .Map import *
-from .Player import Player
-from .Relic import Relic
-from .Obstacle import *
-from .Barrack import *
+from StateSystem.EventHeap import EventHeap
+from StateSystem.Event import Event
+from StateSystem.EventListener import EventListener
+from StateSystem.Unit import *
+from StateSystem.Map import *
+from StateSystem.Player import Player
+from StateSystem.Relic import Relic
+from StateSystem.Obstacle import *
+from StateSystem.Barrack import *
+from StateSystem.CreatureCapacity import *
+from StateSystem.Artifact import gen_artifact_by_name,Inferno
 
 class StateSystem:
     def __init__(self):
         self.map = Map()
         self.event_heap = EventHeap()
         self.player_list = [Player(0,1,self),Player(1,2,self)]
-        self.map.relic_list = [Relic(0,30,(0,0,0),self),Relic(1,30,(1,1,-2),self)]
+        self.current_player_id = 0
+        self.map.relic_list = [Relic(0,30,(-7,7,0),self),Relic(1,30,(7,-7,0),self)]
         self.map.obstacle_list = [Obstacle("Abyss",ob_pos) for ob_pos in ABYSS_INIT_LIST]
-        self.map.barrack_list = [Barrack(br[0],br[1]) for br in BARRACK_INIT_LIST]
+        self.map.barrack_list = [Barrack(br[0],br[1],br[2]) for br in BARRACK_INIT_LIST]
         self.event_listener_list = []
 
         self.add_event_listener(SummonListener())
         self.add_event_listener(CheckDeathListener())
         self.add_event_listener(CheckBarrackListener())
+        self.add_event_listener(TurnStartListener())
+        self.add_event_listener(ChangeCurrentPlayerListener())
+        self.add_event_listener(GameStartListener())
 
     def add_event_listener(self,listener):
         listener.host = self
@@ -87,7 +93,13 @@ class StateSystem:
             if barrack.camp == player_camp]
 
     def get_obstacles(self):
-        return self.map.obstacle_list
+        return self.map.get_obstacles()
+
+    def get_ground_obstacles(self):
+        return self.map.get_ground_obstacles()
+
+    def get_flying_obstacles(self):
+        return self.map.get_flying_obstacles()
 
     def get_relic_by_id(self,player_camp):
         return self.map.get_relic_by_id(player_camp)
@@ -134,6 +146,14 @@ class SummonListener(EventListener):
                         event.parameter_dict["level"],
                         event.parameter_dict["pos"],
                         self.host
+                    )
+                elif event.parameter_dict["type"] == "Inferno":
+                    unit = Inferno(
+                        event.parameter_dict["camp"],
+                        event.parameter_dict["level"],
+                        event.parameter_dict["pos"],
+                        self.host,
+                        event.parameter_dict["artifact_host"]
                     )
                 if unit:
                     self.host.map.add_unit(unit)
@@ -191,9 +211,43 @@ class TurnStartListener(EventListener):
     def deal_event(self,event):
         if event.name == "TurnStart":
             try:
-                self.host.emit(Event("Refresh",{},4))
+                self.host.emit(Event("Refresh",{
+                    "camp": self.host.player_list[self.host.current_player_id].camp
+                },4))
                 self.host.emit(Event("CheckBarrack",{},4))
                 self.host.emit(Event("NewTurn",{},4))
             except:
                 print("Parameter Dict Error.")
     
+class ChangeCurrentPlayerListener(EventListener):
+    '''
+    Only State System register this listener
+    '''
+    def deal_event(self,event):
+        if event.name == "TurnEnd":
+            self.host.current_player_id += 1
+            self.host.current_player_id %= len(self.host.player_list)
+            print("Current Player changed to {}".format(
+                self.host.player_list[self.host.current_player_id].camp
+            ))
+
+class GameStartListener(EventListener):
+    '''
+    Only State System register this listener
+    '''
+    def deal_event(self,event):
+        if event.name == "GameStart":
+            camp = event.parameter_dict["camp"]
+            player = self.host.get_player_by_id(camp)
+            player.creature_capacity_list = [
+                CreatureCapacity(name) \
+                for name in event.parameter_dict["cards"]["creatures"]
+            ]
+            player.artifact_list = [
+                gen_artifact_by_name(name,camp,self.host) \
+                for name in event.parameter_dict["cards"]["artifacts"]
+            ]
+            for index, item in enumerate(self.host.player_list):
+                if item.camp == player:
+                    self.host.player_list[index] = player
+                    break

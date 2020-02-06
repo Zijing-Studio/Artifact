@@ -1,0 +1,87 @@
+必须：
+1. （双方）神迹血量
+C++: map.relics[0/1].hp
+python: map["relics"][0/1]["hp"]
+
+2. （双方）当前法力上限
+C++: players[0/1].max_mana
+python: players[0/1]["max_mana"]
+
+3. （双方）当前剩余法力值
+C++: players[0/1].mana
+python: players[0/1]["mana"]
+
+4. （双方）生物单元列表
+C++: players[0/1].creature_capacity
+python: players[0/1]["creature_capacity"]
+
+5. 对于指定的生物单元，获取状态（是否可用，剩余冷却时间）
+
+6. （双方）当前神器可用情况
+C++: players[0/1].artifact[].state
+python: players[0/1]["artifact"][]["state"]
+
+7. （双方）场上生物列表
+C++: map.units
+python: map["units"]
+
+8. 对于给定的场上生物，获取状态（各个基本属性，属性加值，剩余血量）
+C++: map.units[].hp
+python: map["units"][].hp
+
+9. 对于给定的两个生物A、B，判定A能否攻击到B（或者给出A能攻击到的敌方生物列表）（A可能为敌方生物）
+C++: canAttack(gameunit::Unit attacker, gameunit::Unit target)
+python: can_attack(self, attacker, target)
+
+10. 对于给定的生物A和格子C，判定A能否走到C（或者给出A能走到的格子列表）（A可能为敌方生物）
+unit能走到的格子列表
+C++: calculator::reachable(gameunit::Unit unit, gameunit::Map _map)
+python: calculator.reachable(unit, _map)
+
+11. 给定两个格子，获取地面行走距离（不考虑被敌方生物拦截，但考虑阻挡）
+C++: int getDistanceOnGround(gameunit::Pos pos_a, gameunit::Pos pos_b)
+python: get_distance_on_ground(self, pos_a, pos_b)
+
+12. 给定两个格子，获取飞行距离（不考虑被敌方生物拦截，但考虑阻挡）
+C++: int getDistanceInSky(gameunit::Pos pos_a, gameunit::Pos pos_b)
+python: get_distance_in_sky(self, pos_a, pos_b)
+
+13. 给定两个格子，获取直线/曼哈顿距离（攻击所考虑的距离）
+C++: int calculator::cube_distance(Point pos_a,Point pos_b)
+python: calculator.cube_distance(pos_a,pos_b)
+
+14. 对于给定格子，获取其上生物的编号（飞行&地面）
+C++: std::vector<gameunit::Unit> getUnits(gameunit::Pos pos)
+python: get_units(self, pos)
+
+15. 对于给定神器（自己/对手），选择生物/格子，获取是否是一个合法目标
+C++: bool canUseArtifact(gameunit::Artifact artifact, gameunit::Pos pos)
+     bool canUseArtifact(gameunit::Artifact artifact, gameunit::Unit unit)
+python: can_use_artifact(self, artifact, target)
+
+16. 获取所有驻扎点的坐标
+C++: map.barracks[].pos
+python: map["barracks"][].pos
+
+17. 对于指定格子，判断是否为驻扎点，获取其被占领情况
+C++: int checkBarrack(gameunit::Pos pos)
+python: check_barrack(self, pos)
+
+18. 对于指定驻扎点，获取其出兵点坐标
+C++: map.barracks[].summon_pos_list
+python: map["barracks"][].summon_pos_list
+
+19. 对于指定格子，获取其隶属状态
+
+
+
+可选：
+1. 生物卡的一些基本参数查询（如每个星级分别多少法力消耗，攻击力，行动力，冷却时间等）
+C++: card::SWORDMAN[3].cost
+python: card.SWORDMAN[3].cost
+
+2. 对于给定的场上生物，获取buff列表
+
+3. 对于给定的生物A和格子C，分别判定A能否攻击到C上的飞行生物与地面生物（仅考虑攻击范围）（A可能为敌方生物）
+
+4. 对于给定的生物A，判定其攻击范围内是否有敌方嘲讽生物（A可能为敌方生物）

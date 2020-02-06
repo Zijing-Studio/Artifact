@@ -1,5 +1,4 @@
-'''
-AI相关的SDK
+'''AI相关的SDK
 '''
 
 import sys
@@ -9,7 +8,7 @@ import json
 def convert_byte(data_str):
     '''加数据长度作为数据头,并转化为bytes,用于发送操作
 
-    参数:
+    Args:
 
     data_str: str
     '''
@@ -18,18 +17,16 @@ def convert_byte(data_str):
     message += bytes(data_str, encoding="utf8")
     return message
 
-
 def send_opt(data_str):
     '''发送操作
 
-    参数:
+    Args:
 
     data_str: str
 
     '''
     sys.stdout.buffer.write(convert_byte(data_str))
     sys.stdout.flush()
-
 
 def read_opt():
     '''读取发过来的操作
@@ -41,22 +38,30 @@ def read_opt():
     data = read_buffer.read(int(data_length.decode()))
     return json.loads(data)
 
+def init(artifacts, creatures):
+    '''选择初始神器和生物
 
-def get_game_info():
-    '''获取游戏信息（地图、角色、回合）
+    Args:
 
-    每个小回合开始的时候都会发游戏信息的，一般来说没必要用这个接口
+    artifacts: 神器名字的字符串数组(长度为1)
+
+    creatures: 生物名字的字符串数组(长度为3)
     '''
-    message = {"operation_type": "gameinfo"}
+    message = {
+        "round": 0,
+        "operation_type": "init",
+        "operation_parameters":
+        {
+            "artifacts": artifacts,
+            "creatures": creatures
+        }
+    }
     send_opt(json.dumps(message))
-    game_info = read_opt()
-    return game_info
-
 
 def summon(_round, _type, star, position):
     '''在地图position处召唤一个本方类型为_type，星级为star的单位
 
-    参数:
+    Args:
 
     _round: 当前回合(若游戏实际回合不等于_round，则指令无效)
 
@@ -82,7 +87,7 @@ def summon(_round, _type, star, position):
 def move(_round, mover, position):
     '''将地图上id为mover的单位移动到地图position处
 
-    参数:
+    Args:
 
     _round: 当前回合(若游戏实际回合不等于_round，则指令无效)
 
@@ -101,11 +106,10 @@ def move(_round, mover, position):
     }
     send_opt(json.dumps(message))
 
-
 def attack(_round, attacker, target):
     '''令地图上id为attacker的单位攻击地图上id为target的单位
 
-    参数:
+    Args:
 
     _round: 当前回合(若游戏实际回合不等于_round，则指令无效)
 
@@ -124,16 +128,37 @@ def attack(_round, attacker, target):
     }
     send_opt(json.dumps(message))
 
+def use(_round, artifact, target):
+    '''对target目标使用artifact神器
 
-def end(_round):
+    Args:
+
+    _round: 当前回合(若游戏实际回合不等于_round，则指令无效)
+
+    artifact: 使用的神器的id
+
+    target: 目标单位的id / 目标的[x,y,z]位置
+    '''
+    message = {
+        "round": _round,
+        "operation_type": "use",
+        "operation_parameters":
+        {
+            "card": artifact,
+            "target": target,
+        }
+    }
+    send_opt(json.dumps(message))
+
+def end_round(_round):
     '''结束当前回合
 
-    参数:
+    Args:
 
     _round: 当前回合(若游戏实际回合不等于_round，则指令无效)
     '''
     message = {
         "round": _round,
-        "operation_type": "end"
+        "operation_type": "endround"
     }
     send_opt(json.dumps(message))

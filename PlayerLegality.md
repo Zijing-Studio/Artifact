@@ -205,9 +205,9 @@ null（不需要额外参数）
 ```json
 //operation_type: "use"
 {
-    "type": "Artifact",
-    "card": 1,	//使用的神器的编号
-    "target":	2	//有些神器有使用对象(optional)
+    //"type": "Artifact", 	//现在没有陷阱卡了所以使用的只有神器
+    "card": id,		    	//使用的神器的id
+    "target": pos/unit_id	//神器的使用对象（有些是对点使用，有些是对单位使用）
 }
 ```
 

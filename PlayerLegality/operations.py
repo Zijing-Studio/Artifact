@@ -115,7 +115,7 @@ class Select(AbstractOperation):
 class Init(AbstractOperation):
     '''
     initialize status of a player
-    unfinished
+    unchecked
     '''
     def __init__(self, _parser, _id, _map, _params):
         AbstractOperation.__init__(self, _parser, _id, _map)
@@ -154,7 +154,8 @@ class Init(AbstractOperation):
     def act(self):
         self.map.emit(
             Event("GameStart", {
-                int(self.player_id): {
+                "camp": int(self.player_id), 
+                "cards": {
                         "artifacts": self.artifacts,
                         "creatures": self.creatures
                     }
@@ -356,6 +357,21 @@ class Use(AbstractOperation):
         else:
             self.target = None
 
+    def special_check(self):
+        '''
+        special check for certain artifact
+        '''
+        if self.artifact.name == "InfernoFlame":
+            relic = self.map.get_relic_by_id(self.player_id)
+            barracks = self.map.get_barracks(self.player_id)
+            for barrack in barracks:
+                if len(calculator.units_in_range(barrack.pos, 3, flyingIncluded=False)) != 0:
+                    return False
+            return len(calculator.units_in_range(relic.pos, 5, flyingIncluded=False)) != 0
+        elif self.artifact.name == "HolyLight":
+            return calculator.in_map(self.target)
+        return True
+
     def check_legality(self):
         result = True
         if self.artifact.camp != self.player_id:
@@ -364,6 +380,8 @@ class Use(AbstractOperation):
             result = "The artifact is " + self.artifact.state
         elif self.artifact.cost > self.player.mana:
             result = "Insufficient mana"
+        elif not special_check():
+            result = "Conditions not covered"
         return result
 
     def act(self):

@@ -7,18 +7,25 @@
 其中\_round参数均指代当前的回合数。如果\_round不等于实际当前回合数，则操作无效。
 
 
+```python
+ init(artifacts, creatures):
+```
+​		选择初始神器(**artifacts**数组里包含其名字)和生物(**creatures**数组里包含其名字)
+
+
+
 
 ```python
  summon(_round, _type, star, position)
 ```
-​		在地图position处召唤一个本方类型为\_type，星级为star的单位
+​		在地图**position**位置处召唤一个本方类型为**\_type**，星级为**star**的单位
 
 
 
 ```python
 move(_round, mover, position)
 ```
-​		将地图上id为mover的单位移动到地图position处
+​		将地图上id为**mover**的单位移动到地图**position**处
 
 
 
@@ -26,13 +33,20 @@ move(_round, mover, position)
 ```python
 attack(_round, attacker, target)
 ```
-​		令地图上id为attacker的单位攻击地图上id为target的单位
+​		令地图上id为**attacker**的单位攻击地图上id为**target**的单位
+
+
+
+```python
+use(_round, artifact, target)
+```
+​		对id为**target**的单位/**target**位置使用id为**artifact**的神器
 
 
 
 
 ```python
-end(_round)
+end_round(_round)
 ```
 ​		结束当前回合。
 

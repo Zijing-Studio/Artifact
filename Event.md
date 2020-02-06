@@ -20,6 +20,26 @@ emit(Event(<name>,[parameter_dict = {}],[priority = 0]))
 }
 ```
 
+## HolyShieldAdd
+
+圣盾加持事件
+
+```
+{
+	"source": Unit
+}
+```
+
+## HolyShieldBreak
+
+圣盾被击破的事件
+
+```
+{
+	"source": Unit
+}
+```
+
 ## Attack
 
 ```json
@@ -182,8 +202,8 @@ Priority = 3 (when in move)
 
 ```
 {
-	0:	//玩家id
-	{
+	"camp": 0,	//玩家id
+	"cards": {
 		"artifacts": [String],
 		"creatures": [String, String, String]
 	}

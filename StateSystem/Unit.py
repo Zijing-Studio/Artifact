@@ -25,6 +25,8 @@ class Unit:
         self.pos = pos
         self.flying = UNIT_DATA[name]["flying"]
         self.atk_flying = UNIT_DATA[name]["atk_flying"]
+        self.agility = UNIT_DATA[name]["agility"]
+        self.holy_shield = UNIT_DATA[name]["holy_shield"]
 
         self.death_flag = False
 
@@ -38,6 +40,8 @@ class Unit:
         self.add_event_listener(MoveListener())
         self.add_event_listener(AttackBackListener())
         self.add_event_listener(HealListener())
+        self.add_event_listener(HolyShieldAddListener())
+        self.add_event_listener(HolyShieldBreakListener())
 
     def __str__(self):
         return '''{}
@@ -49,7 +53,8 @@ class Unit:
     Atk Range: {}
     Max Move: {}
     Cool Down:{}
-    Pos: {}'''.format(
+    Pos: {}
+    Holy Shield: {}'''.format(
                 self.name,
                 self.id,
                 self.camp,
@@ -60,7 +65,8 @@ class Unit:
                 self.atk_range,
                 self.max_move,
                 self.cool_down,
-                self.pos
+                self.pos,
+                self.holy_shield
             )
     
     def parse(self):
@@ -78,7 +84,9 @@ class Unit:
             "pos": self.pos,
             "level": self.level,
             "flying": self.flying,
-            "atk_flying": self.atk_flying
+            "atk_flying": self.atk_flying,
+            "agility": self.agility,
+            "holy_shield": self.holy_shield
         }
 
     def add_event_listener(self,listener):
@@ -162,6 +170,3 @@ class VolcanoDragon(Unit):
         )
 
         self.add_event_listener(VolcanoDragonAtkListener())
-
-
-
