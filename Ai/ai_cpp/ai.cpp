@@ -5,10 +5,16 @@
 class AI
 {
 public:
-    // 初始化卡牌
-    AI(std::vector<std::string> artifacts, std::vector<std::string> creatures)
+    //选择初始卡组
+    void chooseCards()
     {
-        ai_sdk::init(artifacts, creatures);
+        // 先获取阵营后选卡组
+        json game_info = ai_sdk::read();
+        game_info["camp"].get_to(my_camp);
+        // artifacts和creatures可以修改
+        std::vector<std::string> artifacts = {"HolyLight"};
+        std::vector<std::string> creatures = {"Archer", "Swordman", "Priest"};
+        ai_sdk::init(my_camp, artifacts, creatures);
     }
 
     // 更新游戏局面信息
@@ -25,7 +31,7 @@ public:
     void play()
     {
         if (round < 20)
-            ai_sdk::endRound(round);
+            ai_sdk::endRound(my_camp, round);
         else
             exit(0);
     }
@@ -39,7 +45,8 @@ private:
 
 int main()
 {
-    AI player_ai({"artifact"}, {"creature0", "creature1", "creature2"});
+    AI player_ai;
+    player_ai.chooseCards();
     while (true)
     {
         player_ai.updateGameInfo();
