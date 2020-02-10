@@ -11,7 +11,9 @@ using json = nlohmann::json;
 
 namespace ai_sdk
 {
-//通信部分
+// 通信部分
+
+// 发送字符串长度
 void sendLen(std::string s)
 {
     int len = s.length();
@@ -24,9 +26,11 @@ void sendLen(std::string s)
         printf("%c", lenb[3 - i]);
 }
 
-void sendMsg(int round, std::string operation_type, json operation_parameters)
+// 发送操作
+void sendMsg(int player, int round, std::string operation_type, json operation_parameters)
 {
     json message;
+    message["player"] = player;
     message["round"] = round;
     message["operation_type"] = operation_type;
     message["operation_parameters"] = operation_parameters;
@@ -35,6 +39,7 @@ void sendMsg(int round, std::string operation_type, json operation_parameters)
     std::cout.flush();
 }
 
+// 读取信息
 json read()
 {
     std::string len = "";
@@ -46,84 +51,93 @@ json read()
     return json::parse(recv_msg);
 }
 
-void init(std::vector<std::string> artifacts, std::vector<std::string> creatures)
+// 玩家player选择初始神器artifacts和生物creatures
+void init(int player, std::vector<std::string> artifacts, std::vector<std::string> creatures)
 {
     json operation_parameters;
     operation_parameters["artifacts"] = artifacts;
     operation_parameters["creatures"] = creatures;
-    sendMsg(0, "init", operation_parameters);
+    sendMsg(player, 0, "init", operation_parameters);
 }
 
-void summon(int round, int type, int star, int x, int y, int z)
+// 玩家player在地图[x,y,z]处召唤一个本方类型为type,星级为star的单位
+void summon(int player, int round, int type, int star, int x, int y, int z)
 {
     json operation_parameters;
     std::vector<int> position = {x, y, z};
     operation_parameters["position"] = position;
     operation_parameters["type"] = type;
     operation_parameters["star"] = star;
-    sendMsg(round, "summon", operation_parameters);
+    sendMsg(player, round, "summon", operation_parameters);
 }
 
-void summon(int round, int type, int star, std::vector<int> position)
+// 玩家player在地图position处召唤一个本方类型为type,星级为star的单位
+void summon(int player, int round, int type, int star, std::vector<int> position)
 {
     json operation_parameters;
     operation_parameters["position"] = position;
     operation_parameters["type"] = type;
     operation_parameters["star"] = star;
-    sendMsg(round, "summon", operation_parameters);
+    sendMsg(player, round, "summon", operation_parameters);
 }
 
-void move(int round, int mover, int x, int y, int z)
+// 玩家player将id为mover的单位移动到地图[x,y,z]处
+void move(int player, int round, int mover, int x, int y, int z)
 {
     json operation_parameters;
     operation_parameters["mover"] = mover;
     std::vector<int> position = {x, y, z};
     operation_parameters["position"] = position;
-    sendMsg(round, "move", operation_parameters);
+    sendMsg(player, round, "move", operation_parameters);
 }
 
-void move(int round, int mover, std::vector<int> position)
+// 玩家player将id为mover的单位移动到地图position处
+void move(int player, int round, int mover, std::vector<int> position)
 {
     json operation_parameters;
     operation_parameters["mover"] = mover;
     operation_parameters["position"] = position;
-    sendMsg(round, "move", operation_parameters);
+    sendMsg(player, round, "move", operation_parameters);
 }
 
-void attack(int round, int attacker, int target)
+// 玩家player令id为attacker的单位攻击id为target的单位
+void attack(int player, int round, int attacker, int target)
 {
     json operation_parameters;
     operation_parameters["attacker"] = attacker;
     operation_parameters["target"] = target;
-    sendMsg(round, "attack", operation_parameters);
+    sendMsg(player, round, "attack", operation_parameters);
 }
 
-void use(int round, int artifact, int target)
+// 玩家player对id为target的目标使用artifact神器
+void use(int player, int round, int artifact, int target)
 {
     json operation_parameters;
     operation_parameters["card"] = artifact;
     operation_parameters["target"] = target;
-    sendMsg(round, "attack", operation_parameters);
+    sendMsg(player, round, "attack", operation_parameters);
 }
 
-void use(int round, int artifact, std::vector<int> target)
+// 玩家player对地图target处使用artifact神器
+void use(int player, int round, int artifact, std::vector<int> target)
 {
     json operation_parameters;
     operation_parameters["card"] = artifact;
     operation_parameters["target"] = target;
-    sendMsg(round, "attack", operation_parameters);
+    sendMsg(player, round, "attack", operation_parameters);
 }
 
-void endRound(int round)
+// 玩家player结束当前回合
+void endRound(int player, int round)
 {
     json operation_parameters;
-    sendMsg(round, "endround", operation_parameters);
+    sendMsg(player, round, "endround", operation_parameters);
 }
 
 //查询部分
 
 // 己方单位从位置pos_a到位置pos_b的地面距离(考虑被敌方地面生物阻挡但不考虑被敌方生物拦截)
-int getDistanceOnGround(gameunit::Map map, gameunit::Pos pos_a, gameunit::Pos pos_b, int my_camp)
+int getDistanceOnGround(gameunit::Map map, gameunit::Pos pos_a, gameunit::Pos pos_b, int camp)
 {
     //地图边界
     std::vector<gameunit::Pos> obstacles_pos = calculator::MAPBORDER();
@@ -135,7 +149,7 @@ int getDistanceOnGround(gameunit::Map map, gameunit::Pos pos_a, gameunit::Pos po
     //敌方地面生物
     for (auto p = map.units.begin(); p != map.units.end(); p++)
     {
-        if (p->camp != my_camp && (!p->flying))
+        if (p->camp != camp && (!p->flying))
         {
             obstacles_pos.push_back(p->pos);
         }
@@ -144,7 +158,7 @@ int getDistanceOnGround(gameunit::Map map, gameunit::Pos pos_a, gameunit::Pos po
 }
 
 // 己方单位从位置pos_a到位置pos_b的飞行距离(考虑被敌方飞行生物阻挡但不考虑被敌方生物拦截)
-int getDistanceInSky(gameunit::Map map, gameunit::Pos pos_a, gameunit::Pos pos_b, int my_camp)
+int getDistanceInSky(gameunit::Map map, gameunit::Pos pos_a, gameunit::Pos pos_b, int camp)
 {
     //地图边界
     std::vector<gameunit::Pos> obstacles_pos = calculator::MAPBORDER();
@@ -156,7 +170,7 @@ int getDistanceInSky(gameunit::Map map, gameunit::Pos pos_a, gameunit::Pos pos_b
     //敌方飞行生物
     for (auto p = map.units.begin(); p != map.units.end(); p++)
     {
-        if (p->camp != my_camp && p->flying)
+        if (p->camp != camp && p->flying)
         {
             obstacles_pos.push_back(p->pos);
         }
@@ -205,7 +219,7 @@ bool canAttack(gameunit::Unit attacker, gameunit::Unit target)
 }
 
 // 判断能否对位置pos使用神器artifact(不考虑消耗、冷却)
-bool canUseArtifact(gameunit::Map map, gameunit::Artifact artifact, gameunit::Pos pos, int my_camp)
+bool canUseArtifact(gameunit::Map map, gameunit::Artifact artifact, gameunit::Pos pos, int camp)
 {
     if (artifact.name == "HolyLight")
     {
@@ -220,12 +234,12 @@ bool canUseArtifact(gameunit::Map map, gameunit::Artifact artifact, gameunit::Po
                 return false;
         }
         // 距己方神迹范围<=5
-        if (calculator::cube_distance(pos, map.relics[my_camp].pos) <= 5)
+        if (calculator::cube_distance(pos, map.relics[camp].pos) <= 5)
             return true;
         // 距己方占领驻扎点范围<=3
         for (auto barrack = map.barracks.begin(); barrack != map.barracks.end(); barrack++)
         {
-            if ((barrack->camp == my_camp) && (calculator::cube_distance(pos, barrack->pos) <= 3))
+            if ((barrack->camp == camp) && (calculator::cube_distance(pos, barrack->pos) <= 3))
                 return true;
         }
     }
