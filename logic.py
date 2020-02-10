@@ -24,7 +24,7 @@ class Game:
         self.replay = ""        # 录像文件存储处
         self.state = 0          # 当前消息回合
         self.listen = 0         # 当前监听的玩家(当前回合玩家)
-        self._round = 0         # 当前游戏回合
+        self._round = -1        # 当前游戏回合
         self.is_end = False     # 是否结束
         self.statesystem = StateSystem()
         self.parser = Parser(self.statesystem)
@@ -67,15 +67,14 @@ class Game:
                 parser_respond = self.parser.parse(opt_dict["content"])
                 if not parser_respond:
                     continue
-                else:
-                    media_info = self.get_media_info(
-                        self.statesystem.event_heap.record)
-                    self.statesystem.event_heap.record.clear()
-                    self.send_media_info(media_info)
-                    self.check_game_end()
-                    # 结束回合
-                    if opt_dict["content"]["operation_type"] == "endround":
-                        break
+                media_info = self.get_media_info(
+                    self.statesystem.event_heap.record)
+                self.statesystem.event_heap.record.clear()
+                self.send_media_info(media_info)
+                self.check_game_end()
+                # 结束回合
+                if json.loads(opt_dict["content"])["operation_type"] == "endround":
+                    break
             # AI异常
             elif opt_dict['player'] == -1:
                 opt = json.loads(opt_dict['content'])
@@ -87,6 +86,11 @@ class Game:
                         self.end(self.player0)
                 # 超时
                 elif opt['error'] == 1:
+                    self.parser.parse(json.dumps(
+                        {"player": 0 if self.listen == self.player0 else 1,
+                         "round": self._round,
+                         "operation_type": "endround",
+                         "operation_parameters": {}}))
                     break
 
     def get_media_info(self, events):
@@ -247,8 +251,6 @@ class Game:
                 # camp
                 media_info += event.parameter_dict['camp'].to_bytes(
                     4, 'big', signed=True)
-                # TODO
-                # name x y id
                 if event.parameter_dict['name'] == "HolyLight":
                     media_info += int(21).to_bytes(4, 'big', signed=True)
                     media_info += event.parameter_dict['target'][0].to_bytes(
@@ -275,7 +277,7 @@ class Game:
                 # event
                 media_info += int(11).to_bytes(4, 'big', signed=True)
                 # camp
-                media_info += event.parameter_dict['camp'].id.to_bytes(
+                media_info += event.parameter_dict['camp'].to_bytes(
                     4, 'big', signed=True)
                 # TODO
                 # a0
@@ -425,11 +427,15 @@ class Game:
     def send_game_info(self):
         '''向当前回合的玩家发送游戏当前局面信息
         '''
-        state_dict = {'state': self.state,
-                      'listen': self.listen, 'player': self.listen}
-        message = self.statesystem.parse()
-        message['round'] = self._round
-        message['camp'] = 0 if self.listen == self.player0 else 1
+        state_dict = {'state': self.state, 'listen': [self.listen],
+                      'player': [self.listen], 'content': []}
+        message = dict()
+        if self._round == -1:
+            message = {'camp': 0 if self.listen == self.player0 else 1}
+        else:
+            message = self.statesystem.parse()
+            message['round'] = self._round
+            message['camp'] = 0 if self.listen == self.player0 else 1
         # 前四位表示长度 后面是表示信息的json格式字符串
         json_length = str(len(json.dumps(message)))
         state_dict['content'] = [
@@ -468,18 +474,18 @@ class Game:
     def select_cards(self):
         '''玩家选择初始卡组
         '''
-        state_dict = {'state': self.state, 'player': [], 'content': []}
         is_player0_ready = is_player1_ready = False
         # 0号玩家
-        state_dict['listen'] = [self.player0]
-        logic_sdk.send_state(state_dict)
+        self.state += 1
+        self.listen = self.player0
+        self.send_game_info()
         opt_dict0 = logic_sdk.read_opt()
         if opt_dict0["player"] == self.player0:
             is_player0_ready = self.parser.parse(opt_dict0["content"])
         # 1号玩家
-        state_dict['state'] += 1
-        state_dict['listen'] = [self.player1]
-        logic_sdk.send_state(state_dict)
+        self.state += 1
+        self.listen = self.player1
+        self.send_game_info()
         opt_dict1 = logic_sdk.read_opt()
         if opt_dict1["player"] == self.player1:
             is_player1_ready = self.parser.parse(opt_dict0["content"])
@@ -505,18 +511,22 @@ class Game:
         logic_sdk.send_init(3, 2048)
         # 处理初始卡组
         self.select_cards()
-        # 播放器协议初始（播放器版本号）
-        if self.media_player != []:
-            self.state = 1
+        # 播放器协议初始（播放器版本号）& 选卡情况
         self.send_media_info(int(0).to_bytes(4, 'big', signed=True))
+        media_info = self.get_media_info(self.statesystem.event_heap.record)
+        self.statesystem.event_heap.record.clear()
+        self.send_media_info(media_info)
         # 游戏回合
+        self._round = 0
+        self.parser.set_round(0)
+        self.listen = self.player0
         while not self.is_end:
-            self.parser.parse({"player": self.listen, "round": self._round,
-                               "operation_type": "startround", "operation_parameters": {}})
+            self.parser.parse(json.dumps(
+                {"player": 0 if self.listen == self.player0 else 1,
+                 "round": self._round,
+                 "operation_type": "startround", "operation_parameters": {}}))
             self.check_game_end()
             self.get_round_ope()
-            self.parser.parse({"player": self.listen, "round": self._round,
-                               "operation_type": "endround", "operation_parameters": {}})
             self.check_game_end()
             self.change_round()
 
@@ -554,12 +564,6 @@ class Game:
         sys.exit()
 
 
-def main():
-    '''主函数
-    '''
+if __name__ == '__main__':
     game = Game()
     game.start()
-
-
-if __name__ == '__main__':
-    main()
