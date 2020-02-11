@@ -136,7 +136,7 @@ void endRound(int player, int round)
 
 //查询部分
 
-// 己方单位从位置pos_a到位置pos_b的地面距离(考虑被敌方地面生物阻挡但不考虑被敌方生物拦截)
+// 获取地图map上camp阵营单位从位置pos_a到位置pos_b的地面距离(不经过地面障碍或敌方地面单位)
 int getDistanceOnGround(gameunit::Map map, gameunit::Pos pos_a, gameunit::Pos pos_b, int camp)
 {
     //地图边界
@@ -157,7 +157,7 @@ int getDistanceOnGround(gameunit::Map map, gameunit::Pos pos_a, gameunit::Pos po
     return calculator::search_path(pos_a, pos_b, obstacles_pos, {}).size();
 }
 
-// 己方单位从位置pos_a到位置pos_b的飞行距离(考虑被敌方飞行生物阻挡但不考虑被敌方生物拦截)
+// 获取地图map上camp阵营单位从位置pos_a到位置pos_b的飞行距离(不经过飞行障碍或敌方飞行单位)
 int getDistanceInSky(gameunit::Map map, gameunit::Pos pos_a, gameunit::Pos pos_b, int camp)
 {
     //地图边界
@@ -178,7 +178,7 @@ int getDistanceInSky(gameunit::Map map, gameunit::Pos pos_a, gameunit::Pos pos_b
     return calculator::search_path(pos_a, pos_b, obstacles_pos, {}).size();
 }
 
-// 对于指定位置pos,获取其上所有生物
+// 获取地图map上位置pos上所有生物
 std::vector<gameunit::Unit> getUnits(gameunit::Map map, gameunit::Pos pos)
 {
     std::vector<gameunit::Unit> units_on_pos;
@@ -191,7 +191,7 @@ std::vector<gameunit::Unit> getUnits(gameunit::Map map, gameunit::Pos pos)
 }
 
 // 对于指定位置pos,判断其驻扎情况
-// 不是驻扎点返回-2,中立返回-1,否则返回占领该驻扎点的阵营(0/1)
+// 不是驻扎点返回-2,中立返回-1,否则返回占领该驻扎点的阵营(0或1)
 int checkBarrack(gameunit::Map map, gameunit::Pos pos)
 {
     for (auto barrack = map.barracks.begin(); barrack != map.barracks.end(); barrack++)

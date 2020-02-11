@@ -10,71 +10,73 @@ using json = nlohmann::json;
 namespace gameunit
 {
 
-typedef std::tuple<int, int, int> Pos;
+typedef std::tuple<int, int, int> Pos; // 坐标
 
-struct Unit
+struct Unit // 生物
 {
-    int id;
-    int camp;
-    std::string name;
-    int cost;
-    int atk;
-    int max_hp;
-    int hp;
-    std::pair<int, int> atk_range;
-    int max_move;
-    int cool_down;
-    Pos pos;
-    int level;
-    bool flying;
-    bool atk_flying;
-    bool agility;
-    bool holy_shield;
+    int id;                        // id
+    int camp;                      // 阵营
+    std::string name;              // 名字
+    int cost;                      // 法力消耗
+    int atk;                       // 攻击
+    int max_hp;                    // 生命上限
+    int hp;                        // 当前生命
+    std::pair<int, int> atk_range; // 最小攻击范围 最大攻击范围
+    int max_move;                  // 行动力
+    int cool_down;                 // 冷却时间
+    Pos pos;                       // 位置
+    int level;                     // 等级
+    bool flying;                   // 能否飞行
+    bool atk_flying;               // 是否对空
+    bool agility;                  // 是否迅捷
+    bool holy_shield;              // 有无圣盾
 };
 
-struct Barrack
+struct Barrack // 驻扎点
 {
-    Pos pos;
-    int camp;
-    std::vector<Pos> summon_pos_list;
+    Pos pos;                          // 位置
+    int camp;                         // 阵营
+    std::vector<Pos> summon_pos_list; // 出兵点位置
 };
 
-struct Relic
+struct Relic // 神迹
 {
-    int camp;
-    int max_hp;
-    int hp;
-    Pos pos;
-    std::string name;
-    int id;
+    int camp;         // 阵营
+    int max_hp;       // 最大生命值
+    int hp;           // 当前生命值
+    Pos pos;          // 位置
+    std::string name; // 名字
+    int id;           // id
 };
 
 struct Obstacle
 {
-    std::string type;
-    Pos pos;
-    bool allow_flying;
+    std::string type;  // 种类
+    Pos pos;           // 位置
+    bool allow_flying; // 是否允许飞行单位通过
+    bool allow_ground; // 是否允许地面单位通过
 };
 
-struct Artifact
+struct Artifact // 神器
 {
-    int id;
-    std::string name;
-    int camp;
-    int cost;
-    int max_cool_down;
-    int cool_down_time;
-    std::string state;
-    std::string target_type;
+    int id;                  // id
+    std::string name;        // 名字
+    int camp;                // 阵营
+    int cost;                // 法力消耗
+    int max_cool_down;       // 最大冷却时间
+    int cool_down_time;      // 当前冷却时间
+    std::string state;       // 使用状态
+    std::string target_type; // 目标种类
 };
 
 struct CreatureCapacity
 {
-    std::string type;
-    int available_count;
+    std::string type;                // 种类
+    int available_count;             // 生物槽容量
+    std::vector<int> cool_down_list; // 冷却时间
 };
 
-struct Map
+struct Map // 地图
 {
     std::vector<Unit> units;
     std::vector<Barrack> barracks;
@@ -84,14 +86,14 @@ struct Map
     std::vector<Obstacle> ground_obstacles;
 };
 
-struct Player
+struct Player // 玩家
 {
-    int camp;
-    std::vector<Artifact> artifact;
-    int mana;
-    int max_mana;
+    int camp;                       // 阵营
+    std::vector<Artifact> artifact; // 神器
+    int mana;                       // 当前法力值
+    int max_mana;                   // 最大法力值
     std::vector<CreatureCapacity> creature_capacity;
-    std::vector<int> new_summoned_id_list;
+    std::vector<int> new_summoned_id_list; // 最新召唤的生物id
 };
 
 void from_json(const json &j, Unit &u)
@@ -139,6 +141,7 @@ void from_json(const json &j, Obstacle &o)
     j.at("type").get_to(o.type);
     j.at("pos").get_to(o.pos);
     j.at("allow_flying").get_to(o.allow_flying);
+    j.at("allow_ground").get_to(o.allow_ground);
 }
 
 void from_json(const json &j, Artifact &a)
@@ -157,6 +160,7 @@ void from_json(const json &j, CreatureCapacity &c)
 {
     j.at("type").get_to(c.type);
     j.at("available_count").get_to(c.available_count);
+    j.at("cool_down_list").get_to(c.cool_down_list);
 }
 
 void from_json(const json &j, Map &m)

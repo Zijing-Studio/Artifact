@@ -16,11 +16,7 @@ class AI:
         self.my_camp = -1                       # 己方阵营
 
     def choose_cards(self):
-        '''选择初始卡组
-
-        Args:
-            artifacts: 神器名字数组(长度为1)
-            creatures: 生物名字数组(长度为3)
+        '''(获取阵营后)选择初始卡组
         '''
         # 先获取阵营后选卡组
         self.my_camp = ai_sdk.read_opt()['camp']
