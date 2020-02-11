@@ -83,6 +83,7 @@ class AbstractOperation:
 class Forbid(AbstractOperation):
     '''
     operation of forbiding artifact and so on
+    depreciated
     '''
     def __init__(self, _parser, _id, _map, _params):
         AbstractOperation.__init__(self, _parser, _id, _map)
@@ -99,6 +100,7 @@ class Forbid(AbstractOperation):
 class Select(AbstractOperation):
     '''
     operation of selecting artifact and so on
+    depreciated
     '''
     def __init__(self, _parser, _id, _map, _params):
         AbstractOperation.__init__(self, _parser, _id, _map)
