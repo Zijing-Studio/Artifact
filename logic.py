@@ -67,10 +67,7 @@ class Game:
                 parser_respond = self.parser.parse(opt_dict["content"])
                 if not parser_respond:
                     continue
-                media_info = self.get_media_info(
-                    self.statesystem.event_heap.record)
-                self.statesystem.event_heap.record.clear()
-                self.send_media_info(media_info)
+                self.send_media_info()
                 self.check_game_end()
                 # 结束回合
                 if json.loads(opt_dict["content"])["operation_type"] == "endround":
@@ -400,17 +397,19 @@ class Game:
                 media_info += int(0).to_bytes(4, 'big', signed=True)
         return media_info
 
-    def send_media_info(self, media_info):
+    def send_media_info(self, media_info=b''):
         '''把信息发给播放器及记录于录像文件
 
         Args:
-            media_info: (get_media_info()生成的)给播放器的信息字符串
+            media_info: 给播放器的信息字符串 为空时会直接从事件堆中取
         '''
         if media_info == b'':
-            return
-        if self.replay != "":
-            with open(self.replay, 'ab') as replay_file:
-                replay_file.write(media_info)
+            media_info = self.get_media_info(self.statesystem.event_heap.record)
+            self.statesystem.event_heap.record.clear()
+            if media_info != b'':
+                self.send_media_info(media_info)
+        with open(self.replay, 'ab') as replay_file:
+            replay_file.write(media_info)
         for media in self.media_player:
             logic_sdk.send_message_goal(media_info, media)
 
@@ -503,20 +502,21 @@ class Game:
         self.select_cards()
         # 播放器协议初始（播放器版本号）& 选卡情况
         self.send_media_info(int(0).to_bytes(4, 'big', signed=True))
-        media_info = self.get_media_info(self.statesystem.event_heap.record)
-        self.statesystem.event_heap.record.clear()
-        self.send_media_info(media_info)
+        self.send_media_info()
         # 游戏回合
         self._round = 0
         self.parser.set_round(0)
         self.listen = self.player0
         while not self.is_end:
+            # 回合开始
             self.parser.parse(json.dumps(
                 {"player": 0 if self.listen == self.player0 else 1,
                  "round": self._round,
                  "operation_type": "startround", "operation_parameters": {}}))
+            self.send_media_info()
             self.check_game_end()
             self.get_round_ope()
+            self.send_media_info()
             self.check_game_end()
             self.change_round()
 
