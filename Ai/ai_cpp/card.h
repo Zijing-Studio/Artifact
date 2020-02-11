@@ -8,7 +8,7 @@ namespace card
 
 struct Creature // 生物
 {
-    std::string name;    // 名字
+    std::string type;    // 种类
     int available_count; // 生物槽容量
     int cost;            // 法力消耗
     int atk;             // 攻击
@@ -21,10 +21,10 @@ struct Creature // 生物
     bool atk_flying;     // 能否对空
     bool agility;        // 是否迅捷
     bool holy_shield;    // 有无圣盾
-    Creature(std::string _name, int _count, int _cost, int _atk, int _maxhp,
+    Creature(std::string _type, int _count, int _cost, int _atk, int _maxhp,
              int _minatk, int _maxatk, int _maxmove, int _cool, bool _fly,
              bool _atkfly, bool _agility, bool _holyshield)
-        : name(_name), available_count(_count), cost(_cost), atk(_atk),
+        : type(_type), available_count(_count), cost(_cost), atk(_atk),
           max_hp(_maxhp), min_atk_range(_minatk), max_atk_range(_maxatk),
           max_move(_maxmove), cool_down(_cool),
           flying(_fly), atk_flying(_atkfly),
@@ -33,11 +33,12 @@ struct Creature // 生物
 
 struct Artifact // 神器
 {
-    std::string name; // 名字
-    int cost;         // 法力消耗
-    int cool_down;    // 冷却时间
-    Artifact(std::string _name, int _cost, int _cool)
-        : name(_name), cost(_cost), cool_down(_cool) {}
+    std::string name;        // 名字
+    int cost;                // 法力消耗
+    int cool_down;           // 冷却时间
+    std::string target_type; // 目标类型
+    Artifact(std::string _name, int _cost, int _cool, std::string _targettype)
+        : name(_name), cost(_cost), cool_down(_cool), target_type(_targettype) {}
 };
 
 // 剑士
@@ -71,11 +72,11 @@ const Creature VOLCANOGRAGON[4] = {Creature("VolcanoDragon", 0, 0, 0, 0, 0, 0, 0
                                    Creature("VolcanoDragon", 3, 9, 5, 9, 1, 2, 3, 5, 0, 0, 0, 0)};
 
 // 圣光之耀
-const Artifact HOLYLIGHT = Artifact("HolyLight", 8, 6);
+const Artifact HOLYLIGHT = Artifact("HolyLight", 8, 6, "Pos");
 // 阳炎之盾
-const Artifact SALAMANDERSHIELD = Artifact("SalamanderShield", 6, 6);
+const Artifact SALAMANDERSHIELD = Artifact("SalamanderShield", 6, 6, "Unit");
 // 地狱之火
-const Artifact INFERNOFLAME = Artifact("InfernoFlame", 6, 6);
+const Artifact INFERNOFLAME = Artifact("InfernoFlame", 6, 6, "Pos");
 // 地狱火
 const Creature INFERNO = Creature("Inferno", 0, 0, 8, 8, 1, 1, 3, 0, 0, 0, 0, 0);
 

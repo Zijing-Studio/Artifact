@@ -16,6 +16,7 @@ struct Unit // 生物
 {
     int id;                        // id
     int camp;                      // 阵营
+    std::string type;              // 种类
     std::string name;              // 名字
     int cost;                      // 法力消耗
     int atk;                       // 攻击
@@ -100,6 +101,7 @@ void from_json(const json &j, Unit &u)
 {
     j.at("id").get_to(u.id);
     j.at("camp").get_to(u.camp);
+    j.at("type").get_to(u.type);
     j.at("name").get_to(u.name);
     j.at("cost").get_to(u.cost);
     j.at("atk").get_to(u.atk);

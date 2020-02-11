@@ -6,21 +6,21 @@ class Creature:
     '''生物
     '''
 
-    def __init__(self, _name, _count, _cost, _atk, _maxhp, _minatk, _maxatk,
+    def __init__(self, _type, _count, _cost, _atk, _maxhp, _minatk, _maxatk,
                  _maxmove, _cool, _fly,  _atkfly, _agility, _holyshield):
-        self.name = _name
-        self.available_count = _count
-        self.cost = _cost
-        self.atk = _atk
-        self.max_hp = _maxhp
-        self.min_atk_range = _minatk
-        self.max_atk_range = _maxatk
-        self.max_move = _maxmove
-        self.cool_down = _cool
-        self.flying = _fly
-        self.atk_flying = _atkfly
-        self.agility = _agility
-        self.holy_shield = _holyshield
+        self.type = _type               # 种类
+        self.available_count = _count   # 生物槽容量
+        self.cost = _cost               # 法力消耗
+        self.atk = _atk                 # 攻击
+        self.max_hp = _maxhp            # 最大生命值
+        self.min_atk_range = _minatk    # 最小攻击范围
+        self.max_atk_range = _maxatk    # 最大攻击范围
+        self.max_move = _maxmove        # 行动力
+        self.cool_down = _cool          # 冷却时间
+        self.flying = _fly              # 是否飞行
+        self.atk_flying = _atkfly       # 能否对空
+        self.agility = _agility         # 是否迅捷
+        self.holy_shield = _holyshield  # 有无圣盾
 
 
 class Artifact:
@@ -28,10 +28,10 @@ class Artifact:
     '''
 
     def __init__(self, _name, _cost, _cool, _targettype):
-        self.name = _name
-        self.cost = _cost
-        self.cool_down = _cool
-        self.target_type = _targettype
+        self.name = _name               # 名字
+        self.cost = _cost               # 法力消耗
+        self.cool_down = _cool          # 冷却时间
+        self.target_type = _targettype  # 目标类型
 
 
 SWORDMAN = [Creature("Swordman", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
