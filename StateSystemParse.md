@@ -19,6 +19,7 @@ A dictionary of all information.
             {
                 'id': 4, 
                 'camp': 0, 
+                'type': 'BlackBat',
                 'name': 'BlackBat (Level 1)', 
                 'cost': 2, 
                 'atk': 1, 
@@ -36,6 +37,7 @@ A dictionary of all information.
             }, {
                 'id': 5, 
                 'camp': 0, 
+                'type': 'Inferno',
                 'name': 'Inferno (Level 1)',
                 'cost': 8, 
                 'atk': 8, 

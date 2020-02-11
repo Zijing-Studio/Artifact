@@ -73,6 +73,7 @@ class Unit:
         return {
             "id": self.id,
             "camp": self.camp,
+            "type": self.type,
             "name": self.name,
             "cost": self.cost,
             "atk": self.atk,
