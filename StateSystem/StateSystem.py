@@ -16,7 +16,22 @@ class StateSystem:
         self.event_heap = EventHeap()
         self.player_list = [Player(0,1,self),Player(1,2,self)]
         self.current_player_id = 0
-        self.map.relic_list = [Relic(0,30,(-7,7,0),self),Relic(1,30,(7,-7,0),self)]
+        self.map.relic_list = [
+            Relic(0,30,(-7,7,0),[
+                (-8,6,2),
+                (-7,6,1),
+                (-6,6,0),
+                (-6,7,-1),
+                (-6,8,-2)
+            ],self),
+            Relic(1,30,(7,-7,0),[
+                (8,-6,-2),
+                (7,-6,-1),
+                (6,-6,0),
+                (6,-7,1),
+                (6,-8,2)
+            ],self)
+        ]
         self.map.obstacle_list = [Obstacle("Abyss",ob_pos) for ob_pos in ABYSS_INIT_LIST]
         self.map.barrack_list = [Barrack(br[0],br[1],br[2]) for br in BARRACK_INIT_LIST]
         self.event_listener_list = []
@@ -86,6 +101,12 @@ class StateSystem:
                 if artifact.id == id:
                     return artifact
         return None
+
+    def get_summon_pos_list(self,player_camp):
+        result = self.get_relic_by_id(player_camp).summon_pos_list
+        for barrack in self.get_barracks(player_camp):
+            result.append(barrack.summon_pos_list)
+        return result
 
     def get_barracks(self,player_camp):
         return [barrack

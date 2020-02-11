@@ -248,7 +248,7 @@ class Summon(AbstractAct):
             result = "Invalid creature type"
         elif self.star not in [1, 2, 3]:
             result = "Invalid level"
-        elif self.position not in self.map.get_barracks(self.player_id):
+        elif self.position not in self.map.get_summon_pos_list(self.player_id):
             result = "No barrack at the point"
         elif self.unit_conflict(self.type, self.position):
             result = "Unit conflict"

@@ -3,6 +3,7 @@ from StateSystem.Event import Event
 
 if __name__ == "__main__":
     sys=StateSystem()
+    print(sys.get_summon_pos_list(0))
     sys.emit(Event("GameStart",{
         "camp": 0,
         "cards": {

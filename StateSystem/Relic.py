@@ -1,13 +1,14 @@
 from StateSystem.EventListener import DamageListener
 
 class Relic:
-    def __init__(self,camp,hp,pos,state_system):
+    def __init__(self,camp,hp,pos,summon_pos_list,state_system):
         self.name = "Relic (belongs to Player {})".format(camp)
         self.id = camp
         self.max_hp = hp
         self.hp = hp
         self.camp = camp
         self.pos = pos
+        self.summon_pos_list = summon_pos_list
         self.state_system = state_system
         self.event_listener_list = []
 
@@ -30,6 +31,7 @@ class Relic:
             "max_hp": self.max_hp,
             "hp": self.hp,
             "pos": self.pos,
+            "summon_pos_list": self.summon_pos_list,
             "name": self.name,
             "id": self.id
         }
