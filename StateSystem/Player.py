@@ -45,21 +45,21 @@ class RefreshListener(EventListener):
             if self.host.max_mana < 12:
                 self.host.max_mana += 1
             self.host.mana = self.host.max_mana
-            print("Player {}'s mana refreshed to {}".format(
-                self.host.camp,
-                self.host.mana
-                ))
+            # print("Player {}'s mana refreshed to {}".format(
+            #     self.host.camp,
+            #     self.host.mana
+            #     ))
             for capacity in self.host.creature_capacity_list:
                 capacity.cool_down()
             for artifact in self.host.artifact_list:
                 artifact.cool_down()
-            print("Player {}'s creatures and artifacts cool down".format(
-                self.host.camp
-            ))
+            # print("Player {}'s creatures and artifacts cool down".format(
+            #     self.host.camp
+            # ))
             self.host.newly_summoned_id_list = []
-            print("Player {}'s newly summoned list cleared.".format(
-                self.host.camp
-            ))
+            # print("Player {}'s newly summoned list cleared.".format(
+            #     self.host.camp
+            # ))
 
 class IntoCoolDownListener(EventListener):
     '''
@@ -72,12 +72,12 @@ class IntoCoolDownListener(EventListener):
                 for capacity in self.host.creature_capacity_list:
                     if capacity.type == source.type:
                         capacity.new_cool_down(source.level)
-                        print("Player {}'s creature {}(ID: {}) starts cooling down for {} turns.".format(
-                            self.host.camp,
-                            source.name,
-                            source.id,
-                            source.cool_down
-                        ))
+                        # print("Player {}'s creature {}(ID: {}) starts cooling down for {} turns.".format(
+                        #     self.host.camp,
+                        #     source.name,
+                        #     source.id,
+                        #     source.cool_down
+                        # ))
 
 class SummonListener(EventListener):
     def deal_event(self,event):
@@ -97,5 +97,5 @@ class ActivateArtifactListener(EventListener):
                 for artifact in self.host.artifact_list:
                     if artifact.name == event.parameter_dict["name"]:
                         artifact.activate(event.parameter_dict["target"])
-                        print("Player {} activate {} !!!".format(self.host.camp,artifact.name))
+                        # print("Player {} activate {} !!!".format(self.host.camp,artifact.name))
                         return

@@ -161,13 +161,14 @@ class SummonListener(EventListener):
                         "source": unit,
                         "pos": unit.pos
                     }))
-                    print("{} (ID: {}) spawns at {}".format(
-                        unit.name,
-                        unit.id,
-                        unit.pos
-                    ))
+                    # print("{} (ID: {}) spawns at {}".format(
+                    #     unit.name,
+                    #     unit.id,
+                    #     unit.pos
+                    # ))
             except:
-                print("Parameter Dict Error.")
+                # print("Parameter Dict Error.")
+                pass
 
 class CheckDeathListener(EventListener):
     '''
@@ -182,12 +183,13 @@ class CheckDeathListener(EventListener):
                         self.host.emit(Event("Death", {
                             "source": unit
                         }))
-                        print("{} (ID: {}) is announced to be dead.".format(
-                            unit.name,
-                            unit.id
-                        ))
+                        # print("{} (ID: {}) is announced to be dead.".format(
+                        #     unit.name,
+                        #     unit.id
+                        # ))
             except:
-                print("Parameter Dict Error.")
+                # print("Parameter Dict Error.")
+                pass
 
 class CheckBarrackListener(EventListener):
     '''
@@ -202,7 +204,8 @@ class CheckBarrackListener(EventListener):
                             barrack.camp = unit.camp
                             break                    
             except:
-                print("Parameter Dict Error.")
+                # print("Parameter Dict Error.")
+                pass
 
 class TurnStartListener(EventListener):
     '''
@@ -217,7 +220,8 @@ class TurnStartListener(EventListener):
                 self.host.emit(Event("CheckBarrack",{},4))
                 self.host.emit(Event("NewTurn",{},4))
             except:
-                print("Parameter Dict Error.")
+                # print("Parameter Dict Error.")
+                pass
     
 class ChangeCurrentPlayerListener(EventListener):
     '''
@@ -227,9 +231,9 @@ class ChangeCurrentPlayerListener(EventListener):
         if event.name == "TurnEnd":
             self.host.current_player_id += 1
             self.host.current_player_id %= len(self.host.player_list)
-            print("Current Player changed to {}".format(
-                self.host.player_list[self.host.current_player_id].camp
-            ))
+            # print("Current Player changed to {}".format(
+            #     self.host.player_list[self.host.current_player_id].camp
+            # ))
 
 class GameStartListener(EventListener):
     '''

@@ -18,11 +18,12 @@ class DamageListener(EventListener):
                         event.parameter_dict["damage"] = 0
                         self.host.emit(Event("HolyShieldBreak", {"source": self.host}, -1))
                     self.host.hp -= event.parameter_dict["damage"]
-                    print("Deal {} damage on {} (ID: {})".format(
-                        event.parameter_dict["damage"],self.host.name,self.host.id
-                    ))
+                    # print("Deal {} damage on {} (ID: {})".format(
+                    #     event.parameter_dict["damage"],self.host.name,self.host.id
+                    # ))
             except:
-                print("An Error appears while handling Damage event.")
+                # print("An Error appears while handling Damage event.")
+                pass
 
 class HolyShieldAddListener(EventListener):
     def deal_event(self,event):
@@ -30,11 +31,12 @@ class HolyShieldAddListener(EventListener):
             try:
                 if event.parameter_dict["source"] == self.host and not self.host.holy_shield:
                     self.host.holy_shield = True
-                    print("{} (ID: {}) gains Holy Shield".format(
-                        self.host.name,self.host.id
-                    ))
+                    # print("{} (ID: {}) gains Holy Shield".format(
+                    #     self.host.name,self.host.id
+                    # ))
             except:
-                print("An Error appears while handling HolyShieldAdd event.")
+                # print("An Error appears while handling HolyShieldAdd event.")
+                pass
 
 
 class HolyShieldBreakListener(EventListener):
@@ -45,11 +47,12 @@ class HolyShieldBreakListener(EventListener):
                     if not self.host.holy_shield:
                         raise BaseException()
                     self.host.holy_shield = False
-                    print("{} (ID: {})'s Holy Shield is broken".format(
-                        self.host.name,self.host.id
-                    ))
+                    # print("{} (ID: {})'s Holy Shield is broken".format(
+                    #     self.host.name,self.host.id
+                    # ))
             except:
-                print("An Error appears while handling HolyShieldBreak event.")
+                # print("An Error appears while handling HolyShieldBreak event.")
+                pass
 
 class AttackListener(EventListener):
     def deal_event(self,event):
@@ -64,14 +67,15 @@ class AttackListener(EventListener):
                     }))
                     self.host.emit(Event("Attacked",event.parameter_dict))
                     self.host.emit(Event("CheckDeath",priority=4))
-                    print("{} (ID: {}) attacks {} (ID: {})".format(
-                        event.parameter_dict["source"].name,
-                        event.parameter_dict["source"].id,
-                        event.parameter_dict["target"].name,
-                        event.parameter_dict["target"].id
-                    ))
+                    # print("{} (ID: {}) attacks {} (ID: {})".format(
+                    #     event.parameter_dict["source"].name,
+                    #     event.parameter_dict["source"].id,
+                    #     event.parameter_dict["target"].name,
+                    #     event.parameter_dict["target"].id
+                    # ))
             except:
-                print("An Error appears while handling Attack event..")
+                # print("An Error appears while handling Attack event..")
+                pass
 
 class AttackBackListener(EventListener):
     def deal_event(self,event):
@@ -89,14 +93,15 @@ class AttackBackListener(EventListener):
                             "target": event.parameter_dict["source"],
                             "damage": event.parameter_dict["target"].atk
                         }))
-                        print("{} (ID: {}) attacks back on {} (ID: {})".format(
-                            event.parameter_dict["target"].name,
-                            event.parameter_dict["target"].id,
-                            event.parameter_dict["source"].name,
-                            event.parameter_dict["source"].id
-                        ))
+                        # print("{} (ID: {}) attacks back on {} (ID: {})".format(
+                        #     event.parameter_dict["target"].name,
+                        #     event.parameter_dict["target"].id,
+                        #     event.parameter_dict["source"].name,
+                        #     event.parameter_dict["source"].id
+                        # ))
             except:
-                print("An Error appears while handling Attacked event..")
+                # print("An Error appears while handling Attacked event..")
+                pass
 
 class MoveListener(EventListener):
     def deal_event(self,event):
@@ -113,13 +118,14 @@ class MoveListener(EventListener):
                         "pos": event.parameter_dict["source"].pos
                     }))
                     self.host.emit(Event("UpdateRingBuff",priority = 3))
-                    print("{} (ID: {}) moves to {}".format(
-                        event.parameter_dict["source"].name,
-                        event.parameter_dict["source"].id,
-                        event.parameter_dict["dest"]
-                    ))
+                    # print("{} (ID: {}) moves to {}".format(
+                    #     event.parameter_dict["source"].name,
+                    #     event.parameter_dict["source"].id,
+                    #     event.parameter_dict["dest"]
+                    # ))
             except:
-                print("An Error appears while handling Move event..")
+                # print("An Error appears while handling Move event..")
+                pass
 
 class HealListener(EventListener):
     def deal_event(self,event):
@@ -129,11 +135,12 @@ class HealListener(EventListener):
                     if self.host.hp < self.host.max_hp:
                         self.host.hp += event.parameter_dict["heal"]
                         self.host.hp = min(self.host.hp, self.host.max_hp)
-                        print("Heal {} HP on {} (ID: {})".format(
-                            event.parameter_dict["heal"],self.host.name,self.host.id
-                        ))
+                        # print("Heal {} HP on {} (ID: {})".format(
+                        #     event.parameter_dict["heal"],self.host.name,self.host.id
+                        # ))
             except:
-                print("An Error appears while handling Heal event..")
+                # print("An Error appears while handling Heal event..")
+                pass
 
 class PriestHealListener(EventListener):
     def deal_event(self,event):
@@ -147,7 +154,8 @@ class PriestHealListener(EventListener):
                             "heal": 1
                         },-3))
             except:
-                print("An Error appears while handling PriestHeal event..")
+                # print("An Error appears while handling PriestHeal event..")
+                pass
 
 class PriestAtkListener(EventListener):
     def deal_event(self,event):
@@ -166,14 +174,16 @@ class PriestAtkListener(EventListener):
                         buff.delete()
                         self.host.priest_buff_list.remove(buff)
             except:
-                print("An Error appears while handling PriestAtk event..")
+                # print("An Error appears while handling PriestAtk event..")
+                pass
         if event.name == "Death":
             try:
                 if event.parameter_dict["source"] == self.host:
                     for buff in self.host.priest_buff_list:
                         buff.delete()
             except:
-                print("An Error appears while handling ??? event..")
+                # print("An Error appears while handling ??? event..")
+                pass
 
 
 class VolcanoDragonAtkListener(EventListener):
@@ -191,5 +201,6 @@ class VolcanoDragonAtkListener(EventListener):
                                 "damage": self.host.level + 2
                             },priority=-1))
             except:
-                print("An Error appears while handling VolcanoDragonAtk event..")
+                # print("An Error appears while handling VolcanoDragonAtk event..")
+                pass
                 
