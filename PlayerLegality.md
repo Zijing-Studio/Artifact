@@ -104,20 +104,6 @@ parser.parse(operation)
 - 5种
 - 不同
 
-##### 陷阱选取
-
-```json
-//operation_type: "select"
-{
-    "type": "Trap",
-    "target": 1		//选择陷阱种类
-}
-```
-
-###### 合法性
-
-- 3张
-
 
 
 #### 游戏中
@@ -215,7 +201,3 @@ null（不需要额外参数）
 
 - 法力消耗
 - 再装填时间
-
-##### 设置陷阱
-
-to be continue ...

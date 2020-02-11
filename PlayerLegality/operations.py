@@ -278,10 +278,17 @@ class Move(AbstractAct):
         self.mover = self.get_unit_by_id(_params["mover"])
         self.position = to_position(_params["position"])
 
+    def acted_special_check(self):
+        if self.mover.agility:
+            return True
+        return False
+
     def check_legality(self):
         result = True
         path = calculator.path(self.mover, self.position, self.map)
-        if self.unit_conflict(self.mover, self.position):
+        if self.mover.camp != self.player_id:
+            result = "You cannot manipulate the unit of the other player"
+        elif self.unit_conflict(self.mover, self.position):
             result = "Unit conflict: target: {}".format(self.position)
         elif not path:  # no path found
             result = "No suitable path"
@@ -290,7 +297,7 @@ class Move(AbstractAct):
                      .format(self.mover.max_move, path)
         elif self.summoned_this_round(self.mover.id):
             result = "Just summoned"
-        elif self.acted_this_round(self.mover.id):
+        elif self.acted_this_round(self.mover.id) and not self.acted_special_check():
             result = "Has acted this round"
         if result is not True:
             result += "\nstart: {}, end: {}\n".format(self.mover.pos, self.position)
@@ -315,18 +322,27 @@ class Attack(AbstractAct):
         self.attacker = self.get_unit_by_id(_params["attacker"])
         self.target = self.get_unit_by_id(_params["target"])
 
+    def acted_special_check(self):
+        if self.attacker.agility:
+            return True
+        return False
+
     def check_legality(self):
         result = True
         dist = calculator.cube_distance(self.attacker.pos, self.target.pos)
-        if self.attacker.atk <= 0:
+        if self.attacker.camp != self.player_id:
+            result = "You cannot manipulate the unit of the other player"
+        elif self.attacker.atk <= 0:
             result = "Attack below zero"
         elif self.summoned_this_round(self.attacker.id):
             result = "Just summoned"
-        elif self.acted_this_round(self.attacker.id):
+        elif self.acted_this_round(self.attacker.id) and not self.acted_special_check():
             result = "Has acted this round"
         elif not self.attacker.atk_range[0] <= dist <= self.attacker.atk_range[-1]:
             result = "Out of range:\nattack range: {}, target distance: {}"\
                     .format(self.attacker.atk_range, dist)
+        elif self.target.hp <= 0:
+            result = "Target hp <= 0"
         elif self.target.flying and not self.attacker.flying and not self.attacker.atk_flying:
             result = "Cannot reach unit in sky"
         if result is not True:
