@@ -147,9 +147,9 @@ class Init(AbstractOperation):
             return "Wrong number of cards"
         elif len(self.creatures) != len(set(self.creatures)):    # 生物互不相同
             return "Duplicate creatures"
-        elif not creature_legality():       # 生物是否存在
+        elif not self.creature_legality():       # 生物是否存在
             return "Wrong creature name"
-        elif not artifact_legality():       # 神器是否存在
+        elif not self.artifact_legality():       # 神器是否存在
             return "Wrong artifact name"
         return True
 
@@ -367,9 +367,9 @@ class Use(AbstractOperation):
             relic = self.map.get_relic_by_id(self.player_id)
             barracks = self.map.get_barracks(self.player_id)
             for barrack in barracks:
-                if len(calculator.units_in_range(barrack.pos, 3, flyingIncluded=False)) != 0:
+                if len(calculator.units_in_range(barrack.pos, 3, self.map, flyingIncluded=False)) != 0:
                     return False
-            return len(calculator.units_in_range(relic.pos, 5, flyingIncluded=False)) != 0
+            return len(calculator.units_in_range(relic.pos, 5, self.map, flyingIncluded=False)) != 0
         elif self.artifact.name == "HolyLight":
             return calculator.in_map(self.target)
         return True
@@ -382,7 +382,7 @@ class Use(AbstractOperation):
             result = "The artifact is " + self.artifact.state
         elif self.artifact.cost > self.player.mana:
             result = "Insufficient mana"
-        elif not special_check():
+        elif not self.special_check():
             result = "Conditions not covered"
         return result
 
