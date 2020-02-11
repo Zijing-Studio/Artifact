@@ -42,12 +42,13 @@ struct Barrack // 驻扎点
 
 struct Relic // 神迹
 {
-    int camp;         // 阵营
-    int max_hp;       // 最大生命值
-    int hp;           // 当前生命值
-    Pos pos;          // 位置
-    std::string name; // 名字
-    int id;           // id
+    int camp;                         // 阵营
+    int max_hp;                       // 最大生命值
+    int hp;                           // 当前生命值
+    Pos pos;                          // 位置
+    std::vector<Pos> summon_pos_list; // 初始出兵点位置
+    std::string name;                 // 名字
+    int id;                           // id
 };
 
 struct Obstacle
@@ -134,6 +135,7 @@ void from_json(const json &j, Relic &r)
     j.at("max_hp").get_to(r.max_hp);
     j.at("hp").get_to(r.hp);
     j.at("pos").get_to(r.pos);
+    j.at("summon_pos_list").get_to(r.summon_pos_list);
     j.at("name").get_to(r.name);
     j.at("id").get_to(r.id);
 }
