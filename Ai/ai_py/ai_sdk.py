@@ -286,7 +286,7 @@ def can_use_artifact(_map, artifact, target, camp):
     return False
 
 def get_unit_by_id(units, unit_id):
-    '''在units列表中查找一个给定unit_id的unit
+    '''在units数组中查找一个给定unit_id的unit
 
     Args:
         units: Unit字典数组 (map['units'])
@@ -301,7 +301,7 @@ def get_unit_by_id(units, unit_id):
     return None
 
 def get_units_by_camp(units, unit_camp):
-    '''在units列表中查找给定unit_camp的unit
+    '''获取units数组中所有阵营为unit_camp的unit
 
     Args:
         units: Unit字典数组 (map['units'])

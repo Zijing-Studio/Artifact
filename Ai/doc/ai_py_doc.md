@@ -120,6 +120,20 @@ can_use_artifact(_map, artifact, target, camp)
 ​		判断阵营camp能否对目标target使用神器artifact(不考虑消耗、冷却)
 
 
+
+
+```python
+get_unit_by_id(units, unit_id)
+```
+​		在units中查找一个给定unit_id的unit
+
+
+
+```python
+get_units_by_camp(units, unit_camp)
+```
+​		获取units中所有阵营为unit_camp的unit
+
 ## ai.py
 
 包含类AI。该类包含的类方法如下
