@@ -196,6 +196,18 @@ def in_map(pos):
         return False
     return True
 
+def all_pos_in_map():
+    '''
+    return all positions in map
+    '''
+    all_pos = []
+    for i in range(-8, 9):
+        for j in range(-8, 9):
+            cur_pos = (i, j, -(i+j))
+            if in_map(cur_pos):
+                all_pos.append(cur_pos)
+    return all_pos
+
 if __name__ == "__main__":
     print(cube_reachable((0, 0, 0), 1, MAPBORDER))
     print(MAPBORDER)

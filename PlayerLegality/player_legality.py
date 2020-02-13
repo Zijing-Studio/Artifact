@@ -5,6 +5,7 @@
     player legality check api
 '''
 from . import operations
+from StateSystem.Event import Event
 import json
 
 class Parser:
@@ -26,6 +27,8 @@ class Parser:
         self.moved = []
         self.attacked = []
         self.round = _round
+        self.map.emit(Event("TurnStart"))
+        self.map.start_event_processing()
 
     def parse(self, operation_json):
         '''
