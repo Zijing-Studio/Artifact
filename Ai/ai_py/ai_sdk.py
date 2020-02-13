@@ -284,3 +284,34 @@ def can_use_artifact(_map, artifact, target, camp):
     elif artifact["name"] == "SalamanderShield":
         return artifact["camp"] == target["camp"]
     return False
+
+def get_unit_by_id(units, unit_id):
+    '''在units列表中查找一个给定unit_id的unit
+
+    Args:
+        units: Unit字典数组 (map['units'])
+        unit_id: 要找的unit的id
+
+    Returns:
+        如果有,返回对应的unit,否则返回None
+    '''
+    for unit in units:
+        if unit['id'] == unit_id:
+            return unit
+    return None
+
+def get_units_by_camp(units, unit_camp):
+    '''在units列表中查找给定unit_camp的unit
+
+    Args:
+        units: Unit字典数组 (map['units'])
+        unit_camp: 要找的unit的camp
+
+    Returns:
+        返回camp等于unit_camp的Unit列表(没有时返回空列表)
+    '''
+    camp_units = []
+    for unit in units:
+        if unit['camp'] == unit_camp:
+            camp_units.append(unit)
+    return camp_units
