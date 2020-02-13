@@ -279,4 +279,16 @@ bool in_map(Point pos) {
 	return true;
 }
 
+std::vector<Point> all_pos_in_map() {
+	std::vector<Point> all_pos;
+	for (int i = -8; i < 9; i++) {
+		for (int j = -8; j < 9; j++) {
+			Point cur_pos = Point(i, j, -(i+j));
+			if (in_map(cur_pos))
+				all_pos.push_back(cur_pos);
+		}
+	}
+	return all_pos;
+}
+
 }

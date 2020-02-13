@@ -20,5 +20,8 @@ units_in_range(pos, dist, _map, camp=-1, flyingIncluded=True, onlandIncluded=Tru
 
 # 判断某个点pos是否在地图范围之内，返回布尔值
 in_map(pos)
+
+# 给出地图内的所有点
+all_pos_in_map()
 ```
 
