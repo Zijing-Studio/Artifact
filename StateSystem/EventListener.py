@@ -9,6 +9,24 @@ class EventListener:
     def deal_event(self,event):
         pass
 
+class RefreshMoveAtkListener(EventListener):
+    def deal_event(self,event):
+        if event.name == "Refresh" and event.parameter_dict["camp"] == self.host.camp:
+            self.host.can_move = True
+            self.host.can_atk = True
+
+class OneMoveListener(EventListener):
+    def deal_event(self,event):
+        if event.name == "Arrive" and event.parameter_dict["source"] == self.host:
+            self.host.can_move = False
+            if not self.host.agility:
+                self.host.can_atk = False
+        if event.name == "Attack" and event.parameter_dict["source"] == self.host:
+            self.host.can_atk = False
+            if not self.host.agility:
+                self.host.can_move = False
+
+
 class DamageListener(EventListener):
     def deal_event(self,event):
         if event.name == "Damage":
