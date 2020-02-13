@@ -27,6 +27,8 @@ class Unit:
         self.atk_flying = UNIT_DATA[name]["atk_flying"]
         self.agility = UNIT_DATA[name]["agility"]
         self.holy_shield = UNIT_DATA[name]["holy_shield"]
+        self.can_atk = False
+        self.can_move = False
 
         self.death_flag = False
 
@@ -35,6 +37,8 @@ class Unit:
         self.state_system = state_system
         self.event_listener_list = []
 
+        self.add_event_listener(RefreshMoveAtkListener())
+        self.add_event_listener(OneMoveListener())
         self.add_event_listener(DamageListener())
         self.add_event_listener(AttackListener())
         self.add_event_listener(MoveListener())
@@ -54,7 +58,9 @@ class Unit:
     Max Move: {}
     Cool Down:{}
     Pos: {}
-    Holy Shield: {}'''.format(
+    Holy Shield: {}
+    Can Move: {}
+    Can Attack: {}'''.format(
                 self.name,
                 self.id,
                 self.camp,
@@ -66,7 +72,9 @@ class Unit:
                 self.max_move,
                 self.cool_down,
                 self.pos,
-                self.holy_shield
+                self.holy_shield,
+                self.can_move,
+                self.can_atk
             )
     
     def parse(self):
@@ -87,7 +95,9 @@ class Unit:
             "flying": self.flying,
             "atk_flying": self.atk_flying,
             "agility": self.agility,
-            "holy_shield": self.holy_shield
+            "holy_shield": self.holy_shield,
+            "can_atk": self.can_atk,
+            "can_move": self.can_move
         }
 
     def add_event_listener(self,listener):

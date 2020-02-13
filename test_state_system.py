@@ -25,10 +25,15 @@ if __name__ == "__main__":
     sys.start_event_processing()
     a=sys.map.get_unit_at((0,0,0))
     b=sys.map.get_unit_at((0,1,-1))
-    sys.emit(Event("ActivateArtifact",{
-        "camp": 0,
-        "name": "InfernoFlame",
-        "target": (0,1,0)
+    sys.emit(Event("TurnEnd"))
+    sys.start_event_processing()
+    sys.emit(Event("TurnStart"))
+    sys.start_event_processing()
+    print(sys.current_player_id)
+    print(a)
+    sys.emit(Event("Attack",{
+        "source": a,
+        "target": b
     }))
     sys.start_event_processing()
     print(a)
@@ -40,6 +45,7 @@ if __name__ == "__main__":
     print(sys.parse())
     sys.emit(Event("TurnStart"))
     sys.start_event_processing()
+    print(a)
     sys.emit(Event("TurnEnd"))
     sys.start_event_processing()
     # print(sys.parse())
