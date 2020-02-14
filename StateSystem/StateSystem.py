@@ -105,7 +105,7 @@ class StateSystem:
     def get_summon_pos_list(self,player_camp):
         result = self.get_relic_by_id(player_camp).summon_pos_list
         for barrack in self.get_barracks(player_camp):
-            result.append(barrack.summon_pos_list)
+            result += barrack.summon_pos_list
         return result
 
     def get_barracks(self,player_camp):
