@@ -205,18 +205,6 @@ def get_distance_in_sky(_map, pos_a, pos_b, camp):
             obstacles_pos.append(unit["pos"])
     return len(calculator.search_path(pos_a, pos_b, obstacles_pos, []))
 
-def get_units(_map, pos):
-    '''获取地图_map上位置pos上所有生物
-
-    Args:
-        _map: 地图
-        pos: 坐标
-
-    Returns:
-        list (Unit)
-    '''
-    return [unit for unit in _map["units"] if unit["pos"] == pos]
-
 def check_barrack(_map, pos):
     '''对于指定位置pos,判断其驻扎情况
 
@@ -285,33 +273,49 @@ def can_use_artifact(_map, artifact, target, camp):
         return artifact["camp"] == target["camp"]
     return False
 
-def get_unit_by_id(units, unit_id):
-    '''在units数组中查找一个给定unit_id的unit
+def get_unit_by_pos(_map, pos, flying):
+    '''获取地图_map上位置pos上的生物
 
     Args:
-        units: Unit字典数组 (map['units'])
+        _map: 地图
+        pos: 坐标
+        flying: 飞行生物还是地面生物
+
+    Returns:
+        Unit 如果有,返回对应的unit,否则返回None
+    '''
+    for unit in _map["units"]:
+        if unit["pos"] == pos and unit["flying"] == flying:
+            return unit
+    return None
+
+def get_unit_by_id(_map, unit_id):
+    '''获取地图_map上id为unit_id的unit
+
+    Args:
+        _map: 地图
         unit_id: 要找的unit的id
 
     Returns:
         Unit 如果有,返回对应的unit,否则返回None
     '''
-    for unit in units:
+    for unit in _map['units']:
         if unit['id'] == unit_id:
             return unit
     return None
 
-def get_units_by_camp(units, unit_camp):
-    '''获取units数组中所有阵营为unit_camp的unit
+def get_units_by_camp(_map, unit_camp):
+    '''获取地图_map上所有阵营为unit_camp的unit
 
     Args:
-        units: Unit字典数组 (map['units'])
+        _map: 地图
         unit_camp: 要找的unit的camp
 
     Returns:
         list (Unit) 返回camp等于unit_camp的Unit列表(没有时返回空列表)
     '''
     camp_units = []
-    for unit in units:
+    for unit in _map['units']:
         if unit['camp'] == unit_camp:
             camp_units.append(unit)
     return camp_units

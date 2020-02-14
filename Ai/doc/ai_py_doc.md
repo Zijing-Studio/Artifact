@@ -90,12 +90,6 @@ get_distance_in_sky(_map, pos_a, pos_b, camp)
 
 
 
-```python
-get_units(_map, pos)
-```
-​		获取地图_map上位置pos上所有生物。
-
-
 
 
 ```python
@@ -121,18 +115,22 @@ can_use_artifact(_map, artifact, target, camp)
 
 
 
+```python
+get_unit_by_pos(_map, pos, flying)
+```
+​		获取地图_map上位置pos上的生物
 
 ```python
-get_unit_by_id(units, unit_id)
+get_unit_by_id(_map, unit_id)
 ```
-​		在units中查找一个给定unit_id的unit
+​		获取地图_map上id为unit_id的unit
 
 
 
 ```python
-get_units_by_camp(units, unit_camp)
+get_units_by_camp(_map, unit_camp)
 ```
-​		获取units中所有阵营为unit_camp的unit
+​		获取地图_map上所有阵营为unit_camp的unit
 
 
 

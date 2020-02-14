@@ -178,18 +178,6 @@ int getDistanceInSky(gameunit::Map map, gameunit::Pos pos_a, gameunit::Pos pos_b
     return calculator::search_path(pos_a, pos_b, obstacles_pos, {}).size();
 }
 
-// 获取地图map上位置pos上所有生物
-std::vector<gameunit::Unit> getUnits(gameunit::Map map, gameunit::Pos pos)
-{
-    std::vector<gameunit::Unit> units_on_pos;
-    for (int i = 0; i < map.units.size(); ++i)
-    {
-        if (map.units[i].pos == pos)
-            units_on_pos.push_back(map.units[i]);
-    }
-    return units_on_pos;
-}
-
 // 对于指定位置pos,判断其驻扎情况
 // 不是驻扎点返回-2,中立返回-1,否则返回占领该驻扎点的阵营(0或1)
 int checkBarrack(gameunit::Map map, gameunit::Pos pos)
@@ -257,14 +245,14 @@ bool canUseArtifact(gameunit::Artifact artifact, gameunit::Unit unit)
     return false;
 }
 
-// 在units数组中查找一个给定unit_id的unit
+// 获取地图map上位置pos上的生物
 // 如果有,返回对应的Unit,否则返回一个id为-1的Unit
-gameunit::Unit get_unit_by_id(std::vector<gameunit::Unit> units, int unit_id)
+gameunit::Unit getUnitsByPos(gameunit::Map map, gameunit::Pos pos, bool flying)
 {
-    for (int i = 0; i < units.size(); ++i)
+    for (int i = 0; i < map.units.size(); ++i)
     {
-        if (units[i].id == unit_id)
-            return units[i];
+        if (map.units[i].pos == pos && map.units[i].flying == flying)
+            return map.units[i];
     }
     // 未找到时返回一个id为-1的Unit
     gameunit::Unit no_unit;
@@ -272,15 +260,30 @@ gameunit::Unit get_unit_by_id(std::vector<gameunit::Unit> units, int unit_id)
     return no_unit;
 }
 
-// 在units数组中查找给定unit_camp的unit
+// 获取地图map上id为unit_id的unit
+// 如果有,返回对应的Unit,否则返回一个id为-1的Unit
+gameunit::Unit getUnitById(gameunit::Map map, int unit_id)
+{
+    for (int i = 0; i < map.units.size(); ++i)
+    {
+        if (map.units[i].id == unit_id)
+            return map.units[i];
+    }
+    // 未找到时返回一个id为-1的Unit
+    gameunit::Unit no_unit;
+    no_unit.id = -1;
+    return no_unit;
+}
+
+// 获取地图map上所有阵营为unit_camp的unit
 // 返回camp等于unit_camp的Unit列表(没有时返回空列表)
-std::vector<gameunit::Unit> get_units_by_camp(std::vector<gameunit::Unit> units, int unit_camp)
+std::vector<gameunit::Unit> getUnitsByCamp(gameunit::Map map, int unit_camp)
 {
     std::vector<gameunit::Unit> camp_units;
-    for (int i = 0; i < units.size(); ++i)
+    for (int i = 0; i < map.units.size(); ++i)
     {
-        if (units[i].camp == unit_camp)
-            camp_units.push_back(units[i]);
+        if (map.units[i].camp == unit_camp)
+            camp_units.push_back(map.units[i]);
     }
     return camp_units;
 }

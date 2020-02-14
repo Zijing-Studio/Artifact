@@ -130,12 +130,6 @@ int getDistanceInSky(gameunit::Map map, gameunit::Pos pos_a, gameunit::Pos pos_b
 
 
 
-```cpp
-std::vector<gameunit::Unit> getUnits(gameunit::Map map, gameunit::Pos pos)
-```
-
-​		获取地图map上位置pos上所有生物。
-
 
 
 
@@ -171,21 +165,27 @@ bool canUseArtifact(gameunit::Artifact artifact, gameunit::Unit unit)
 ​		判断能否对生物pos使用神器artifact(不考虑消耗、冷却)。
 
 
+```cpp
+gameunit::Unit getUnitsByPos(gameunit::Map map, gameunit::Pos pos, bool flying)
+
+```
+
+​		获取地图map上位置pos上的生物。
 
 
 ```cpp
-gameunit::Unit get_unit_by_id(std::vector<gameunit::Unit> units, int unit_id)
+gameunit::Unit getUnitById(gameunit::Map map, int unit_id)
 ```
 
-​		在units数组中查找一个给定unit_id的unit
+​		获取地图map上id为unit_id的unit。
 
 
 
 ```cpp
-std::vector<gameunit::Unit> get_units_by_camp(std::vector<gameunit::Unit> units, int unit_camp)
+std::vector<gameunit::Unit> getUnitsByCamp(gameunit::Map map, int unit_camp)
 ```
 
-​		在units数组中查找给定unit_camp的unit
+​		获取地图map上所有阵营为unit_camp的unit。
 
 
 
@@ -193,7 +193,7 @@ std::vector<gameunit::Unit> get_units_by_camp(std::vector<gameunit::Unit> units,
 std::vector<gameunit::Pos> get_summon_pos_by_camp(gameunit::Map map, int camp)
 ```
 
-​		获取地图上所有属于阵营camp的出兵点(初始出兵点+额外出兵点)
+​		获取地图上所有属于阵营camp的出兵点(初始出兵点+额外出兵点)。
 
 ## ai.cpp
 
