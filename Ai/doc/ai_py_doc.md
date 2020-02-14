@@ -134,6 +134,14 @@ get_units_by_camp(units, unit_camp)
 ```
 ​		获取units中所有阵营为unit_camp的unit
 
+
+
+
+```python
+get_summon_pos_by_camp(_map, camp)
+```
+​		获取地图上所有属于阵营camp的出兵点(初始出兵点+额外出兵点)
+
 ## ai.py
 
 包含类AI。该类包含的类方法如下

@@ -284,6 +284,23 @@ std::vector<gameunit::Unit> get_units_by_camp(std::vector<gameunit::Unit> units,
     }
     return camp_units;
 }
+
+// 获取地图上所有属于阵营camp的出兵点(初始出兵点+额外出兵点)
+std::vector<gameunit::Pos> get_summon_pos_by_camp(gameunit::Map map, int camp)
+{
+    std::vector<gameunit::Pos> summon_pos;
+    for(auto relic = map.relics.begin();relic!=map.relics.end();relic++)
+    {
+        if(relic->camp==camp)
+            summon_pos.insert(summon_pos.end(),relic->summon_pos_list.begin(),relic->summon_pos_list.end());
+    }
+    for(auto barrack = map.barracks.begin();barrack!=map.barracks.end();barrack++)
+    {
+        if(barrack->camp==camp)
+            summon_pos.insert(summon_pos.end(),barrack->summon_pos_list.begin(),barrack->summon_pos_list.end());
+    }
+    return summon_pos;
+}
 }; // namespace ai_sdk
 
 #endif

@@ -213,7 +213,7 @@ def get_units(_map, pos):
         pos: 坐标
 
     Returns:
-        list 包含Unit
+        list (Unit)
     '''
     return [unit for unit in _map["units"] if unit["pos"] == pos]
 
@@ -293,7 +293,7 @@ def get_unit_by_id(units, unit_id):
         unit_id: 要找的unit的id
 
     Returns:
-        如果有,返回对应的unit,否则返回None
+        Unit 如果有,返回对应的unit,否则返回None
     '''
     for unit in units:
         if unit['id'] == unit_id:
@@ -308,10 +308,29 @@ def get_units_by_camp(units, unit_camp):
         unit_camp: 要找的unit的camp
 
     Returns:
-        返回camp等于unit_camp的Unit列表(没有时返回空列表)
+        list (Unit) 返回camp等于unit_camp的Unit列表(没有时返回空列表)
     '''
     camp_units = []
     for unit in units:
         if unit['camp'] == unit_camp:
             camp_units.append(unit)
     return camp_units
+
+def get_summon_pos_by_camp(_map, camp):
+    '''获取地图上所有属于阵营camp的出兵点(初始出兵点+额外出兵点)
+
+    Args:
+        _map: 地图
+        camp: 阵营
+
+    Returns:
+        list (Pos)
+    '''
+    summon_pos = []
+    for relic in _map['relics']:
+        if relic['camp'] == camp:
+            summon_pos += relic['summon_pos_list']
+    for barrack in _map['barracks']:
+        if barrack['camp'] == camp:
+            summon_pos += barrack['summon_pos_list']
+    return summon_pos
