@@ -263,8 +263,8 @@ class Game:
                     4, 'big', signed=True)
                 # a0
                 media_info += int(artifact_names.index(
-                    event.parameter_dict['cards']["artifacts"][0] +
-                    10 * event.parameter_dict['camp'])
+                    event.parameter_dict['cards']["artifacts"][0]) +
+                    10 * event.parameter_dict['camp']
                                  ).to_bytes(4, 'big', signed=True)
                 # c1 c2 c3
                 for creature_name in event.parameter_dict['cards']["creatures"]:

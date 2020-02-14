@@ -256,6 +256,34 @@ bool canUseArtifact(gameunit::Artifact artifact, gameunit::Unit unit)
     }
     return false;
 }
+
+// 在units数组中查找一个给定unit_id的unit
+// 如果有,返回对应的Unit,否则返回一个id为-1的Unit
+gameunit::Unit get_unit_by_id(std::vector<gameunit::Unit> units, int unit_id)
+{
+    for (int i = 0; i < units.size(); ++i)
+    {
+        if (units[i].id == unit_id)
+            return units[i];
+    }
+    // 未找到时返回一个id为-1的Unit
+    gameunit::Unit no_unit;
+    no_unit.id = -1;
+    return no_unit;
+}
+
+// 在units数组中查找给定unit_camp的unit
+// 返回camp等于unit_camp的Unit列表(没有时返回空列表)
+std::vector<gameunit::Unit> get_units_by_camp(std::vector<gameunit::Unit> units, int unit_camp)
+{
+    std::vector<gameunit::Unit> camp_units;
+    for (int i = 0; i < units.size(); ++i)
+    {
+        if (units[i].camp == unit_camp)
+            camp_units.push_back(units[i]);
+    }
+    return camp_units;
+}
 }; // namespace ai_sdk
 
 #endif

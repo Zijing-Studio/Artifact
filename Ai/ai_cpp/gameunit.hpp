@@ -31,6 +31,8 @@ struct Unit // 生物
     bool atk_flying;               // 是否对空
     bool agility;                  // 是否迅捷
     bool holy_shield;              // 有无圣盾
+    bool can_atk;                  // 能否攻击
+    bool can_move;                 // 能否移动
 };
 
 struct Barrack // 驻扎点
@@ -117,6 +119,8 @@ void from_json(const json &j, Unit &u)
     j.at("atk_flying").get_to(u.atk_flying);
     j.at("agility").get_to(u.agility);
     j.at("holy_shield").get_to(u.holy_shield);
+    j.at("can_atk").get_to(u.can_atk);
+    j.at("can_move").get_to(u.can_move);
 }
 
 void from_json(const json &j, Barrack &b)

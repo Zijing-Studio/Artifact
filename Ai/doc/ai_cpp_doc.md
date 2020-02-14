@@ -171,6 +171,22 @@ bool canUseArtifact(gameunit::Artifact artifact, gameunit::Unit unit)
 ​		判断能否对生物pos使用神器artifact(不考虑消耗、冷却)。
 
 
+
+
+```cpp
+gameunit::Unit get_unit_by_id(std::vector<gameunit::Unit> units, int unit_id)
+```
+
+​		在units数组中查找一个给定unit_id的unit
+
+
+
+```cpp
+std::vector<gameunit::Unit> get_units_by_camp(std::vector<gameunit::Unit> units, int unit_camp)
+```
+
+​		在units数组中查找给定unit_camp的unit
+
 ## ai.cpp
 
 包含类AI。该类包含的类方法如下
