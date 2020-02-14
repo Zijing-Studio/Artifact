@@ -496,19 +496,18 @@ class Game:
         opt_dict = logic_sdk.read_opt()
         self.init_player(opt_dict['player_list'])
         self.replay = opt_dict['replay']
+        # 录像文件初始
+        self.send_media_info(int(0).to_bytes(4, 'big', signed=True))
         # 每个回合的时间限制和单条消息的最大长度
         logic_sdk.send_init(3, 2048)
         # 处理初始卡组
         self.select_cards()
-        # 播放器协议初始（播放器版本号）& 选卡情况
-        self.send_media_info(int(0).to_bytes(4, 'big', signed=True))
         self.send_media_info()
         # 游戏回合
         self._round = 0
         self.parser.set_round(0)
         self.listen = self.player0
         while not self.is_end:
-            # 回合开始
             self.parser.parse(json.dumps(
                 {"player": 0 if self.listen == self.player0 else 1,
                  "round": self._round,

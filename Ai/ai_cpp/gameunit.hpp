@@ -27,7 +27,7 @@ struct Unit // 生物
     int cool_down;                 // 冷却时间
     Pos pos;                       // 位置
     int level;                     // 等级
-    bool flying;                   // 能否飞行
+    bool flying;                   // 是否飞行
     bool atk_flying;               // 是否对空
     bool agility;                  // 是否迅捷
     bool holy_shield;              // 有无圣盾
