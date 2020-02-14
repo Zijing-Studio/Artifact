@@ -289,7 +289,7 @@ std::vector<gameunit::Unit> getUnitsByCamp(gameunit::Map map, int unit_camp)
 }
 
 // 获取地图上所有属于阵营camp的出兵点(初始出兵点+额外出兵点)
-std::vector<gameunit::Pos> get_summon_pos_by_camp(gameunit::Map map, int camp)
+std::vector<gameunit::Pos> getSummonPosByCamp(gameunit::Map map, int camp)
 {
     std::vector<gameunit::Pos> summon_pos;
     for(auto relic = map.relics.begin();relic!=map.relics.end();relic++)
