@@ -4,10 +4,75 @@
 import sys
 import json
 import random
-import logic_sdk
 from PlayerLegality.player_legality import Parser
 from StateSystem.StateSystem import StateSystem
 
+DEBUG = True  # DEBUG时会生成一个log.txt记录logic收发的信息
+
+
+def logic_convert_byte(data_str, send_goal):
+    '''传输数据的时候加数据长度作为数据头
+    '''
+    message_len = len(data_str)
+    message = message_len.to_bytes(4, byteorder='big', signed=True)
+    message += send_goal.to_bytes(4, byteorder='big', signed=True)
+    if isinstance(data_str, str):
+        message += bytes(data_str, encoding="utf8")
+    elif isinstance(data_str, bytes):
+        message += data_str
+    return message
+
+def read_opt():
+    '''读取发过来的操作
+    '''
+    read_buffer = sys.stdin.buffer
+    data_len = int.from_bytes(read_buffer.read(4), byteorder='big', signed=True)
+    data = read_buffer.read(data_len)
+    if DEBUG:
+        with open('log.txt', 'a') as logfile:
+            logfile.write('judger->logic:\n'+str(json.loads(data))+'\n')
+    opt = json.loads(data)
+    return opt
+
+def send_end_info(end_info):
+    '''发送终局信息
+    '''
+    end_dict = {}
+    end_dict['state'] = -1
+    end_dict['end_info'] = json.dumps(end_info)
+    if DEBUG:
+        with open('log.txt', 'a') as logfile:
+            logfile.write('end:\n'+end_dict['end_info']+'\n')
+    sys.stdout.buffer.write(logic_convert_byte(json.dumps(end_dict), -1))
+    sys.stdout.flush()
+
+def send_init(time, length):
+    '''发送初始化信息
+    '''
+    init_dict = {"time": time, "length": length}
+    sys.stdout.buffer.write(logic_convert_byte(json.dumps({"state": 0, "content": init_dict}), -1))
+    sys.stdout.flush()
+
+def send_state(state_dict):
+    '''发送回合信息
+
+    Args:
+        state_dict: dict
+    '''
+    if DEBUG:
+        with open('log.txt', 'a') as logfile:
+            logfile.write('logic->judger:\n'+json.dumps(state_dict)+'\n')
+    sys.stdout.buffer.write(logic_convert_byte(json.dumps(state_dict), -1))
+    sys.stdout.flush()
+
+def send_message_goal(message_str, send_goal):
+    '''发送二进制流
+    '''
+    if DEBUG:
+        with open('log.txt', 'a') as logfile:
+            logfile.write('logic->'+str(send_goal)+':\n'+message_str+'\n')
+    sys.stdout.buffer.write(logic_convert_byte(message_str, send_goal))
+    sys.stdout.flush()
 
 class Game:
     '''游戏 Artifact
@@ -62,7 +127,7 @@ class Game:
         while not self.is_end:
             self.state += 1
             self.send_game_info()
-            opt_dict = logic_sdk.read_opt()
+            opt_dict = read_opt()
             if opt_dict["player"] == self.listen:
                 parser_respond = self.parser.parse(opt_dict["content"])
                 if not parser_respond:
@@ -411,7 +476,7 @@ class Game:
         with open(self.replay, 'ab') as replay_file:
             replay_file.write(media_info)
         for media in self.media_player:
-            logic_sdk.send_message_goal(media_info, media)
+            send_message_goal(media_info, media)
 
     def send_game_info(self):
         '''向当前回合的玩家发送游戏当前局面信息
@@ -429,7 +494,7 @@ class Game:
         json_length = str(len(json.dumps(message)))
         state_dict['content'] = [
             "0" * (4 - len(json_length)) + json_length + json.dumps(message)]
-        logic_sdk.send_state(state_dict)
+        send_state(state_dict)
 
     def init_player(self, player_list):
         '''根据玩家列表进行初始化处理
@@ -468,14 +533,14 @@ class Game:
         self.state += 1
         self.listen = self.player0
         self.send_game_info()
-        opt_dict0 = logic_sdk.read_opt()
+        opt_dict0 = read_opt()
         if opt_dict0["player"] == self.player0:
             is_player0_ready = self.parser.parse(opt_dict0["content"])
         # 1号玩家
         self.state += 1
         self.listen = self.player1
         self.send_game_info()
-        opt_dict1 = logic_sdk.read_opt()
+        opt_dict1 = read_opt()
         if opt_dict1["player"] == self.player1:
             is_player1_ready = self.parser.parse(opt_dict0["content"])
         # 双方玩家是否均准备好卡组
@@ -493,13 +558,13 @@ class Game:
         '''开始游戏
         '''
         # 设置玩家、播放器
-        opt_dict = logic_sdk.read_opt()
+        opt_dict = read_opt()
         self.init_player(opt_dict['player_list'])
         self.replay = opt_dict['replay']
         # 录像文件初始
         self.send_media_info(int(0).to_bytes(4, 'big', signed=True))
         # 每个回合的时间限制和单条消息的最大长度
-        logic_sdk.send_init(3, 2048)
+        send_init(3, 2048)
         # 处理初始卡组
         self.select_cards()
         self.send_media_info()
@@ -549,7 +614,7 @@ class Game:
         media_info += int(0).to_bytes(4, 'big', signed=True)
         media_info += int(-1).to_bytes(4, 'big', signed=True)
         self.send_media_info(media_info)
-        logic_sdk.send_end_info(end_info)
+        send_end_info(end_info)
         sys.exit()
 
 
