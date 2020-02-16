@@ -1,8 +1,20 @@
 # AI运行说明
 
-0、ai启动后，会获取自己的阵营。之后调用发送初始卡组的api，确定初始卡组。
+0、使用judger启动ai
 
-1、每位玩家的回合开始时，judger会向ai发送当前游戏信息(json格式)。
+启动指令: python3 <judger路径> <启动逻辑command> <启动AI 1 command> <启动AI 2 command> …… <逻辑生成replay路径>
+
+启动指令示例: python3 .\Judger\judger.py python+.\\logic.py python+.\\Ai\\ai_py\\ai.py  .\\Ai\\ai_cpp\\ai.exe  record.txt
+
+AI可以是C++版本，也可以选择python版本。
+
+注意judger与AI的通信使用标准输入/输出流。除了直接使用sdk中相关的函数外，请不要在标准输出流中输出任何信息。
+
+logic.py中有一个DEBUG参数，设置为True的时候会在当前目录下生成一个log.txt文件，记录收发的信息。
+
+1、ai启动后，会先调用选取卡组的函数，在获取自己的阵营后调用发送初始卡组的api，确定初始卡组。
+
+2、每位玩家的回合开始时，judger会向ai发送当前游戏局面信息(json格式)。
 
 > 游戏信息的相关格式在gameinfo.md中给出
 
@@ -10,7 +22,7 @@
 
 玩家根据当前游戏局面信息进行自己的处理，并调用相关的api发送自己的操作。
 
-每次操作后，judger会向ai发送操作后的游戏信息。
+每次操作后，judger会向ai发送操作后的当前游戏局面信息。
 
 玩家可以不断发送自己的操作，直到发送结束回合的指令为止。
 
