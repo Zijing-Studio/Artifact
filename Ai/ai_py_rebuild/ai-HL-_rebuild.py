@@ -48,6 +48,7 @@ class AI(AiClient):
         else:
             # 神器能用就用，选择覆盖单位数最多的地点
             # TODO
+            '''
             if self.players[self.my_camp].mana >= 6 and self.can_use_artifact():
                 pos_list = calculator.all_pos_in_map()
                 best_pos = pos_list[0]
@@ -59,7 +60,7 @@ class AI(AiClient):
                         best_pos = pos, max_benefit = len(unit_list)
                 self.use(self.players[self.my_camp]['Artifact'][0]['id'], best_pos)
                 self.update_game_info()
-            
+            '''
             # 之后先战斗，再移动
             self.battle()
             self.update_game_info()
@@ -139,7 +140,7 @@ class AI(AiClient):
             enemy_list = self.get_units_by_camp(self.my_camp ^ 1)
             target_list = []
             for enemy in enemy_list:
-                if self.can_attack(ally.id, enemy.id):
+                if self.can_attack(ally, enemy):
                     target_list.append(enemy)
             if len(target_list) == 0:
                 continue
@@ -158,7 +159,7 @@ class AI(AiClient):
                 enemy_list.sort(key=lambda _enemy: _enemy.atk, reverse=True)
                 suc = False
                 for enemy in target_list:
-                    if not self.can_attack(enemy.id, ally.id):
+                    if not self.can_attack(enemy, ally):
                         self.attack(ally.id, enemy.id)
                         suc = True
                         self.update_game_info()
@@ -194,6 +195,7 @@ class AI(AiClient):
                     continue
                 reach_list.sort(
                     key=lambda _pos: calculator.cube_distance(_pos, self.enemy_pos))
+                # TODO
                 self.move(ally.id, reach_list[0])
 
             else:
