@@ -12,7 +12,7 @@ UNIT_DATA = {
         "agility": False,           # 迅捷
         "holy_shield": False        # 圣盾
     },
-    "Swordman": {
+    "Swordsman": {
         "cost": [2,4,6],
         "atk": [2,4,6],
         "hp": [2,4,6],

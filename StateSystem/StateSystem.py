@@ -140,8 +140,8 @@ class SummonListener(EventListener):
                         event.parameter_dict["pos"],
                         self.host
                     )
-                elif event.parameter_dict["type"] == "Swordman":
-                    unit = Swordman(
+                elif event.parameter_dict["type"] == "Swordsman":
+                    unit = Swordsman(
                         event.parameter_dict["camp"],
                         event.parameter_dict["level"],
                         event.parameter_dict["pos"],
