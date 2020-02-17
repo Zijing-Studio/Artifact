@@ -75,7 +75,7 @@ def send_message_goal(message_str, send_goal):
     sys.stdout.flush()
 
 class Game:
-    '''游戏 Artifact
+    '''游戏 神迹之战Miracle
     '''
     # pylint: disable=too-many-instance-attributes
 
