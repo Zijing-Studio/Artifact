@@ -540,7 +540,7 @@ class Game:
         self.send_game_info()
         opt_dict1 = read_opt()
         if opt_dict1["player"] == self.player1:
-            is_player1_ready = self.parser.parse(opt_dict0["content"])
+            is_player1_ready = self.parser.parse(opt_dict1["content"])
         # 双方玩家是否均准备好卡组
         if not is_player0_ready and not is_player1_ready:
             self.is_end = True
