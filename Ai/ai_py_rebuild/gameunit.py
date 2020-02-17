@@ -106,12 +106,19 @@ class Map:
         self.ground_obstacles = [Obstacle()]
         if map_dict is None:
             return
-        self.units = map_dict.get('units', [Unit()])
-        self.barracks = map_dict.get('barracks', [Barrack()])
-        self.relics = map_dict.get('relics', [Relic()])
-        self.obstacles = map_dict.get('obstacles', [Obstacle()])
-        self.flying_obstacles = map_dict.get('flying_obstacles', [Obstacle()])
-        self.ground_obstacles = map_dict.get('ground_obstacles', [Obstacle()])
+        units_dict_list = map_dict.get('units', [])
+        self.units = [Unit(x) for x in units_dict_list]
+        barracks_dict_list = map_dict.get('barracks', [])
+        self.barracks = [Barrack(x) for x in barracks_dict_list]
+        relics_dict_list = map_dict.get('relics', [])
+        self.relics = [Relic(x) for x in relics_dict_list]
+        obstacles_dict_list = map_dict.get('obstacles', [])
+        self.obstacles = [Obstacle(x) for x in obstacles_dict_list]
+        flying_obstacles_dict_list = map_dict.get('flying_obstacles', [])
+        self.flying_obstacles = [Obstacle(x) for x in flying_obstacles_dict_list]
+        ground_obstacles_dict_list = map_dict.get('ground_obstacles', [])
+        self.ground_obstacles = [Obstacle(x) for x in ground_obstacles_dict_list]
+
 
 class Player:
     '''玩家
@@ -125,6 +132,7 @@ class Player:
         self.mana = player_dict.get('mana', 0)  # 当前法力值
         self.max_mana = player_dict.get('max_mana', 0)  # 最大法力值
         self.creature_capacity = [CreatureCapacity()]
-        self.creature_capacity = player_dict.get('creature_capacity', [])
+        creature_capacity_dict_list = player_dict.get('creature_capacity', [])
+        self.creature_capacity = [CreatureCapacity(x) for x in creature_capacity_dict_list]
         self.new_summoned_id_list = player_dict.get(
             'new_summoned_id_list', [])  # 最新召唤的生物id

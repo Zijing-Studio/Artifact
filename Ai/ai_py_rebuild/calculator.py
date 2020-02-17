@@ -122,10 +122,10 @@ def get_obstacles_by_unit(unit, _map):
     '''
     obstacles = MAPBORDER
     if unit.flying:
-        obstacles += _map.get_flying_obstacles
+        obstacles += _map.flying_obstacles
     else:
-        obstacles += _map.get_ground_obstacles
-    obstacle_unit = _map.get_units()
+        obstacles += _map.ground_obstacles
+    obstacle_unit = _map.units
     for obstacle in obstacle_unit:
         if obstacle.camp != unit.camp:
             if unit.flying == obstacle.flying:
@@ -138,7 +138,7 @@ def get_obstructs_by_unit(unit, _map):
     stay at that point but cannot pass it
     '''
     obstructs = MAPBORDER
-    obstacle_unit = _map.get_units()
+    obstacle_unit = _map.units
     for obstruct in obstacle_unit:
         if obstruct.camp != unit.camp:
             for i in range(0, 6):
@@ -175,7 +175,7 @@ def units_in_range(pos, dist, _map, camp=-1, flyingIncluded=True, onlandIncluded
     onlandIncluded = True will include onland units
     '''
     units = []
-    all_units = _map.get_units()
+    all_units = _map.units
     for _unit in all_units:
         if cube_distance(_unit.pos, pos) <= dist and \
            (camp == -1 or camp == _unit.camp) and \
@@ -195,6 +195,18 @@ def in_map(pos):
     elif pos == (-7, 7, 0) or pos == (7, -7, 0):
         return False
     return True
+
+def all_pos_in_map():
+    '''
+    return all positions in map
+    '''
+    all_pos = []
+    for i in range(-8, 9):
+        for j in range(-8, 9):
+            cur_pos = (i, j, -(i+j))
+            if in_map(cur_pos):
+                all_pos.append(cur_pos)
+    return all_pos
 
 if __name__ == "__main__":
     print(cube_reachable((0, 0, 0), 1, MAPBORDER))

@@ -164,7 +164,7 @@ class Game:
         # pylint: disable=too-many-branches
         # pylint: disable=too-many-statements
         creature_names = ["", "Swordman", "Archer",
-                          "BlackBat", "Priest", "VolcanoDargon"]
+                          "BlackBat", "Priest", "VolcanoDragon"]
         artifact_names = ["", "HolyLight", "SalamanderShield", "InfernoFlame"]
 
         media_info = bytes()
@@ -432,25 +432,23 @@ class Game:
                 # event
                 media_info += int(18).to_bytes(4, 'big', signed=True)
                 # type
-                if event.parameter_dict['source'].type == 'Swordman':
-                    media_info += int(1 + 10 * event.parameter_dict['source'].camp).to_bytes(
+                if event.parameter_dict['type'] == 'Swordman':
+                    media_info += int(1 + 10 * event.parameter_dict['camp']).to_bytes(
                         4, 'big', signed=True)
-                elif event.parameter_dict['source'].type == 'Archer':
-                    media_info += int(2 + 10 * event.parameter_dict['source'].camp).to_bytes(
+                elif event.parameter_dict['type'] == 'Archer':
+                    media_info += int(2 + 10 * event.parameter_dict['camp']).to_bytes(
                         4, 'big', signed=True)
-                elif event.parameter_dict['source'].type == 'BlackBat':
-                    media_info += int(3 + 10 * event.parameter_dict['source'].camp).to_bytes(
+                elif event.parameter_dict['type'] == 'BlackBat':
+                    media_info += int(3 + 10 * event.parameter_dict['camp']).to_bytes(
                         4, 'big', signed=True)
-                elif event.parameter_dict['source'].type == 'Priest':
-                    media_info += int(4 + 10 * event.parameter_dict['source'].camp).to_bytes(
+                elif event.parameter_dict['type'] == 'Priest':
+                    media_info += int(4 + 10 * event.parameter_dict['camp']).to_bytes(
                         4, 'big', signed=True)
-                elif event.parameter_dict['source'].type == 'VolcanoDragon':
-                    media_info += int(5 + 10 * event.parameter_dict['source'].camp).to_bytes(
+                elif event.parameter_dict['type'] == 'VolcanoDragon':
+                    media_info += int(5 + 10 * event.parameter_dict['camp']).to_bytes(
                         4, 'big', signed=True)
-                else:
-                    pass
                 # level
-                media_info += int(event.parameter_dict['source'].level).to_bytes(
+                media_info += int(event.parameter_dict['level']).to_bytes(
                     4, 'big', signed=True)
                 # posX
                 media_info += event.parameter_dict['pos'][0].to_bytes(
