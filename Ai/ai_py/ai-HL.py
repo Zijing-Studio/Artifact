@@ -256,6 +256,7 @@ class AI:
         暂时只考虑1星
         """
         self.early_stage()
+        ai_sdk.end_round(self.players, self.round)
 
 
 def main():
