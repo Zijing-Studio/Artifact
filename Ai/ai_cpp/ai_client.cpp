@@ -18,6 +18,14 @@ void AiClient::chooseCards()
     init();
 }
 
+void AiClient::play()
+{
+    if (round < 20)
+        endRound();
+    else
+        exit(0);
+}
+
 void AiClient::init()
 {
     json operation_parameters;
@@ -175,7 +183,7 @@ bool AiClient::canAttack(gameunit::Unit attacker, gameunit::Unit target)
         return false;
     //攻击范围
     int dist = calculator::cube_distance(attacker.pos, target.pos);
-    if (dist < attacker.atk_range.first || dist > attacker.atk_range.second)
+    if (dist < attacker.atk_range[0] || dist > attacker.atk_range[1])
         return false;
     //对空攻击
     if (target.flying && (!attacker.atk_flying))

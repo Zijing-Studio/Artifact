@@ -16,10 +16,6 @@ public:
 
     void play()
     {
-        if (round < 20)
-            endRound();
-        else
-            exit(0);
     }
 };
 

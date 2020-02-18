@@ -71,6 +71,14 @@ class AiClient:
         '''
         self.init()
 
+    def play(self):
+        '''处理游戏信息并做出操作
+        '''
+        if self.round < 5:
+            self.end_round()
+        else:
+            exit(0)
+
     def init(self):
         '''选择初始神器artifacts和生物creatures
 
@@ -222,13 +230,13 @@ class AiClient:
         return len(calculator.search_path(pos_a, pos_b, obstacles_pos, []))
 
     def check_barrack(self, pos: list) -> int:
-        '''对于指定位置pos,判断其驻扎情况
+        '''判定位置pos的驻扎情况
 
         Args:
             pos: 地图上的[x,y,z]位置
 
         Returns:
-            int 不是驻扎点返回-2,中立返回-1,否则返回占领该驻扎点的阵营(0/1)
+            int 不是驻扎点返回-2,中立返回-1,否则返回占领该驻扎点的阵营(0或1)
         '''
         for barrack in self.map.barracks:
             if barrack.pos == pos:

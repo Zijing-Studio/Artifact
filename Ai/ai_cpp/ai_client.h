@@ -61,6 +61,9 @@ public:
     // 选择初始卡组
     void chooseCards();
 
+    // 结合当前局面信息做出操作
+    void play();
+
     // 初始卡组选择artifacts神器和creatures生物
     void init();
 
