@@ -119,7 +119,6 @@ class Map:
         ground_obstacles_dict_list = map_dict.get('ground_obstacles', [])
         self.ground_obstacles = [Obstacle(x) for x in ground_obstacles_dict_list]
 
-
 class Player:
     '''玩家
     '''
@@ -128,7 +127,8 @@ class Player:
         if player_dict is None:
             player_dict = dict()
         self.camp = player_dict.get('camp', -1)  # 阵营
-        self.artifact = player_dict.get('artifact', [''])  # 神器
+        artifact_dict_list = player_dict.get('artifact', [Artifact()])  # 神器
+        self.artifact = [Artifact(x) for x in artifact_dict_list]
         self.mana = player_dict.get('mana', 0)  # 当前法力值
         self.max_mana = player_dict.get('max_mana', 0)  # 最大法力值
         self.creature_capacity = [CreatureCapacity()]

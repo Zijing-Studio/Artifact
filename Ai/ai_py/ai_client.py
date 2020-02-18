@@ -90,12 +90,12 @@ class AiClient:
         }
         send_opt(json.dumps(message))
 
-    def summon(self, _type: str, star: int, position: list):
-        '''在位置position处召唤一个本方类型为_type,星级为star的生物
+    def summon(self, _type: str, level: int, position: list):
+        '''在位置position处召唤一个本方类型为_type,星级为level的生物
 
         Args:
             _type: 描述生物类型的字符串
-            star: 生物星级
+            level: 生物星级
             position: 地图上的[x,y,z]位置
         '''
         message = {
@@ -106,7 +106,7 @@ class AiClient:
             {
                 "position": position,
                 "type": _type,
-                "star": star
+                "star": level
             }
         }
         send_opt(json.dumps(message))

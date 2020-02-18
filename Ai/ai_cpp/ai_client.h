@@ -70,11 +70,17 @@ public:
     // 在position位置处召唤一个本方类型为type,星级为star的生物
     void summon(int type, int star, std::vector<int> position);
 
+    // 在position位置处召唤一个本方类型为type,星级为star的生物
+    void summon(int type, int star, std::tuple<int, int, int> position);
+
     // 将id为mover的生物移动到[x,y,z]位置处
     void move(int mover, int x, int y, int z);
 
     // 将id为mover的生物移动到position位置处
     void move(int mover, std::vector<int> position);
+
+    // 将id为mover的生物移动到position位置处
+    void move(int mover, std::tuple<int, int, int> position);
 
     // 令id为attacker的生物攻击id为target的生物
     void attack(int attacker, int target);
@@ -84,6 +90,9 @@ public:
 
     // 对target位置使用artifact神器
     void use(int artifact, std::vector<int> target);
+
+    // 对target位置使用artifact神器
+    void use(int artifact, std::tuple<int, int, int> target);
 
     // 结束当前回合
     void endRound();

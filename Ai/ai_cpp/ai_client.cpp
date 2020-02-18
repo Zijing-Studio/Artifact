@@ -45,6 +45,15 @@ void AiClient::summon(int type, int star, std::vector<int> position)
     sendMsg(my_camp, round, "summon", operation_parameters);
 }
 
+void AiClient::summon(int type, int star, std::tuple<int, int, int> position)
+{
+    json operation_parameters;
+    operation_parameters["position"] = position;
+    operation_parameters["type"] = type;
+    operation_parameters["star"] = star;
+    sendMsg(my_camp, round, "summon", operation_parameters);
+}
+
 void AiClient::move(int mover, int x, int y, int z)
 {
     json operation_parameters;
@@ -55,6 +64,14 @@ void AiClient::move(int mover, int x, int y, int z)
 }
 
 void AiClient::move(int mover, std::vector<int> position)
+{
+    json operation_parameters;
+    operation_parameters["mover"] = mover;
+    operation_parameters["position"] = position;
+    sendMsg(my_camp, round, "move", operation_parameters);
+}
+
+void AiClient::move(int mover, std::tuple<int, int, int> position)
 {
     json operation_parameters;
     operation_parameters["mover"] = mover;
@@ -79,6 +96,14 @@ void AiClient::use(int artifact, int target)
 }
 
 void AiClient::use(int artifact, std::vector<int> target)
+{
+    json operation_parameters;
+    operation_parameters["card"] = artifact;
+    operation_parameters["target"] = target;
+    sendMsg(my_camp, round, "attack", operation_parameters);
+}
+
+void AiClient::use(int artifact, std::tuple<int, int, int> target)
 {
     json operation_parameters;
     operation_parameters["card"] = artifact;

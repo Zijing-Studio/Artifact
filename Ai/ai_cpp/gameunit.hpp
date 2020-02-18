@@ -14,25 +14,25 @@ typedef std::tuple<int, int, int> Pos; // 坐标
 
 struct Unit // 生物
 {
-    int id;                        // id
-    int camp;                      // 阵营
-    std::string type;              // 种类
-    std::string name;              // 名字
-    int cost;                      // 法力消耗
-    int atk;                       // 攻击
-    int max_hp;                    // 生命上限
-    int hp;                        // 当前生命
-    std::pair<int, int> atk_range; // 最小攻击范围 最大攻击范围
-    int max_move;                  // 行动力
-    int cool_down;                 // 冷却时间
-    Pos pos;                       // 位置
-    int level;                     // 等级
-    bool flying;                   // 是否飞行
-    bool atk_flying;               // 是否对空
-    bool agility;                  // 是否迅捷
-    bool holy_shield;              // 有无圣盾
-    bool can_atk;                  // 能否攻击
-    bool can_move;                 // 能否移动
+    int id;                     // id
+    int camp;                   // 阵营
+    std::string type;           // 种类
+    std::string name;           // 名字
+    int cost;                   // 法力消耗
+    int atk;                    // 攻击
+    int max_hp;                 // 生命上限
+    int hp;                     // 当前生命
+    std::vector<int> atk_range; // 最小攻击范围 最大攻击范围
+    int max_move;               // 行动力
+    int cool_down;              // 冷却时间
+    Pos pos;                    // 位置
+    int level;                  // 等级
+    bool flying;                // 是否飞行
+    bool atk_flying;            // 是否对空
+    bool agility;               // 是否迅捷
+    bool holy_shield;           // 有无圣盾
+    bool can_atk;               // 能否攻击
+    bool can_move;              // 能否移动
 };
 
 struct Barrack // 驻扎点
