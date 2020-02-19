@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#/usr/bin/python
 # -*- coding:utf-8 -*-
 '''
 classes of operations
@@ -380,12 +380,12 @@ class Use(AbstractOperation):
         special check for certain artifact
         '''
         if self.artifact.name == "InfernoFlame":
-            relic = self.map.get_relic_by_id(self.player_id)
+            miracle = self.map.get_miracle_by_id(self.player_id)
             barracks = self.map.get_barracks(self.player_id)
             for barrack in barracks:
                 if len(calculator.units_in_range(barrack.pos, 3, self.map, flyingIncluded=False)) != 0:
                     return False
-            return len(calculator.units_in_range(relic.pos, 5, self.map, flyingIncluded=False)) != 0
+            return len(calculator.units_in_range(miracle.pos, 5, self.map, flyingIncluded=False)) != 0
         elif self.artifact.name == "HolyLight":
             return calculator.in_map(self.target)
         return True
