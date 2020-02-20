@@ -41,8 +41,8 @@ SWORDSMAN = [Creature("Swordsman", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
 
 ARCHER = [Creature("Archer", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
           Creature("Archer", 3, 2, 1, 1, 2, 4, 3, 4, 0, 1, 0, 0),
-          Creature("Archer", 3, 2, 1, 1, 2, 4, 3, 4, 0, 1, 0, 0),
-          Creature("Archer", 3, 2, 1, 1, 2, 4, 3, 4, 0, 1, 0, 0)]
+          Creature("Archer", 3, 4, 2, 3, 2, 4, 3, 4, 0, 1, 0, 0),
+          Creature("Archer", 3, 6, 3, 5, 2, 4, 3, 4, 0, 1, 0, 0)]
 
 BLACKBAT = [Creature("BlackBat", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
             Creature("BlackBat", 4, 2, 1, 1, 0, 1, 5, 2, 1, 1, 0, 0),

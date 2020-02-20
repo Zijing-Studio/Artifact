@@ -50,8 +50,8 @@ const Creature SWORDSMAN[4] = {Creature("Swordsman", 0, 0, 0, 0, 0, 0, 0, 0, 0, 
 // 弓箭手
 const Creature ARCHER[4] = {Creature("Archer", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
                             Creature("Archer", 3, 2, 1, 1, 2, 4, 3, 4, 0, 1, 0, 0),
-                            Creature("Archer", 3, 2, 1, 1, 2, 4, 3, 4, 0, 1, 0, 0),
-                            Creature("Archer", 3, 2, 1, 1, 2, 4, 3, 4, 0, 1, 0, 0)};
+                            Creature("Archer", 3, 4, 2, 3, 2, 4, 3, 4, 0, 1, 0, 0),
+                            Creature("Archer", 3, 6, 3, 5, 2, 4, 3, 4, 0, 1, 0, 0)};
 
 // 黑蝙蝠
 const Creature BLACKBAT[4] = {Creature("Archer", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
