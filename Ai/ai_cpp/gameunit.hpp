@@ -178,7 +178,7 @@ void from_json(const json &j, Map &m)
     j.at("obstacles").get_to(m.obstacles);
     j.at("ground_obstacles").get_to(m.ground_obstacles);
     j.at("flying_obstacles").get_to(m.flying_obstacles);
-    j.at("relics").get_to(m.miracles);
+    j.at("miracles").get_to(m.miracles);
 }
 
 void from_json(const json &j, Player &p)

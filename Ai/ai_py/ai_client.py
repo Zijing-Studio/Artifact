@@ -114,7 +114,7 @@ class AiClient:
             {
                 "position": position,
                 "type": _type,
-                "star": level
+                "level": level
             }
         }
         send_opt(json.dumps(message))

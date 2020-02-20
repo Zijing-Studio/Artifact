@@ -101,8 +101,8 @@ class Game:
         if self._round == 100:
             self.end(-1)
 
-        hp0 = self.statesystem.get_relic_by_id(0).hp
-        hp1 = self.statesystem.get_relic_by_id(1).hp
+        hp0 = self.statesystem.get_miracle_by_id(0).hp
+        hp1 = self.statesystem.get_miracle_by_id(1).hp
         if hp0 <= 0 and hp1 <= 0:   # 平局
             self.is_end = True
             self.end(-1)

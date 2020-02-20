@@ -110,22 +110,22 @@ void init()
 
 
 ```cpp
-void summon(int type, int star, int x, int y, int z)
+void summon(int type, int level, int x, int y, int z)
 ```
 
-​		在地图(**x**, **y**, **z**)处召唤一个本方类型为**type**，星级为**star**的生物
+​		在地图(**x**, **y**, **z**)处召唤一个本方类型为**type**，星级为**level**的生物
 
 
 
 ```cpp
-void summon(int type, int star, std::vector<int> position)
+void summon(int type, int level, std::vector<int> position)
 ```
 
 ```cpp
-void summon(int type, int star, std::tuple<int, int, int> position)
+void summon(int type, int level, std::tuple<int, int, int> position)
 ```
 
-​		在地图**position**处召唤一个本方类型为**type**，星级为**star**的生物
+​		在地图**position**处召唤一个本方类型为**type**，星级为**level**的生物
 
 
 

@@ -110,9 +110,9 @@ play()
 
 
 ```python
- summon(_type, star, position)
+ summon(_type, level, position)
 ```
-​		在**position**处召唤一个本方类型为**\_type**，星级为**star**的生物。
+​		在**position**处召唤一个本方类型为**\_type**，星级为**level**的生物。
 
 
 

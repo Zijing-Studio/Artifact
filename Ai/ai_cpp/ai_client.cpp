@@ -69,31 +69,31 @@ void AiClient::init()
     sendMsg(my_camp, 0, "init", operation_parameters);
 }
 
-void AiClient::summon(int type, int star, int x, int y, int z)
+void AiClient::summon(int type, int level, int x, int y, int z)
 {
     json operation_parameters;
     std::vector<int> position = {x, y, z};
     operation_parameters["position"] = position;
     operation_parameters["type"] = type;
-    operation_parameters["star"] = star;
+    operation_parameters["level"] = level;
     sendMsg(my_camp, round, "summon", operation_parameters);
 }
 
-void AiClient::summon(int type, int star, std::vector<int> position)
+void AiClient::summon(int type, int level, std::vector<int> position)
 {
     json operation_parameters;
     operation_parameters["position"] = position;
     operation_parameters["type"] = type;
-    operation_parameters["star"] = star;
+    operation_parameters["level"] = level;
     sendMsg(my_camp, round, "summon", operation_parameters);
 }
 
-void AiClient::summon(int type, int star, std::tuple<int, int, int> position)
+void AiClient::summon(int type, int level, std::tuple<int, int, int> position)
 {
     json operation_parameters;
     operation_parameters["position"] = position;
     operation_parameters["type"] = type;
-    operation_parameters["star"] = star;
+    operation_parameters["level"] = level;
     sendMsg(my_camp, round, "summon", operation_parameters);
 }
 

@@ -111,7 +111,7 @@ class Map:
         self.units = [Unit(x) for x in units_dict_list]
         barracks_dict_list = map_dict.get('barracks', [])
         self.barracks = [Barrack(x) for x in barracks_dict_list]
-        miracles_dict_list = map_dict.get('relics', [])
+        miracles_dict_list = map_dict.get('miracles', [])
         self.miracles = [Miracle(x) for x in miracles_dict_list]
         obstacles_dict_list = map_dict.get('obstacles', [])
         self.obstacles = [Obstacle(x) for x in obstacles_dict_list]
