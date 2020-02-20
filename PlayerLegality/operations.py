@@ -223,7 +223,7 @@ class Summon(AbstractAct):
         AbstractAct.__init__(self, _parser, _id, _map)
         self.name = "Summon"
         self.type = _params["type"]
-        self.star = _params["star"]
+        self.level = _params["level"]
         self.position = to_position(_params["position"])
         self.all_type = UNIT_DATA.keys()
 
@@ -231,7 +231,7 @@ class Summon(AbstractAct):
         '''
         check mana cost
         '''
-        return self.player.mana >= UNIT_DATA[self.type]["cost"][self.star-1]
+        return self.player.mana >= UNIT_DATA[self.type]["cost"][self.level-1]
 
     def check_unit_cool_down(self, _type):
         '''
@@ -246,7 +246,7 @@ class Summon(AbstractAct):
         result = True
         if self.type not in self.all_type:
             result = "Invalid creature type"
-        elif self.star not in [1, 2, 3]:
+        elif self.level not in [1, 2, 3]:
             result = "Invalid level"
         elif self.position not in self.map.get_summon_pos_list(self.player_id):
             result = "No barrack at the point"
@@ -262,7 +262,7 @@ class Summon(AbstractAct):
         self.map.emit(
             Event("Summon", {
                 "type": self.type,
-                "level": self.star,
+                "level": self.level,
                 "pos": self.position,
                 "camp": self.player_id
             }))
