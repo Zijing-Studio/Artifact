@@ -90,19 +90,25 @@ class AI(AiClient):
                     and mana >= CARD_DICT['VolcanoDragon'][1].cost:
                 summon_list = ['VolcanoDragon']
                 mana -= CARD_DICT['VolcanoDragon'][1].cost
-            while mana >= 2:
+                
+            suc = True
+            while mana >= 2 and suc:
+                suc = False
                 if available_count['Swordsman'] > 0 and mana >= CARD_DICT['Swordsman'][1].cost:
                     summon_list.append('Swordsman')
                     mana -= CARD_DICT['Swordsman'][1].cost
                     available_count['Swordsman'] -= 1
+                    suc = True
                 if available_count['Archer'] > 0 and mana >= CARD_DICT['Archer'][1].cost:
                     summon_list.append('Archer')
                     mana -= CARD_DICT['Archer'][1].cost
                     available_count['Archer'] -= 1
+                    suc = True
                 if available_count['VolcanoDragon'] > 0 and mana >= CARD_DICT['VolcanoDragon'][1].cost:
                     summon_list.append('VolcanoDragon')
                     mana -= CARD_DICT['VolcanoDragon'][1].cost
                     available_count['VolcanoDragon'] -= 1
+                    suc = True
 
             for pos in available_summon_pos_list:
                 if not summon_list:
