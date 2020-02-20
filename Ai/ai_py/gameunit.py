@@ -71,7 +71,7 @@ class Obstacle:
 class Artifact:
     '''神器
     '''
-
+    # TODO Artifact has no method 'get'
     def __init__(self, artifact_dict=None):
         if artifact_dict is None:
             artifact_dict = dict()
