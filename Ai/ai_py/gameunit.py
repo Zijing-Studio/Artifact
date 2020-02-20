@@ -68,7 +68,7 @@ class Obstacle:
         self.allow_flying = obstacle_dict.get(
             'allow_flying', False)  # 是否允许飞行生物通过
         self.allow_ground = obstacle_dict.get(
-            'allow_ground', False)  # 是否允许地面单位通过
+            'allow_ground', False)  # 是否允许地面生物通过
 
 class Artifact:
     '''神器

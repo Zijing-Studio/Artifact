@@ -58,7 +58,7 @@ struct Obstacle
     std::string type;  // 种类
     Pos pos;           // 位置
     bool allow_flying; // 是否允许飞行生物通过
-    bool allow_ground; // 是否允许地面单位通过
+    bool allow_ground; // 是否允许地面生物通过
 };
 
 struct Artifact // 神器

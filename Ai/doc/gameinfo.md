@@ -156,7 +156,7 @@ Pos。表示Obstacle的位置。
 
 #### allow_flying
 
-bool。表示Obstacle是否允许飞行单位通过。
+bool。表示Obstacle是否允许飞行生物通过。
 
 #### allow_ground
 

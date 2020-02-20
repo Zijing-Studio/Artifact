@@ -2,9 +2,9 @@
 
 ## gameunit.py
 
-包含若干结构体，用于表述游戏中各单位的信息。
+包含若干类，用于表述游戏中各单位的信息。
 
-> 具体的结构体的结构可查看gameinfo.md。
+> 具体的类的结构可查看gameinfo.md。
 
 ## card.py
 
@@ -112,7 +112,7 @@ play()
 ```python
  summon(_type, star, position)
 ```
-​		在**position**处召唤一个本方类型为**\_type**，星级为**star**的单位。
+​		在**position**处召唤一个本方类型为**\_type**，星级为**star**的生物。
 
 
 
@@ -127,14 +127,14 @@ move(mover, position)
 ```python
 attack(attacker, target)
 ```
-​		令id为**attacker**的生物攻击id为**target**的生物。
+​		令id为**attacker**的生物攻击id为**target**的生物或神迹。
 
 
 
 ```python
 use(artifact, target)
 ```
-​		对id为**target**的单位/**target**位置使用id为**artifact**的神器。
+​		对id为**target**的生物/**target**位置使用id为**artifact**的神器。
 
 
 
@@ -152,7 +152,7 @@ end_round()
 ```python
 get_distance_on_ground(pos_a, pos_b, camp)
 ```
-​		获取**camp**阵营生物从位置**pos_a**到位置**pos_b**的地面距离(不经过地面障碍或敌方地面单位)。
+​		获取**camp**阵营生物从位置**pos_a**到位置**pos_b**的地面距离(不经过地面障碍或敌方地面生物)。
 
 
 
@@ -160,7 +160,7 @@ get_distance_on_ground(pos_a, pos_b, camp)
 ```python
 get_distance_in_sky(pos_a, pos_b, camp)
 ```
-​		获取**camp**阵营生物从位置**pos_a**到位置**pos_b**的飞行距离(不经过飞行障碍或敌方飞行单位)。
+​		获取**camp**阵营生物从位置**pos_a**到位置**pos_b**的飞行距离(不经过飞行障碍或敌方飞行生物)。
 
 
 

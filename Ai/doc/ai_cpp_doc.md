@@ -33,7 +33,7 @@ std::vector<Point> search_path(Point start, Point to,
 ```cpp
 std::vector<Point> path(gameunit::Unit unit, Point dest, gameunit::Map _map)
 ```
-​		用A*算法给出从单位unit到dest点的路径（包含起点），无法给出路径时返回空数组。
+​		用A*算法给出从生物unit到dest点的路径（包含起点），无法给出路径时返回空数组。
 
 
 
@@ -55,7 +55,7 @@ std::vector<std::vector<Point>> reachable(gameunit::Unit unit, gameunit::Map _ma
 std::vector<gameunit::Unit> units_in_range(Point pos, int dist, gameunit::Map _map, int camp=-1,
                                 bool flyingIncluded=true, bool onlandIncluded=true)
 ```
-​		给出某点pos在给定范围内存在的单位,dist为给定的范围（步数），camp默认为-1，将会返回所有阵营的单位，0为先手阵营，1为后手阵营；flyingIncluded表示将飞行单位包含其中，onlandIncluded为将地面单位包含其中，默认两者都包含。
+​		给出某点pos在给定范围内存在的生物,dist为给定的范围（步数），camp默认为-1，将会返回所有阵营的生物，0为先手阵营，1为后手阵营；flyingIncluded表示将飞行生物包含其中，onlandIncluded为将地面生物包含其中，默认两者都包含。
 
 
 
@@ -113,7 +113,7 @@ void init()
 void summon(int type, int star, int x, int y, int z)
 ```
 
-​		在地图(**x**, **y**, **z**)处召唤一个本方类型为**type**，星级为**star**的单位
+​		在地图(**x**, **y**, **z**)处召唤一个本方类型为**type**，星级为**star**的生物
 
 
 
@@ -125,7 +125,7 @@ void summon(int type, int star, std::vector<int> position)
 void summon(int type, int star, std::tuple<int, int, int> position)
 ```
 
-​		在地图**position**处召唤一个本方类型为**type**，星级为**star**的单位
+​		在地图**position**处召唤一个本方类型为**type**，星级为**star**的生物
 
 
 
@@ -133,7 +133,7 @@ void summon(int type, int star, std::tuple<int, int, int> position)
 void move(int mover, int x, int y, int z)
 ```
 
-​		将地图上id为**mover**的单位移动到地图(**x**, **y**, **z**)处。
+​		将地图上id为**mover**的生物移动到地图(**x**, **y**, **z**)处。
 
 
 
@@ -144,7 +144,7 @@ void move(int mover, std::vector<int> position)
 void move(int mover, std::tuple<int, int, int> position)
 ```
 
-​		将地图上id为**mover**的单位移动到地图**position**处。
+​		将地图上id为**mover**的生物移动到地图**position**处。
 
 
 
@@ -152,7 +152,7 @@ void move(int mover, std::tuple<int, int, int> position)
 void attack(int attacker, int target)
 ```
 
-​		令地图上id为**attacker**的单位攻击地图上id为**target**的生物或神迹。
+​		令地图上id为**attacker**的生物攻击地图上id为**target**的生物或神迹。
 
 
 
@@ -161,7 +161,7 @@ void attack(int attacker, int target)
 void use(int artifact, int target)
 ```
 
-​		对id为**target**的单位使用id为**artifact**的神器
+​		对id为**target**的生物使用id为**artifact**的神器
 
 
 
@@ -189,7 +189,7 @@ void endRound()
 int getDistanceOnGround(gameunit::Pos pos_a, gameunit::Pos pos_b, int camp)
 ```
 
-​		获取camp**阵营单位从位置**pos_a**到位置**pos_b**的地面距离(不经过地面障碍或敌方地面单位)。
+​		获取camp**阵营生物从位置**pos_a**到位置**pos_b**的地面距离(不经过地面障碍或敌方地面生物)。
 
 
 
@@ -198,7 +198,7 @@ int getDistanceInSky(gameunit::Pos pos_a, gameunit::Pos pos_b, int camp)
 
 ```
 
-​		获取camp**阵营单位从位置**pos_a**到位置**pos_b**的飞行距离(不经过飞行障碍或敌方飞行单位)。
+​		获取camp**阵营生物从位置**pos_a**到位置**pos_b**的飞行距离(不经过飞行障碍或敌方飞行生物)。
 
 
 

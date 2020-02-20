@@ -162,7 +162,7 @@ class AiClient:
 
         Args:
             artifact: 使用的神器的id
-            target: 目标单位的id / 地图的[x,y,z]位置
+            target: 目标生物的id / 地图的[x,y,z]位置
         '''
         message = {
             "player": self.my_camp,
@@ -253,7 +253,7 @@ class AiClient:
         Returns:
             bool 能攻击到返回True,不能攻击到返回False
         '''
-        # 攻击力小于等于0的单位无法攻击
+        # 攻击力小于等于0的生物无法攻击
         if attacker.atk <= 0:
             return False
         # 攻击范围
