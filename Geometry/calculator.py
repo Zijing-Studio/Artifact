@@ -44,7 +44,7 @@ def cube_neighbor(pos, dir):
 
 class Node:
     def __init__(self, pos, G, H, parent=None):
-        self.pos = pos
+        self.pos = tuple(pos)
         self.G = G
         self.H = H
         self.parent = parent
@@ -60,12 +60,14 @@ def search_path(start, to, obstacles=[], obstructs=[]):
     '''
     return shortest path
     '''
-    _start = ()
-    _to = ()
-    for i in range(3):
-        _start += (start[i],)
-        _to += (to[i],)
-    if to in obstacles:
+    #_start = ()
+    #_to = ()
+    #for i in range(3):
+    #    _start += (start[i],)
+    #    _to += (to[i],)
+    _start = tuple(start)
+    _to = tuple(to)
+    if _to in obstacles:
         return False
     opened = {}
     closed = {}
@@ -90,8 +92,8 @@ def search_path(start, to, obstacles=[], obstructs=[]):
                         return final_path
                     elif neighbor in obstructs:
                         del opened[neighbor]
-        closed[cur_node.pos] = cur_node
-        del opened[cur_node.pos]
+        closed[tuple(cur_node.pos)] = cur_node
+        del opened[tuple(cur_node.pos)]
     return False
 
 def cube_reachable(start, movement, obstacles=[], obstructs=[]):
@@ -209,5 +211,4 @@ def all_pos_in_map():
     return all_pos
 
 if __name__ == "__main__":
-    print(cube_reachable((0, 0, 0), 1, MAPBORDER))
-    print(MAPBORDER)
+    print(search_path([6,-7,1],[3,-7,4]))
