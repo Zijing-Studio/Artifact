@@ -89,7 +89,7 @@ class Game:
         self.replay = ""        # 录像文件存储处
         self.state = 0          # 当前消息回合
         self.listen = 0         # 当前监听的玩家(当前回合玩家)
-        self._round = -1        # 当前游戏回合
+        self._round = 0        # 当前游戏回合
         self.is_end = False     # 是否结束
         self.statesystem = StateSystem()
         self.parser = Parser(self.statesystem)
@@ -98,7 +98,7 @@ class Game:
         '''判断游戏是否结束，若结束则结束对局
         '''
         # 最大回合数
-        if self._round == 10000:
+        if self._round == 10:
             self.end(-1)
 
         hp0 = self.statesystem.get_relic_by_id(0).hp
@@ -163,7 +163,7 @@ class Game:
         '''
         # pylint: disable=too-many-branches
         # pylint: disable=too-many-statements
-        creature_names = ["", "Swordman", "Archer",
+        creature_names = ["", "Swordsman", "Archer",
                           "BlackBat", "Priest", "VolcanoDragon"]
         artifact_names = ["", "HolyLight", "SalamanderShield", "InfernoFlame"]
 
@@ -432,21 +432,9 @@ class Game:
                 # event
                 media_info += int(18).to_bytes(4, 'big', signed=True)
                 # type
-                if event.parameter_dict['type'] == 'Swordman':
-                    media_info += int(1 + 10 * event.parameter_dict['camp']).to_bytes(
-                        4, 'big', signed=True)
-                elif event.parameter_dict['type'] == 'Archer':
-                    media_info += int(2 + 10 * event.parameter_dict['camp']).to_bytes(
-                        4, 'big', signed=True)
-                elif event.parameter_dict['type'] == 'BlackBat':
-                    media_info += int(3 + 10 * event.parameter_dict['camp']).to_bytes(
-                        4, 'big', signed=True)
-                elif event.parameter_dict['type'] == 'Priest':
-                    media_info += int(4 + 10 * event.parameter_dict['camp']).to_bytes(
-                        4, 'big', signed=True)
-                elif event.parameter_dict['type'] == 'VolcanoDragon':
-                    media_info += int(5 + 10 * event.parameter_dict['camp']).to_bytes(
-                        4, 'big', signed=True)
+                media_info += int(creature_names.index(event.parameter_dict['type'])
+                                  + 10 * event.parameter_dict['camp']).to_bytes(
+                                      4, 'big', signed=True)
                 # level
                 media_info += int(event.parameter_dict['level']).to_bytes(
                     4, 'big', signed=True)
@@ -467,10 +455,10 @@ class Game:
             media_info: 给播放器的信息字符串 为空时会直接从事件堆中取
         '''
         if media_info == b'':
+            if not self.statesystem.event_heap.record:
+                return
             media_info = self.get_media_info(self.statesystem.event_heap.record)
             self.statesystem.event_heap.record.clear()
-            if media_info != b'':
-                self.send_media_info(media_info)
         with open(self.replay, 'ab') as replay_file:
             replay_file.write(media_info)
         for media in self.media_player:
@@ -571,10 +559,6 @@ class Game:
         self.parser.set_round(0)
         self.listen = self.player0
         while not self.is_end:
-            self.parser.parse(json.dumps(
-                {"player": 0 if self.listen == self.player0 else 1,
-                 "round": self._round,
-                 "operation_type": "startround", "operation_parameters": {}}))
             self.send_media_info()
             self.check_game_end()
             self.get_round_ope()

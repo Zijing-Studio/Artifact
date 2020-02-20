@@ -3,7 +3,7 @@ AI
 """
 import functools
 import random
-
+import gameunit
 import calculator
 from ai_client import AiClient
 from card import CARD_DICT
@@ -17,37 +17,37 @@ class AI(AiClient):
     def __init__(self):
         super().__init__()
         # 以下是玩家自己的初始构造
-        self.relic_pos = list()
+        self.miracle_pos = list()
         self.enemy_pos = list()
-        self.target_barrack = list()
-    
+        self.target_barrack = gameunit.Barrack()
+
     def choose_cards(self):
         """
         (根据初始阵营)选择初始卡组
         """
         # artifacts和creatures可以修改
         self.artifacts = ["HolyLight"]
-        self.creatures = ["Archer", "Swordman", "VolcanoDragon"]
+        self.creatures = ["Archer", "Swordsman", "VolcanoDragon"]
         self.init()
-    
+
     def early_stage(self):
         """
         在费用较低时尽可能爆等星级为1的兵，优先度剑士>弓箭手>火山龙
         """
         if self.round == 0 or self.round == 1:
             # 先确定自己的基地、对方的基地
-            self.relic_pos = self.map.relics[self.my_camp].pos
-            self.enemy_pos = self.map.relics[self.my_camp ^ 1].pos
+            self.miracle_pos = self.map.miracles[self.my_camp].pos
+            self.enemy_pos = self.map.miracles[self.my_camp ^ 1].pos
             self.target_barrack = self.map.barracks[0]
-            
+
             # 确定离自己基地最近的驻扎点的位置
             for barrack in self.map.barracks:
-                if calculator.cube_distance(self.relic_pos, barrack.pos) < \
-                        calculator.cube_distance(self.relic_pos, self.target_barrack.pos):
+                if calculator.cube_distance(self.miracle_pos, barrack.pos) < \
+                        calculator.cube_distance(self.miracle_pos, self.target_barrack.pos):
                     self.target_barrack = barrack
             
             # 在正中心偏右召唤一个弓箭手，用来抢占驻扎点
-            self.summon('Archer', 1, self.pos_shift(self.relic_pos, 'SF'))
+            self.summon('Archer', 1, self.pos_shift(self.miracle_pos, 'SF'))
         else:
             # 神器能用就用，选择覆盖单位数最多的地点
             if self.players[self.my_camp].mana >= 6 and self.players[self.my_camp].artifact[0].state == 'Ready':
@@ -57,7 +57,7 @@ class AI(AiClient):
                 for pos in pos_list:
                     unit_list = calculator.units_in_range(pos, 2, self.map, self.my_camp)
                     if len(unit_list) > max_benefit:
-                        best_pos = pos, max_benefit = len(unit_list)
+                        best_pos, max_benefit = pos, len(unit_list)
                 self.use(self.players[self.my_camp].artifact[0].id, best_pos)
                 self.update_game_info()
             
@@ -87,15 +87,15 @@ class AI(AiClient):
             summon_list = []
             
             # 剑士和弓箭手数量不足或者格子不足则召唤火山龙
-            if (len(available_summon_pos_list) == 1 or available_count['Swordman'] + available_count['Archer'] < 2) \
+            if (len(available_summon_pos_list) == 1 or available_count['Swordsman'] + available_count['Archer'] < 2) \
                     and mana >= 5:
                 summon_list = ['VolcanoDragon']
                 mana -= 5
             while mana >= 2:
-                if available_count['Swordman'] > 0 and mana >= CARD_DICT['Swordman'][1].cost:
-                    summon_list.append('Swordman')
-                    mana -= CARD_DICT['Swordman'][1].cost
-                    available_count['Swordman'] -= 1
+                if available_count['Swordsman'] > 0 and mana >= CARD_DICT['Swordsman'][1].cost:
+                    summon_list.append('Swordsman')
+                    mana -= CARD_DICT['Swordsman'][1].cost
+                    available_count['Swordsman'] -= 1
                 if available_count['Archer'] > 0 and mana >= CARD_DICT['Archer'][1].cost:
                     summon_list.append('Archer')
                     mana -= CARD_DICT['Archer'][1].cost
@@ -122,14 +122,14 @@ class AI(AiClient):
         # 自定义排列顺序
         def cmp(unit1, unit2):
             if unit1.can_atk != unit2.can_atk:  # 首先要能动
-                return unit1.can_atk > unit2.can_atk
+                return unit2.can_atk - unit1.can_atk
             elif unit1.type != unit2.type:  # 火山龙>剑士>弓箭手
-                type_id_gen = lambda typename: 0 if typename == 'VolcanoDragon' else 1 if typename == 'Swordman' else 2
-                return type_id_gen(unit1.type) < type_id_gen(unit2.type)
+                type_id_gen = lambda typename: 0 if typename == 'VolcanoDragon' else 1 if typename == 'Swordsman' else 2
+                return type_id_gen(unit1.type) - type_id_gen(unit2.type)
             elif unit1.type == 'VolcanoDragon' or unit1.type == 'Archer':
-                return unit1.atk > unit2.atk
+                return unit2.atk - unit1.atk
             else:
-                return unit1.atk < unit2.atk
+                return unit1.atk - unit2.atk
         
         # 按顺序排列好单位，依次攻击
         ally_list.sort(key=functools.cmp_to_key(cmp))
@@ -149,7 +149,7 @@ class AI(AiClient):
                 self.attack(ally.id, target_list[tar].id)
                 self.update_game_info()
             
-            elif ally.type == 'Swordman':
+            elif ally.type == 'Swordsman':
                 enemy_list.sort(key=lambda _enemy: _enemy.atk)
                 self.attack(ally.id, target_list[0].id)
                 self.update_game_info()
@@ -173,7 +173,7 @@ class AI(AiClient):
         ally_list = self.get_units_by_camp(self.my_camp)
         ally_list.sort(key=functools.cmp_to_key(cmp))
         for ally in ally_list:
-            if ally.can_atk == 0:
+            if not ally.can_atk:
                 break
             dis = calculator.cube_distance(ally.pos, self.enemy_pos)
             if ally.atk_range[0] <= dis <= ally.atk_range[1]:
@@ -184,9 +184,9 @@ class AI(AiClient):
         先动所有剑士，冲家，若驻扎点上没有地面单位，则让弓箭手能走上去就走上去，然后火龙能走上去就走上去，其他情况下尽可能冲家
         """
         ally_list = self.get_units_by_camp(self.my_camp)
-        ally_list.sort(key=lambda unit: 0 if unit.type == 'Swordman' else 1 if unit.type == 'Archer' else 2)
+        ally_list.sort(key=lambda unit: 0 if unit.type == 'Swordsman' else 1 if unit.type == 'Archer' else 2)
         for ally in ally_list:
-            if ally.type == 'Swordman':
+            if ally.type == 'Swordsman':
                 # 获取所有可到达的位置
                 reach_pos_with_dis = calculator.reachable(ally, self.map)
                 # 压平
