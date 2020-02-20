@@ -125,9 +125,9 @@ class Archer(Unit):
             state_system
         )
 
-class Swordman(Unit):
+class Swordsman(Unit):
     def __init__(self,camp,level,pos,state_system):
-        name = "Swordman"
+        name = "Swordsman"
         Unit.__init__(
             self,
             camp,
