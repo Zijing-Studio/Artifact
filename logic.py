@@ -89,7 +89,7 @@ class Game:
         self.replay = ""        # 录像文件存储处
         self.state = 0          # 当前消息回合
         self.listen = 0         # 当前监听的玩家(当前回合玩家)
-        self._round = 0        # 当前游戏回合
+        self._round = -1        # 当前游戏回合
         self.is_end = False     # 是否结束
         self.statesystem = StateSystem()
         self.parser = Parser(self.statesystem)
@@ -98,7 +98,7 @@ class Game:
         '''判断游戏是否结束，若结束则结束对局
         '''
         # 最大回合数
-        if self._round == 10:
+        if self._round == 100:
             self.end(-1)
 
         hp0 = self.statesystem.get_relic_by_id(0).hp
@@ -320,7 +320,7 @@ class Game:
                         4, 'big', signed=True)
             elif event.name == "GameStart":
                 # round
-                media_info += self._round.to_bytes(4, 'big', signed=True)
+                media_info += int(0).to_bytes(4, 'big', signed=True)
                 # event
                 media_info += int(11).to_bytes(4, 'big', signed=True)
                 # camp
@@ -476,10 +476,10 @@ class Game:
             message = self.statesystem.parse()
             message['round'] = self._round
             message['camp'] = 0 if self.listen == self.player0 else 1
-        # 前四位表示长度 后面是表示信息的json格式字符串
+        # 前六位表示长度 后面是表示信息的json格式字符串
         json_length = str(len(json.dumps(message)))
         state_dict['content'] = [
-            "0" * (4 - len(json_length)) + json_length + json.dumps(message)]
+            "0" * (6 - len(json_length)) + json_length + json.dumps(message)]
         send_state(state_dict)
 
     def init_player(self, player_list):

@@ -13,7 +13,7 @@ class AI(AiClient):
     """
     玩家编写的ai
     """
-    
+
     def __init__(self):
         super().__init__()
         # 以下是玩家自己的初始构造
@@ -45,9 +45,10 @@ class AI(AiClient):
                 if calculator.cube_distance(self.miracle_pos, barrack.pos) < \
                         calculator.cube_distance(self.miracle_pos, self.target_barrack.pos):
                     self.target_barrack = barrack
-            
+
             # 在正中心偏右召唤一个弓箭手，用来抢占驻扎点
             self.summon('Archer', 1, self.pos_shift(self.miracle_pos, 'SF'))
+            self.update_game_info()
         else:
             # 神器能用就用，选择覆盖单位数最多的地点
             if self.players[self.my_camp].mana >= 6 and self.players[self.my_camp].artifact[0].state == 'Ready':
@@ -60,24 +61,22 @@ class AI(AiClient):
                         best_pos, max_benefit = pos, len(unit_list)
                 self.use(self.players[self.my_camp].artifact[0].id, best_pos)
                 self.update_game_info()
-            
+
             # 之后先战斗，再移动
             self.battle()
-            self.update_game_info()
             self.march()
-            self.update_game_info()
-            
+
             # 最后进行召唤
             # 将所有本方出兵点按照到对方基地的距离排序，从近到远出兵
             summon_pos_list = self.get_summon_pos_by_camp(self.my_camp)
             summon_pos_list.sort(key=lambda _pos: calculator.cube_distance(_pos, self.enemy_pos))
             available_summon_pos_list = []
             for pos in summon_pos_list:
-                unit_on_pos_ground = self.get_unit_by_pos(pos, 0)
+                unit_on_pos_ground = self.get_unit_by_pos(pos, False)
                 if unit_on_pos_ground is None:
                     available_summon_pos_list.append(pos)
             del summon_pos_list
-            
+
             # 统计各个生物的可用数量，在假设出兵点无限的情况下，按照1个剑士、1个弓箭手、1个火山龙的顺序召唤
             mana = self.players[self.my_camp].mana
             deck = self.players[self.my_camp].creature_capacity
@@ -85,12 +84,12 @@ class AI(AiClient):
             for card_unit in deck:
                 available_count[card_unit.type] = card_unit.available_count
             summon_list = []
-            
+
             # 剑士和弓箭手数量不足或者格子不足则召唤火山龙
             if (len(available_summon_pos_list) == 1 or available_count['Swordsman'] + available_count['Archer'] < 2) \
-                    and mana >= 5:
+                    and mana >= CARD_DICT['VolcanoDragon'][1].cost:
                 summon_list = ['VolcanoDragon']
-                mana -= 5
+                mana -= CARD_DICT['VolcanoDragon'][1].cost
             while mana >= 2:
                 if available_count['Swordsman'] > 0 and mana >= CARD_DICT['Swordsman'][1].cost:
                     summon_list.append('Swordsman')
@@ -104,11 +103,14 @@ class AI(AiClient):
                     summon_list.append('VolcanoDragon')
                     mana -= CARD_DICT['VolcanoDragon'][1].cost
                     available_count['VolcanoDragon'] -= 1
-            
+
             for pos in available_summon_pos_list:
+                if not summon_list:
+                    break
                 self.summon(summon_list[0], 1, pos)
+                self.update_game_info()
                 summon_list.pop(0)
-    
+
     def battle(self):
         """
         基本思路，行动顺序:
@@ -118,7 +120,7 @@ class AI(AiClient):
         对单位的战斗完成后，对神迹进行输出
         """
         ally_list = self.get_units_by_camp(self.my_camp)
-        
+
         # 自定义排列顺序
         def cmp(unit1, unit2):
             if unit1.can_atk != unit2.can_atk:  # 首先要能动
@@ -130,7 +132,7 @@ class AI(AiClient):
                 return unit2.atk - unit1.atk
             else:
                 return unit1.atk - unit2.atk
-        
+
         # 按顺序排列好单位，依次攻击
         ally_list.sort(key=functools.cmp_to_key(cmp))
         for ally in ally_list:
@@ -143,32 +145,32 @@ class AI(AiClient):
                     target_list.append(enemy)
             if len(target_list) == 0:
                 continue
-            
+
             if ally.type == 'VolcanoDragon':
                 tar = random.randint(0, len(target_list) - 1)
                 self.attack(ally.id, target_list[tar].id)
                 self.update_game_info()
-            
+
             elif ally.type == 'Swordsman':
                 enemy_list.sort(key=lambda _enemy: _enemy.atk)
                 self.attack(ally.id, target_list[0].id)
                 self.update_game_info()
-            
+
             elif ally.type == 'Archer':
                 enemy_list.sort(key=lambda _enemy: _enemy.atk, reverse=True)
                 suc = False
                 for enemy in target_list:
                     if not self.can_attack(enemy, ally):
                         self.attack(ally.id, enemy.id)
-                        suc = True
                         self.update_game_info()
+                        suc = True
                         break
                 if suc:
                     continue
                 enemy_list.sort(key=lambda _enemy: _enemy.atk)
                 self.attack(ally.id, target_list[0].id)
                 self.update_game_info()
-        
+
         # 最后攻击神迹
         ally_list = self.get_units_by_camp(self.my_camp)
         ally_list.sort(key=functools.cmp_to_key(cmp))
@@ -178,7 +180,8 @@ class AI(AiClient):
             dis = calculator.cube_distance(ally.pos, self.enemy_pos)
             if ally.atk_range[0] <= dis <= ally.atk_range[1]:
                 self.attack(ally.id, self.my_camp ^ 1)
-    
+                self.update_game_info()
+
     def march(self):
         """
         先动所有剑士，冲家，若驻扎点上没有地面单位，则让弓箭手能走上去就走上去，然后火龙能走上去就走上去，其他情况下尽可能冲家
@@ -195,16 +198,17 @@ class AI(AiClient):
                     reach_pos_list += reach_pos
                 if len(reach_pos_list) == 0:
                     continue
-                
+
                 # 优先走到距离敌方神迹更近的位置
                 reach_pos_list.sort(key=lambda _pos: calculator.cube_distance(_pos, self.enemy_pos))
                 self.move(ally.id, reach_pos_list[0])
-            
+                self.update_game_info()
+
             else:
                 # 如果已经在兵营就不动了
-                if ally.pos in self.map.barracks:
+                if ally.pos in [barrack.pos for barrack in self.map.barracks]:
                     continue
-                
+
                 # 获取所有可到达的位置
                 reach_pos_with_dis = calculator.reachable(ally, self.map)
                 # 压平
@@ -213,16 +217,17 @@ class AI(AiClient):
                     reach_pos_list += reach_pos
                 if len(reach_pos_list) == 0:
                     continue
-                
+
                 # 优先走到未被占领的兵营，否则走到
-                if self.get_unit_by_pos(self.target_barrack, False) is None:
-                    reach_pos_list.sort(key=lambda _pos: calculator.cube_distance(_pos, self.target_barrack))
+                if self.get_unit_by_pos(self.target_barrack.pos, False) is None:
+                    reach_pos_list.sort(key=lambda _pos: calculator.cube_distance(_pos, self.target_barrack.pos))
                     self.move(ally.id, reach_pos_list[0])
                     self.update_game_info()
                 else:
                     reach_pos_list.sort(key=lambda _pos: calculator.cube_distance(_pos, self.enemy_pos))
                     self.move(ally.id, reach_pos_list[0])
-    
+                    self.update_game_info()
+
     def pos_shift(self, pos, direct: str):
         """
         对于给定位置，给出按照自己的视角（基地在最下方）的某个方向移动一步后的位置
@@ -257,7 +262,7 @@ class AI(AiClient):
                 return [pos[0], pos[1] + 1, pos[2] - 1]
             elif direct.upper() == "IB":  # Inferior-backward
                 return [pos[0] + 1, pos[1], pos[2] - 1]
-    
+
     def play(self):
         """
         玩家需要编写的ai操作函数
