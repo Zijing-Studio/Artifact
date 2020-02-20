@@ -14,7 +14,7 @@ void AiClient::updateGameInfo()
 void AiClient::chooseCards()
 {
     my_artifacts = {"HolyLight"};
-    my_creatures = {"Archer", "Swordman", "Priest"};
+    my_creatures = {"Archer", "Swordsman", "Priest"};
     init();
 }
 
@@ -206,7 +206,7 @@ bool AiClient::canUseArtifact(gameunit::Artifact artifact, gameunit::Pos pos, in
                 return false;
         }
         // 距己方神迹范围<=5
-        if (calculator::cube_distance(pos, map.relics[camp].pos) <= 5)
+        if (calculator::cube_distance(pos, map.miracles[camp].pos) <= 5)
             return true;
         // 距己方占领驻扎点范围<=3
         for (auto barrack = map.barracks.begin(); barrack != map.barracks.end(); barrack++)
@@ -268,10 +268,10 @@ std::vector<gameunit::Unit> AiClient::getUnitsByCamp(int unit_camp)
 std::vector<gameunit::Pos> AiClient::getSummonPosByCamp(int camp)
 {
     std::vector<gameunit::Pos> summon_pos;
-    for (auto relic = map.relics.begin(); relic != map.relics.end(); relic++)
+    for (auto miracle = map.miracles.begin(); miracle != map.miracles.end(); miracle++)
     {
-        if (relic->camp == camp)
-            summon_pos.insert(summon_pos.end(), relic->summon_pos_list.begin(), relic->summon_pos_list.end());
+        if (miracle->camp == camp)
+            summon_pos.insert(summon_pos.end(), miracle->summon_pos_list.begin(), miracle->summon_pos_list.end());
     }
     for (auto barrack = map.barracks.begin(); barrack != map.barracks.end(); barrack++)
     {

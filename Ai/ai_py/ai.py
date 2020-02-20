@@ -18,7 +18,7 @@ class AI(AiClient):
         '''
         # artifacts和creatures可以修改
         self.artifacts = ["HolyLight"]
-        self.creatures = ["Archer", "Swordman", "VolcanoDragon"]
+        self.creatures = ["Archer", "Swordsman", "VolcanoDragon"]
         self.init()
 
     def play(self):

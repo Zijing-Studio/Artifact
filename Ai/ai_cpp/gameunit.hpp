@@ -42,7 +42,7 @@ struct Barrack // 驻扎点
     std::vector<Pos> summon_pos_list; // 出兵点位置
 };
 
-struct Relic // 神迹
+struct Miracle // 神迹
 {
     int camp;                         // 阵营
     int max_hp;                       // 最大生命值
@@ -84,7 +84,7 @@ struct Map // 地图
 {
     std::vector<Unit> units;
     std::vector<Barrack> barracks;
-    std::vector<Relic> relics;
+    std::vector<Miracle> miracles;
     std::vector<Obstacle> obstacles;
     std::vector<Obstacle> flying_obstacles;
     std::vector<Obstacle> ground_obstacles;
@@ -133,7 +133,7 @@ void from_json(const json &j, Barrack &b)
     j.at("summon_pos_list").get_to(b.summon_pos_list);
 }
 
-void from_json(const json &j, Relic &r)
+void from_json(const json &j, Miracle &r)
 {
     j.at("camp").get_to(r.camp);
     j.at("max_hp").get_to(r.max_hp);
@@ -178,7 +178,7 @@ void from_json(const json &j, Map &m)
     j.at("obstacles").get_to(m.obstacles);
     j.at("ground_obstacles").get_to(m.ground_obstacles);
     j.at("flying_obstacles").get_to(m.flying_obstacles);
-    j.at("relics").get_to(m.relics);
+    j.at("relics").get_to(m.miracles);
 }
 
 void from_json(const json &j, Player &p)

@@ -110,7 +110,7 @@ int。表示驻扎点所属阵营。
 
 Pos数组。表示驻扎点所控制的出兵点的位置。
 
-### Relic
+### Miracle
 
 表示一个神迹。
 
@@ -224,9 +224,9 @@ Unit数组。包括地图上所有生物。
 
 Barrack数组。包括地图上所有驻扎点。
 
-#### relics
+#### miracles
 
-Relic数组。包括地图上所有神迹。
+Miracle数组。包括地图上所有神迹。
 
 #### obstacles
 

@@ -38,24 +38,26 @@ class Barrack:
             barrack_dict = dict()
         self.pos = barrack_dict.get('pos', [0, 0, 0])  # 位置
         self.camp = barrack_dict.get('camp', -1)  # 阵营
+        if self.camp == None:
+            self.camp = -1
         self.summon_pos_list = barrack_dict.get(
             'summon_pos_list', [[0, 0, 0]])  # 出兵点位置
 
-class Relic:
+class Miracle:
     '''神迹
     '''
 
-    def __init__(self, relic_dict=None):
-        if relic_dict is None:
-            relic_dict = dict()
-        self.camp = relic_dict.get('camp', -1)  # 阵营
-        self.max_hp = relic_dict.get('max_hp', -1)  # 最大生命值
-        self.hp = relic_dict.get('hp', -1)  # 当前生命值
-        self.pos = relic_dict.get('pos', [0, 0, 0])  # 位置
-        self.summon_pos_list = relic_dict.get(
+    def __init__(self, miracle_dict=None):
+        if miracle_dict is None:
+            miracle_dict = dict()
+        self.camp = miracle_dict.get('camp', -1)  # 阵营
+        self.max_hp = miracle_dict.get('max_hp', -1)  # 最大生命值
+        self.hp = miracle_dict.get('hp', -1)  # 当前生命值
+        self.pos = miracle_dict.get('pos', [0, 0, 0])  # 位置
+        self.summon_pos_list = miracle_dict.get(
             'summon_pos_list', [[0, 0, 0]])  # 初始出兵点位置
-        self.name = relic_dict.get('name', '')  # 名字
-        self.id = relic_dict.get('id', -1)  # id
+        self.name = miracle_dict.get('name', '')  # 名字
+        self.id = miracle_dict.get('id', -1)  # id
 
 class Obstacle:
     def __init__(self, obstacle_dict=None):
@@ -71,7 +73,6 @@ class Obstacle:
 class Artifact:
     '''神器
     '''
-    # TODO Artifact has no method 'get'
     def __init__(self, artifact_dict=None):
         if artifact_dict is None:
             artifact_dict = dict()
@@ -100,7 +101,7 @@ class Map:
     def __init__(self, map_dict=None):
         self.units = [Unit()]
         self.barracks = [Barrack()]
-        self.relics = [Relic()]
+        self.miracles = [Miracle()]
         self.obstacles = [Obstacle()]
         self.flying_obstacles = [Obstacle()]
         self.ground_obstacles = [Obstacle()]
@@ -110,8 +111,8 @@ class Map:
         self.units = [Unit(x) for x in units_dict_list]
         barracks_dict_list = map_dict.get('barracks', [])
         self.barracks = [Barrack(x) for x in barracks_dict_list]
-        relics_dict_list = map_dict.get('relics', [])
-        self.relics = [Relic(x) for x in relics_dict_list]
+        miracles_dict_list = map_dict.get('relics', [])
+        self.miracles = [Miracle(x) for x in miracles_dict_list]
         obstacles_dict_list = map_dict.get('obstacles', [])
         self.obstacles = [Obstacle(x) for x in obstacles_dict_list]
         flying_obstacles_dict_list = map_dict.get('flying_obstacles', [])
@@ -127,7 +128,8 @@ class Player:
         if player_dict is None:
             player_dict = dict()
         self.camp = player_dict.get('camp', -1)  # 阵营
-        artifact_dict_list = player_dict.get('artifact', [Artifact()])  # 神器
+        self.artifact = [Artifact()]
+        artifact_dict_list = player_dict.get('artifact', [])  # 神器
         self.artifact = [Artifact(x) for x in artifact_dict_list]
         self.mana = player_dict.get('mana', 0)  # 当前法力值
         self.max_mana = player_dict.get('max_mana', 0)  # 最大法力值

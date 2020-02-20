@@ -54,7 +54,7 @@ class AiClient:
         self.round = 0                                          # 当前回合
         self.my_camp = read_opt()['camp']                       # 己方阵营
         self.artifacts = ["HolyLight"]                          # 己方神器
-        self.creatures = ["Archer", "Swordman", "VolcanoDragon"]  # 己方生物
+        self.creatures = ["Archer", "Swordsman", "VolcanoDragon"]  # 己方生物
 
     def update_game_info(self):
         '''更新游戏信息
@@ -288,7 +288,7 @@ class AiClient:
                     if (unit.pos == target) and (not unit.flying):
                         return False
                 # 神迹范围<=5
-                if calculator.cube_distance(target, self.map.relics[camp].pos) <= 5:
+                if calculator.cube_distance(target, self.map.miracles[camp].pos) <= 5:
                     return True
                 # 占领驻扎点范围<=3
                 for barrack in self.map.barracks:
@@ -351,9 +351,9 @@ class AiClient:
             list (Pos)
         '''
         summon_pos = []
-        for relic in self.map.relics:
-            if relic.camp == camp:
-                summon_pos += relic.summon_pos_list
+        for miracle in self.map.miracles:
+            if miracle.camp == camp:
+                summon_pos += miracle.summon_pos_list
         for barrack in self.map.barracks:
             if barrack.camp == camp:
                 summon_pos += barrack.summon_pos_list

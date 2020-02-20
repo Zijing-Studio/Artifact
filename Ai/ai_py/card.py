@@ -34,10 +34,10 @@ class Artifact:
         self.target_type = _targettype  # 目标类型
 
 
-SWORDMAN = [Creature("Swordman", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-            Creature("Swordman", 4, 2, 2, 2, 1, 1, 3, 3, 0, 0, 0, 0),
-            Creature("Swordman", 4, 4, 4, 4, 1, 1, 3, 3, 0, 0, 0, 0),
-            Creature("Swordman", 4, 6, 6, 6, 1, 1, 3, 3, 0, 0, 0, 0)]
+SWORDSMAN = [Creature("Swordsman", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+            Creature("Swordsman", 4, 2, 2, 2, 1, 1, 3, 3, 0, 0, 0, 0),
+            Creature("Swordsman", 4, 4, 4, 4, 1, 1, 3, 3, 0, 0, 0, 0),
+            Creature("Swordsman", 4, 6, 6, 6, 1, 1, 3, 3, 0, 0, 0, 0)]
 
 ARCHER = [Creature("Archer", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
           Creature("Archer", 3, 2, 1, 1, 2, 4, 3, 4, 0, 1, 0, 0),
@@ -68,7 +68,7 @@ INFERNOFLAME = Artifact("InfernoFlame", 6, 6, "Pos")
 INFERNO = Creature("Inferno", 0, 0, 8, 8, 1, 1, 3, 0, 0, 0, 0, 0)
 
 CARD_DICT = {
-    'Swordman': SWORDMAN,
+    'Swordsman': SWORDSMAN,
     'Archer': ARCHER,
     'BlackBat': BLACKBAT,
     'Priest': PRIEST,

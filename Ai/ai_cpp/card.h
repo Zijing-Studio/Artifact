@@ -42,10 +42,10 @@ struct Artifact // 神器
 };
 
 // 剑士
-const Creature SWORDMAN[4] = {Creature("Swordman", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-                              Creature("Swordman", 4, 2, 2, 2, 1, 1, 3, 3, 0, 0, 0, 0),
-                              Creature("Swordman", 4, 4, 4, 4, 1, 1, 3, 3, 0, 0, 0, 0),
-                              Creature("Swordman", 4, 6, 6, 6, 1, 1, 3, 3, 0, 0, 0, 0)};
+const Creature SWORDSMAN[4] = {Creature("Swordsman", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+                              Creature("Swordsman", 4, 2, 2, 2, 1, 1, 3, 3, 0, 0, 0, 0),
+                              Creature("Swordsman", 4, 4, 4, 4, 1, 1, 3, 3, 0, 0, 0, 0),
+                              Creature("Swordsman", 4, 6, 6, 6, 1, 1, 3, 3, 0, 0, 0, 0)};
 
 // 弓箭手
 const Creature ARCHER[4] = {Creature("Archer", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),

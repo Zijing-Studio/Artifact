@@ -10,7 +10,7 @@ public:
     {
         // artifacts和creatures可以修改
         my_artifacts = {"HolyLight"};
-        my_creatures = {"Archer", "Swordman", "Priest"};
+        my_creatures = {"Archer", "Swordsman", "Priest"};
         init();
     }
 
