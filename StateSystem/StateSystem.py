@@ -4,7 +4,7 @@ from StateSystem.EventListener import EventListener
 from StateSystem.Unit import *
 from StateSystem.Map import *
 from StateSystem.Player import Player
-from StateSystem.Relic import Relic
+from StateSystem.Miracle import Miracle
 from StateSystem.Obstacle import *
 from StateSystem.Barrack import *
 from StateSystem.CreatureCapacity import *
@@ -16,15 +16,15 @@ class StateSystem:
         self.event_heap = EventHeap()
         self.player_list = [Player(0,1,self),Player(1,2,self)]
         self.current_player_id = 0
-        self.map.relic_list = [
-            Relic(0,30,(-7,7,0),[
+        self.map.miracle_list = [
+            Miracle(0,30,(-7,7,0),[
                 (-8,6,2),
                 (-7,6,1),
                 (-6,6,0),
                 (-6,7,-1),
                 (-6,8,-2)
             ],self),
-            Relic(1,30,(7,-7,0),[
+            Miracle(1,30,(7,-7,0),[
                 (8,-6,-2),
                 (7,-6,-1),
                 (6,-6,0),
@@ -62,8 +62,8 @@ class StateSystem:
                 player.deal_event(current_event)
             for unit in self.map.unit_list:
                 unit.deal_event(current_event)
-            for relic in self.map.relic_list:
-                relic.deal_event(current_event)
+            for miracle in self.map.miracle_list:
+                miracle.deal_event(current_event)
         # Check Death
         new_unit_list = []
         for unit in self.map.unit_list:
@@ -103,7 +103,7 @@ class StateSystem:
         return None
 
     def get_summon_pos_list(self,player_camp):
-        result = self.get_relic_by_id(player_camp).summon_pos_list
+        result = self.get_miracle_by_id(player_camp).summon_pos_list
         for barrack in self.get_barracks(player_camp):
             result += barrack.summon_pos_list
         return result
@@ -122,8 +122,8 @@ class StateSystem:
     def get_flying_obstacles(self):
         return self.map.get_flying_obstacles()
 
-    def get_relic_by_id(self,player_camp):
-        return self.map.get_relic_by_id(player_camp)
+    def get_miracle_by_id(self,player_camp):
+        return self.map.get_miracle_by_id(player_camp)
 
 class SummonListener(EventListener):
     '''

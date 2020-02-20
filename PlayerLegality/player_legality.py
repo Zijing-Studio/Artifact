@@ -40,7 +40,7 @@ class Parser:
             return False
         try:
             _round = int(operation["round"])
-        except KeyError or ValueError:
+        except Exception:
             return False
 
         #check round number
