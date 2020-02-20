@@ -141,7 +141,7 @@ def get_obstructs_by_unit(unit, _map):
     returns all obstructs for a unit, obstructs means the unit can
     stay at that point but cannot pass it
     '''
-    obstructs = MAPBORDER
+    obstructs = []
     obstacle_unit = _map.get_units()
     for obstruct in obstacle_unit:
         if obstruct.camp != unit.camp:
