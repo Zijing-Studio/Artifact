@@ -124,9 +124,11 @@ def get_obstacles_by_unit(unit, _map):
     '''
     obstacles = MAPBORDER
     if unit.flying:
-        obstacles += _map.get_flying_obstacles
+        fixed_obstacles = _map.get_flying_obstacles
     else:
-        obstacles += _map.get_ground_obstacles
+        fixed_obstacles = _map.get_ground_obstacles
+    for obstacle in fixed_obstacles:
+        obstacles.append(obstacle.pos)
     obstacle_unit = _map.get_units()
     for obstacle in obstacle_unit:
         if obstacle.camp != unit.camp:
