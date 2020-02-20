@@ -160,7 +160,7 @@ bool。表示Obstacle是否允许飞行单位通过。
 
 #### allow_ground
 
-bool。表示Obstacle是否允许地面单位通过。
+bool。表示Obstacle是否允许地面生物通过。
 
 ### Artifact
 

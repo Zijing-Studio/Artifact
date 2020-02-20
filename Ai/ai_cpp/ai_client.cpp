@@ -213,7 +213,7 @@ int AiClient::checkBarrack(gameunit::Pos pos)
 
 bool AiClient::canAttack(gameunit::Unit attacker, gameunit::Unit target)
 {
-    //攻击力小于等于0的单位无法攻击
+    //攻击力小于等于0的生物无法攻击
     if (attacker.atk <= 0)
         return false;
     //攻击范围

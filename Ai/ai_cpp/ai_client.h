@@ -56,7 +56,7 @@ public:
     // 将id为mover的生物移动到position位置处
     void move(int mover, std::tuple<int, int, int> position);
 
-    // 令id为attacker的生物攻击id为target的生物
+    // 令id为attacker的生物攻击id为target的生物或神迹
     void attack(int attacker, int target);
 
     // 对id为target的生物使用artifact神器

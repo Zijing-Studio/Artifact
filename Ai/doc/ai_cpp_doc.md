@@ -133,7 +133,7 @@ void summon(int type, int star, std::tuple<int, int, int> position)
 void move(int mover, int x, int y, int z)
 ```
 
-​		将地图上id为**mover**的单位移动到地图(**x**, **y**, **z**)处
+​		将地图上id为**mover**的单位移动到地图(**x**, **y**, **z**)处。
 
 
 
@@ -144,7 +144,7 @@ void move(int mover, std::vector<int> position)
 void move(int mover, std::tuple<int, int, int> position)
 ```
 
-​		将地图上id为**mover**的单位移动到地图**position**处
+​		将地图上id为**mover**的单位移动到地图**position**处。
 
 
 
@@ -152,7 +152,7 @@ void move(int mover, std::tuple<int, int, int> position)
 void attack(int attacker, int target)
 ```
 
-​		令地图上id为**attacker**的单位攻击地图上id为**target**的单位
+​		令地图上id为**attacker**的单位攻击地图上id为**target**的生物或神迹。
 
 
 

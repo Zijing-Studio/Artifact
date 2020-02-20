@@ -66,7 +66,7 @@ class Obstacle:
         self.type = obstacle_dict.get('type', '')  # 种类
         self.pos = obstacle_dict.get('pos', [0, 0, 0])  # 位置
         self.allow_flying = obstacle_dict.get(
-            'allow_flying', False)  # 是否允许飞行单位通过
+            'allow_flying', False)  # 是否允许飞行生物通过
         self.allow_ground = obstacle_dict.get(
             'allow_ground', False)  # 是否允许地面单位通过
 

@@ -139,7 +139,7 @@ class AiClient:
         send_opt(json.dumps(message))
 
     def attack(self, attacker: int, target: int):
-        '''令id为attacker的生物攻击id为target的生物
+        '''令id为attacker的生物攻击id为target的生物或神迹
 
         Args:
             attacker: 发起攻击生物的id
