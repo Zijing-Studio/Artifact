@@ -44,7 +44,7 @@ def cube_neighbor(pos, dir):
 
 class Node:
     def __init__(self, pos, G, H, parent=None):
-        self.pos = pos
+        self.pos = tuple(pos)
         self.G = G
         self.H = H
         self.parent = parent
@@ -60,12 +60,14 @@ def search_path(start, to, obstacles=[], obstructs=[]):
     '''
     return shortest path
     '''
-    _start = ()
-    _to = ()
-    for i in range(3):
-        _start += (start[i],)
-        _to += (to[i],)
-    if to in obstacles:
+    _start = tuple(start)
+    _to = tuple(to)
+    #_start = ()
+    #_to = ()
+    #for i in range(3):
+    #    _start += (start[i],)
+    #    _to += (to[i],)
+    #if to in obstacles:
         return False
     opened = {}
     closed = {}
