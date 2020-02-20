@@ -38,7 +38,7 @@
 
 启动指令: python <judger路径> <启动逻辑command> <启动AI 1 command> <启动AI 2 command> <逻辑生成replay路径>
 
-启动指令示例: python .\Judger\judger.py python+.\\logic.py python+.\\Ai\\ai_py_rebuild\\ai-HL-_rebuild.py  python+.\\Ai\\ai_py_rebuild\\ai-HL-_rebuild.py  record.txt
+启动指令示例: python .\Judger\judger.py python+.\\logic.py python+.\\Ai\\ai_py\\ai-HL.py  python+.\\Ai\\ai_py\\ai-HL.py  record
 
 AI可以是C++版本，也可以选择python版本。选择其一即可。
 
