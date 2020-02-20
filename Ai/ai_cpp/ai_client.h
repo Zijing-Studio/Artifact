@@ -8,42 +8,13 @@
 using json = nlohmann::json;
 
 // 发送字符串长度
-void sendLen(std::string s)
-{
-    int len = s.length();
-    unsigned char lenb[4];
-    lenb[0] = (unsigned char)(len);
-    lenb[1] = (unsigned char)(len >> 8);
-    lenb[2] = (unsigned char)(len >> 16);
-    lenb[3] = (unsigned char)(len >> 24);
-    for (int i = 0; i < 4; i++)
-        printf("%c", lenb[3 - i]);
-}
+void sendLen(std::string s);
 
 // 发送操作
-void sendMsg(int player, int round, std::string operation_type, json operation_parameters)
-{
-    json message;
-    message["player"] = player;
-    message["round"] = round;
-    message["operation_type"] = operation_type;
-    message["operation_parameters"] = operation_parameters;
-    sendLen(message.dump());
-    std::cout << (unsigned char *)(message.dump().c_str());
-    std::cout.flush();
-}
+void sendMsg(int player, int round, std::string operation_type, json operation_parameters);
 
 // 读取信息
-json read()
-{
-    std::string len = "";
-    for (int i = 0; i < 4; ++i)
-        len += getchar();
-    std::string recv_msg = "";
-    for (int i = std::stoi(len); i > 0; --i)
-        recv_msg += getchar();
-    return json::parse(recv_msg);
-}
+json read();
 
 class AiClient
 {

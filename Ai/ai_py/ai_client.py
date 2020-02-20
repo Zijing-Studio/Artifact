@@ -39,7 +39,7 @@ def read_opt():
         dict
     '''
     read_buffer = sys.stdin.buffer
-    data_length = read_buffer.read(4)
+    data_length = read_buffer.read(6)
     data = read_buffer.read(int(data_length.decode()))
     return json.loads(data)
 
@@ -310,7 +310,7 @@ class AiClient:
         for unit in self.map.units:
             if unit.pos == pos and unit.flying == flying:
                 return unit
-        return gameunit.Unit()
+        return None
 
     def get_unit_by_id(self, unit_id: int) -> gameunit.Unit:
         '''获取id为unit_id的生物
