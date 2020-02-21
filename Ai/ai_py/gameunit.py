@@ -20,7 +20,7 @@ class Unit:
         self.atk_range = unit_dict.get('atk_range', [0, 0])  # 最小攻击范围 最大攻击范围
         self.max_move = unit_dict.get('max_move', 0)  # 行动力
         self.cool_down = unit_dict.get('cool_down', 0)  # 冷却时间
-        self.pos = unit_dict.get('pos', [0, 0, 0])  # 位置
+        self.pos = tuple(unit_dict.get('pos', [0, 0, 0]))  # 位置
         self.level = unit_dict.get('level', 0)  # 等级
         self.flying = unit_dict.get('flying', False)  # 是否飞行
         self.atk_flying = unit_dict.get('atk_flying', False)  # 是否对空
@@ -36,12 +36,13 @@ class Barrack:
     def __init__(self, barrack_dict=None):
         if barrack_dict is None:
             barrack_dict = dict()
-        self.pos = barrack_dict.get('pos', [0, 0, 0])  # 位置
+        self.pos = tuple(barrack_dict.get('pos', [0, 0, 0]))  # 位置
         self.camp = barrack_dict.get('camp', -1)  # 阵营
-        if self.camp == None:
+        if self.camp is None:
             self.camp = -1
-        self.summon_pos_list = barrack_dict.get(
+        summon_list_list = barrack_dict.get(
             'summon_pos_list', [[0, 0, 0]])  # 出兵点位置
+        self.summon_pos_list = [tuple(x) for x in summon_list_list]
 
 class Miracle:
     '''神迹
@@ -53,9 +54,10 @@ class Miracle:
         self.camp = miracle_dict.get('camp', -1)  # 阵营
         self.max_hp = miracle_dict.get('max_hp', -1)  # 最大生命值
         self.hp = miracle_dict.get('hp', -1)  # 当前生命值
-        self.pos = miracle_dict.get('pos', [0, 0, 0])  # 位置
-        self.summon_pos_list = miracle_dict.get(
+        self.pos = tuple(miracle_dict.get('pos', [0, 0, 0]))  # 位置
+        summon_list_list = miracle_dict.get(
             'summon_pos_list', [[0, 0, 0]])  # 初始出兵点位置
+        self.summon_pos_list = [x for x in summon_list_list]
         self.name = miracle_dict.get('name', '')  # 名字
         self.id = miracle_dict.get('id', -1)  # id
 
@@ -64,7 +66,7 @@ class Obstacle:
         if obstacle_dict is None:
             obstacle_dict = dict()
         self.type = obstacle_dict.get('type', '')  # 种类
-        self.pos = obstacle_dict.get('pos', [0, 0, 0])  # 位置
+        self.pos = tuple(obstacle_dict.get('pos', [0, 0, 0]))  # 位置
         self.allow_flying = obstacle_dict.get(
             'allow_flying', False)  # 是否允许飞行生物通过
         self.allow_ground = obstacle_dict.get(

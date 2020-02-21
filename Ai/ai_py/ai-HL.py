@@ -243,31 +243,31 @@ class AI(AiClient):
         """
         if self.my_camp == 0:
             if direct.upper() == "FF":  # Straight-forward
-                return [pos[0] + 1, pos[1] - 1, pos[2]]
+                return (pos[0] + 1, pos[1] - 1, pos[2])
             elif direct.upper() == "SF":  # Superior-forward (the direction which goes nearer to the barrack)
-                return [pos[0] + 1, pos[1], pos[2] - 1]
+                return (pos[0] + 1, pos[1], pos[2] - 1)
             elif direct.upper() == "IF":  # Inferior-forward
-                return [pos[0], pos[1] + 1, pos[2] - 1]
+                return (pos[0], pos[1] + 1, pos[2] - 1)
             elif direct.upper() == "BB":  # Straight-backward
-                return [pos[0] - 1, pos[1] + 1, pos[2]]
+                return (pos[0] - 1, pos[1] + 1, pos[2])
             elif direct.upper() == "SB":  # Superior-backward
-                return [pos[0], pos[1] - 1, pos[2] + 1]
+                return (pos[0], pos[1] - 1, pos[2] + 1)
             elif direct.upper() == "IB":  # Inferior-backward
-                return [pos[0] - 1, pos[1], pos[2] + 1]
+                return (pos[0] - 1, pos[1], pos[2] + 1)
         
         else:
             if direct.upper() == "FF":  # Straight-forward
-                return [pos[0] - 1, pos[1] + 1, pos[2]]
+                return (pos[0] - 1, pos[1] + 1, pos[2])
             elif direct.upper() == "SF":  # Superior-forward (the direction which goes nearer to the barrack)
-                return [pos[0] - 1, pos[1], pos[2] + 1]
+                return (pos[0] - 1, pos[1], pos[2] + 1)
             elif direct.upper() == "IF":  # Inferior-forward
-                return [pos[0], pos[1] - 1, pos[2] + 1]
+                return (pos[0], pos[1] - 1, pos[2] + 1)
             elif direct.upper() == "BB":  # Straight-backward
-                return [pos[0] + 1, pos[1] - 1, pos[2]]
+                return (pos[0] + 1, pos[1] - 1, pos[2])
             elif direct.upper() == "SB":  # Superior-backward
-                return [pos[0], pos[1] + 1, pos[2] - 1]
+                return (pos[0], pos[1] + 1, pos[2] - 1)
             elif direct.upper() == "IB":  # Inferior-backward
-                return [pos[0] + 1, pos[1], pos[2] - 1]
+                return (pos[0] + 1, pos[1], pos[2] - 1)
 
     def play(self):
         """
