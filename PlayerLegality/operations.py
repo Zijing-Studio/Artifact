@@ -241,6 +241,18 @@ class Summon(AbstractAct):
             if creature.type == _type and creature.available_count > 0:
                 return True
         return False
+    
+    def unit_conflict(self, creature_type, pos):
+        '''
+        override, check if the summon position already had a creature on it
+        '''
+        flying = UNIT_DATA[creature_type]["flying"]
+        target = self.map.get_unit_at(pos)
+        result = True
+        if target is None or flying != target.flying:
+            result = False
+        return result
+
 
     def check_legality(self):
         result = True
