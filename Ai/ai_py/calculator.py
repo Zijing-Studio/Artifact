@@ -4,14 +4,18 @@
 calculator for hex-grids
 '''
 
-# left-up, right-up, left-down, right-down, left-right, up, down
-MAPBORDER = [(-6+i, -9, 15-i) for i in range(0, 14)] + \
-            [(9, 6-i, -15+i) for i in range(0, 14)] + \
-            [(-9, -6+i, 15-i) for i in range(0, 14)] + \
-            [(6-i, 9, -15+i) for i in range(0, 14)] + \
-            [(-7, -8, 15), (-8, -7, 15), (8, 7, -15), (7, 8, -15)] + \
-            [(7, -8, 1), (8, -8, 0), (8, -7, -1)] + \
-            [(-8, 7, 1), (-8, 8, 0), (-7, 8,  -1)]
+def MAPBORDER():
+    '''
+    return map border'''
+    # left-up, right-up, left-down, right-down, left-right, up, down
+    border = [(-6+i, -9, 15-i) for i in range(0, 14)] + \
+                [(9, 6-i, -15+i) for i in range(0, 14)] + \
+                [(-9, -6+i, 15-i) for i in range(0, 14)] + \
+                [(6-i, 9, -15+i) for i in range(0, 14)] + \
+                [(-7, -8, 15), (-8, -7, 15), (8, 7, -15), (7, 8, -15)] + \
+                [(7, -8, 1), (8, -8, 0), (8, -7, -1)] + \
+                [(-8, 7, 1), (-8, 8, 0), (-7, 8,  -1)]
+    return border
 
 def cube_distance(a, b):
     '''
@@ -68,7 +72,7 @@ def search_path(start, to, obstacles=[], obstructs=[]):
     #    _start += (start[i],)
     #    _to += (to[i],)
     #if to in obstacles:
-        return False
+    #    return False
     opened = {}
     closed = {}
     opened[_start] =  Node(start, 0, cube_distance(start, to))
@@ -122,11 +126,13 @@ def get_obstacles_by_unit(unit, _map):
     returns all obstacles for a unit
     unfinished, currently only units have been taken into account
     '''
-    obstacles = MAPBORDER
+    obstacles = MAPBORDER()
     if unit.flying:
-        obstacles += _map.flying_obstacles
+        fixed_obstacles = _map.flying_obstacles
     else:
-        obstacles += _map.ground_obstacles
+        fixed_obstacles = _map.ground_obstacles
+    for obstacle in fixed_obstacles:
+        obstacles.append(obstacle.pos)
     obstacle_unit = _map.units
     for obstacle in obstacle_unit:
         if obstacle.camp != unit.camp:
@@ -139,7 +145,7 @@ def get_obstructs_by_unit(unit, _map):
     returns all obstructs for a unit, obstructs means the unit can
     stay at that point but cannot pass it
     '''
-    obstructs = MAPBORDER
+    obstructs = []
     obstacle_unit = _map.units
     for obstruct in obstacle_unit:
         if obstruct.camp != unit.camp:
@@ -211,5 +217,5 @@ def all_pos_in_map():
     return all_pos
 
 if __name__ == "__main__":
-    print(cube_reachable((0, 0, 0), 1, MAPBORDER))
-    print(MAPBORDER)
+    print(cube_reachable((0, 0, 0), 1, MAPBORDER()))
+    print(MAPBORDER())

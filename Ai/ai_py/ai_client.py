@@ -199,9 +199,9 @@ class AiClient:
             int 距离
         '''
         # 地图边界
-        obstacles_pos = calculator.MAPBORDER[:]
+        obstacles_pos = calculator.MAPBORDER()
         # 地面障碍
-        obstacles_pos += self.map.ground_obstacles[:]
+        obstacles_pos += self.map.ground_obstacles
         # 敌方地面生物
         for unit in self.map.units:
             if unit.camp != camp and (not unit.flying):
@@ -220,9 +220,9 @@ class AiClient:
             int 距离
         '''
         # 地图边界
-        obstacles_pos = calculator.MAPBORDER[:]
+        obstacles_pos = calculator.MAPBORDER()
         # 地面障碍
-        obstacles_pos += self.map.flying_obstacles[:]
+        obstacles_pos += self.map.flying_obstacles
         # 敌方地面生物
         for unit in self.map.units:
             if unit.camp != camp and unit.flying:
