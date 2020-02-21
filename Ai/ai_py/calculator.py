@@ -4,14 +4,18 @@
 calculator for hex-grids
 '''
 
-# left-up, right-up, left-down, right-down, left-right, up, down
-MAPBORDER = [(-6+i, -9, 15-i) for i in range(0, 14)] + \
-            [(9, 6-i, -15+i) for i in range(0, 14)] + \
-            [(-9, -6+i, 15-i) for i in range(0, 14)] + \
-            [(6-i, 9, -15+i) for i in range(0, 14)] + \
-            [(-7, -8, 15), (-8, -7, 15), (8, 7, -15), (7, 8, -15)] + \
-            [(7, -8, 1), (8, -8, 0), (8, -7, -1)] + \
-            [(-8, 7, 1), (-8, 8, 0), (-7, 8,  -1)]
+def MAPBORDER():
+    '''
+    return map border'''
+    # left-up, right-up, left-down, right-down, left-right, up, down
+    border = [(-6+i, -9, 15-i) for i in range(0, 14)] + \
+                [(9, 6-i, -15+i) for i in range(0, 14)] + \
+                [(-9, -6+i, 15-i) for i in range(0, 14)] + \
+                [(6-i, 9, -15+i) for i in range(0, 14)] + \
+                [(-7, -8, 15), (-8, -7, 15), (8, 7, -15), (7, 8, -15)] + \
+                [(7, -8, 1), (8, -8, 0), (8, -7, -1)] + \
+                [(-8, 7, 1), (-8, 8, 0), (-7, 8,  -1)]
+    return border
 
 def cube_distance(a, b):
     '''
@@ -122,7 +126,7 @@ def get_obstacles_by_unit(unit, _map):
     returns all obstacles for a unit
     unfinished, currently only units have been taken into account
     '''
-    obstacles = MAPBORDER
+    obstacles = MAPBORDER()
     if unit.flying:
         fixed_obstacles = _map.get_flying_obstacles()
     else:
@@ -201,5 +205,5 @@ def in_map(pos):
     return True
 
 if __name__ == "__main__":
-    print(cube_reachable((0, 0, 0), 1, MAPBORDER))
-    print(MAPBORDER)
+    print(cube_reachable((0, 0, 0), 1, MAPBORDER()))
+    print(MAPBORDER())

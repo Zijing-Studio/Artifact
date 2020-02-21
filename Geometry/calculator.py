@@ -4,14 +4,18 @@
 calculator for hex-grids
 '''
 
-# left-up, right-up, left-down, right-down, left-right, up, down
-MAPBORDER = [(-6+i, -9, 15-i) for i in range(0, 14)] + \
-            [(9, 6-i, -15+i) for i in range(0, 14)] + \
-            [(-9, -6+i, 15-i) for i in range(0, 14)] + \
-            [(6-i, 9, -15+i) for i in range(0, 14)] + \
-            [(-7, -8, 15), (-8, -7, 15), (8, 7, -15), (7, 8, -15)] + \
-            [(7, -8, 1), (8, -8, 0), (8, -7, -1)] + \
-            [(-8, 7, 1), (-8, 8, 0), (-7, 8,  -1)]
+def MAPBORDER():
+    '''
+    return map border'''
+    # left-up, right-up, left-down, right-down, left-right, up, down
+    border = [(-6+i, -9, 15-i) for i in range(0, 14)] + \
+                [(9, 6-i, -15+i) for i in range(0, 14)] + \
+                [(-9, -6+i, 15-i) for i in range(0, 14)] + \
+                [(6-i, 9, -15+i) for i in range(0, 14)] + \
+                [(-7, -8, 15), (-8, -7, 15), (8, 7, -15), (7, 8, -15)] + \
+                [(7, -8, 1), (8, -8, 0), (8, -7, -1)] + \
+                [(-8, 7, 1), (-8, 8, 0), (-7, 8,  -1)]
+    return border
 
 def cube_distance(a, b):
     '''
@@ -68,12 +72,16 @@ def search_path(start, to, obstacles=[], obstructs=[]):
     _start = tuple(start)
     _to = tuple(to)
     if _to in obstacles:
+        #print("to: " + str(_to))
+        #print(obstacles)
         return False
     opened = {}
     closed = {}
     opened[_start] =  Node(start, 0, cube_distance(start, to))
     while opened:
         cur_node = opened[min(opened, key=lambda x: opened[x].G + opened[x].H)]
+        #print("Opened: "+str(opened.keys()))
+        #print("cur node:" + str(cur_node.pos))
         for i in range(6):
             neighbor = cube_neighbor(cur_node.pos, i)
             if neighbor not in closed and neighbor not in obstacles:
@@ -122,7 +130,8 @@ def get_obstacles_by_unit(unit, _map):
     returns all obstacles for a unit
     unfinished, currently only units have been taken into account
     '''
-    obstacles = MAPBORDER
+    obstacles = MAPBORDER()
+    #obstacles=[]
     if unit.flying:
         fixed_obstacles = _map.get_flying_obstacles()
     else:
@@ -158,8 +167,12 @@ def path(unit, dest, _map):
     public sdk for search_path
     '''
     obstacles = get_obstacles_by_unit(unit, _map)
+    #print("mapborder: "+str(MAPBORDER()))
+    #print("obstacles:" + str(obstacles))
     obstructs = get_obstructs_by_unit(unit, _map)
+    #print("obstructs:" + str(obstructs))
     result = search_path(unit.pos, dest, obstacles, obstructs)
+    #print("Path:" + str(result))
     return result
 
 def reachable(unit, _map):
@@ -213,4 +226,4 @@ def all_pos_in_map():
     return all_pos
 
 if __name__ == "__main__":
-    print(search_path([6,-7,1],[3,-7,4]))
+    print(MAPBORDER())
