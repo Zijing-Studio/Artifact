@@ -103,7 +103,7 @@ class StateSystem:
         return None
 
     def get_summon_pos_list(self,player_camp):
-        result = self.get_miracle_by_id(player_camp).summon_pos_list
+        result = [item for item in self.get_miracle_by_id(player_camp).summon_pos_list]
         for barrack in self.get_barracks(player_camp):
             result += barrack.summon_pos_list
         return result
