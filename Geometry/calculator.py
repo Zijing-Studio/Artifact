@@ -117,7 +117,7 @@ def cube_reachable(start, movement, obstacles=[], obstructs=[]):
         fringes.append([])
         for pos in fringes[i]:
             if pos in obstructs:
-                pass
+                continue
             for j in range(0, 6):
                 neighbor = cube_neighbor(pos, j)
                 if neighbor not in visited and neighbor not in obstacles:
