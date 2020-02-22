@@ -37,23 +37,23 @@ class Parser:
         try:
             operation = json.loads(operation_json)
         except json.decoder.JSONDecodeError:
-            return False
+            raise Exception("error: json decode error")
         try:
             _round = int(operation["round"])
         except Exception:
-            return False
+            raise Exception("error: round error")
 
         #check round number
         if _round != self.round:
             # return "Not the same round"
-            return False
+            raise Exception("error: not the same round")
         #create operation object
         operation_object = self.to_object(operation)
         if isinstance(operation_object, BaseException):
             #return error message
             #print(operation_object)
             #return operation_object
-            return False
+            raise operation_object
         # check legality
         legality = operation_object.check_legality()
         if legality is True:
@@ -61,12 +61,11 @@ class Parser:
             #print("emit " + operation_object.name)
             operation_object.act()
             #return "OK"
-            return True
         else:
             #return error message
             #print("emit " + operation_object.name + " error: " + str(legality))
             #return legality
-            return False
+            raise Exception(operation_object.name + " error: " + str(legality))
 
     def to_object(self, operation_json):
         '''

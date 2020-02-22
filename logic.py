@@ -128,8 +128,11 @@ class Game:
             self.send_game_info()
             opt_dict = read_opt()
             if opt_dict["player"] == self.listen:
-                parser_respond = self.parser.parse(opt_dict["content"])
-                if not parser_respond:
+                try:
+                    self.parser.parse(opt_dict["content"])
+                except Exception as parse_error:
+                    if DEBUG:
+                        raise parse_error
                     continue
                 self.send_media_info()
                 self.check_game_end()
@@ -520,14 +523,26 @@ class Game:
         self.send_game_info()
         opt_dict0 = read_opt()
         if opt_dict0["player"] == self.player0:
-            is_player0_ready = self.parser.parse(opt_dict0["content"])
+            try:
+                self.parser.parse(opt_dict0["content"])
+            except Exception as init_error:
+                if DEBUG:
+                    raise init_error
+            else:
+                is_player0_ready = True
         # 1号玩家
         self.state += 1
         self.listen = self.player1
         self.send_game_info()
         opt_dict1 = read_opt()
         if opt_dict1["player"] == self.player1:
-            is_player1_ready = self.parser.parse(opt_dict1["content"])
+            try:
+                self.parser.parse(opt_dict0["content"])
+            except Exception:
+                if DEBUG:
+                    raise init_error
+            else:
+                is_player0_ready = True
         # 双方玩家是否均准备好卡组
         if not is_player0_ready and not is_player1_ready:
             self.is_end = True
