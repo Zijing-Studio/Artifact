@@ -332,7 +332,11 @@ class Attack(AbstractAct):
         AbstractAct.__init__(self, _parser, _id, _map)
         self.name = "Attack"
         self.attacker = self.get_unit_by_id(_params["attacker"])
-        self.target = self.get_unit_by_id(_params["target"])
+        target_id = _params["target"]
+        if target_id in (0, 1):
+            self.target = self.map.get_miracle_by_id(target_id)
+        else:
+            self.target = self.map.get_unit_by_id(_params["target"])
 
     def acted_special_check(self):
         if self.attacker.agility:
@@ -355,7 +359,7 @@ class Attack(AbstractAct):
                     .format(self.attacker.atk_range, dist)
         elif self.target.hp <= 0:
             result = "Target hp <= 0"
-        elif self.target.flying and not self.attacker.flying and not self.attacker.atk_flying:
+        elif self.target.id != 0 and self.target.id != 1 and self.target.flying and not self.attacker.flying and not self.attacker.atk_flying:
             result = "Cannot reach unit in sky"
         if result is not True:
             result += "\nattacker: {}\n, target: {}"\
