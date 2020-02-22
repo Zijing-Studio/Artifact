@@ -140,9 +140,9 @@ def get_obstacles_by_unit(unit, _map):
         obstacles.append(obstacle.pos)
     obstacle_unit = _map.get_units()
     for obstacle in obstacle_unit:
-        if obstacle.camp != unit.camp:
-            if unit.flying == obstacle.flying:
-                obstacles.append(obstacle.pos)
+        #if obstacle.camp != unit.camp:
+        if unit.flying == obstacle.flying:
+            obstacles.append(obstacle.pos)
     return obstacles
 
 def get_obstructs_by_unit(unit, _map):
