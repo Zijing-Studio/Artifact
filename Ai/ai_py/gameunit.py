@@ -38,8 +38,6 @@ class Barrack:
             barrack_dict = dict()
         self.pos = tuple(barrack_dict.get('pos', [0, 0, 0]))  # 位置
         self.camp = barrack_dict.get('camp', -1)  # 阵营
-        if self.camp is None:
-            self.camp = -1
         summon_list_list = barrack_dict.get(
             'summon_pos_list', [[0, 0, 0]])  # 出兵点位置
         self.summon_pos_list = [tuple(x) for x in summon_list_list]

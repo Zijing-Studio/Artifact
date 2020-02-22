@@ -300,6 +300,4 @@ string数组。用于确认己方生物。
 
 python版本的gameunit与C++版本的gameunit大体相同。在此列出一些细微差异。
 
-C++版本的Pos是std::tuple<int, int, int>，而python版本的Pos是list。
-
 C++版本用的是结构体，而python版本用的是类。python版本的类属性有一些无关紧要的默认值。

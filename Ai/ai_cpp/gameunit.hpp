@@ -126,10 +126,7 @@ void from_json(const json &j, Unit &u)
 void from_json(const json &j, Barrack &b)
 {
     j.at("pos").get_to(b.pos);
-    if (j["camp"].is_null())
-        b.camp = -1;
-    else
-        j.at("camp").get_to(b.camp);
+    j.at("camp").get_to(b.camp);
     j.at("summon_pos_list").get_to(b.summon_pos_list);
 }
 
