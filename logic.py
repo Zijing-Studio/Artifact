@@ -68,9 +68,8 @@ def send_state(state_dict):
 def send_message_goal(message_str, send_goal):
     '''发送二进制流
     '''
-    if DEBUG:
-        with open('log.txt', 'a') as logfile:
-            logfile.write('logic->'+str(send_goal)+':\n'+message_str+'\n')
+    with open('log.txt', 'a') as logfile:
+        logfile.write('logic->'+str(send_goal)+':\n'+message_str+'\n')
     sys.stdout.buffer.write(logic_convert_byte(message_str, send_goal))
     sys.stdout.flush()
 
@@ -98,7 +97,7 @@ class Game:
         '''判断游戏是否结束，若结束则结束对局
         '''
         # 最大回合数
-        if self._round == 100:
+        if self._round == 10000:
             self.end(-1)
 
         hp0 = self.statesystem.get_miracle_by_id(0).hp
