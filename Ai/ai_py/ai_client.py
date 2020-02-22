@@ -98,13 +98,13 @@ class AiClient:
         }
         send_opt(json.dumps(message))
 
-    def summon(self, _type: str, level: int, position: list):
+    def summon(self, _type: str, level: int, position: tuple):
         '''在位置position处召唤一个本方类型为_type,星级为level的生物
 
         Args:
             _type: 描述生物类型的字符串
             level: 生物星级
-            position: 地图上的[x,y,z]位置
+            position: 地图上的(x,y,z)位置
         '''
         message = {
             "player": self.my_camp,
@@ -119,12 +119,12 @@ class AiClient:
         }
         send_opt(json.dumps(message))
 
-    def move(self, mover: int, position: list):
+    def move(self, mover: int, position: tuple):
         '''将id为mover的生物移动到位置position处
 
         Args:
             mover: 需要移动的生物的id
-            position: 目标在地图上的[x,y,z]位置
+            position: 目标在地图上的(x,y,z)位置
         '''
         message = {
             "player": self.my_camp,
@@ -187,7 +187,7 @@ class AiClient:
         }
         send_opt(json.dumps(message))
 
-    def get_distance_on_ground(self, pos_a: list, pos_b: list, camp: int) -> int:
+    def get_distance_on_ground(self, pos_a: tuple, pos_b: tuple, camp: int) -> int:
         '''获取camp阵营生物从位置pos_a到位置pos_b的地面距离(不经过地面障碍或敌方地面生物)
 
         Args:
@@ -208,7 +208,7 @@ class AiClient:
                 obstacles_pos.append(unit.pos)
         return len(calculator.search_path(pos_a, pos_b, obstacles_pos, []))
 
-    def get_distance_in_sky(self, pos_a: list, pos_b: list, camp: int) -> int:
+    def get_distance_in_sky(self, pos_a: tuple, pos_b: tuple, camp: int) -> int:
         '''获取camp阵营生物从位置pos_a到位置pos_b的飞行距离(不经过飞行障碍或敌方飞行生物)
 
         Args:
@@ -229,11 +229,11 @@ class AiClient:
                 obstacles_pos.append(unit.pos)
         return len(calculator.search_path(pos_a, pos_b, obstacles_pos, []))
 
-    def check_barrack(self, pos: list) -> int:
+    def check_barrack(self, pos: tuple) -> int:
         '''判定位置pos的驻扎情况
 
         Args:
-            pos: 地图上的[x,y,z]位置
+            pos: 地图上的(x,y,z)位置
 
         Returns:
             int 不是驻扎点返回-2,中立返回-1,否则返回占领该驻扎点的阵营(0或1)
@@ -297,11 +297,11 @@ class AiClient:
                         return True
         return False
 
-    def get_unit_by_pos(self, pos: list, flying: bool) -> gameunit.Unit:
+    def get_unit_by_pos(self, pos: tuple, flying: bool) -> gameunit.Unit:
         '''获取位置pos上的生物
 
         Args:
-            pos: 地图上的[x,y,z]位置
+            pos: 地图上的(x,y,z)位置
             flying: 飞行生物还是地面生物
 
         Returns:

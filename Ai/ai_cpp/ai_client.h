@@ -47,7 +47,7 @@ public:
     // 在position位置处召唤一个本方类型为type,星级为level的生物
     void summon(int type, int level, std::tuple<int, int, int> position);
 
-    // 将id为mover的生物移动到[x,y,z]位置处
+    // 将id为mover的生物移动到(x,y,z)位置处
     void move(int mover, int x, int y, int z);
 
     // 将id为mover的生物移动到position位置处

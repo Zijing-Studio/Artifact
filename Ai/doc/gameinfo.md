@@ -10,7 +10,7 @@ ai回合开始时/每次执行非结束回合的游戏操作时会收到一个�
 
 以下为gameunit.hpp相关结构体的具体参数的解释。
 
-其中Pos类型表示三元整数tuple，表示位置。
+其中Pos类型表示std::tuple<int, int, int>，表示位置。
 
 ### Unit
 
@@ -299,5 +299,7 @@ string数组。用于确认己方生物。
 ## python版本的细微差异
 
 python版本的gameunit与C++版本的gameunit大体相同。在此列出一些细微差异。
+
+C++版本的Pos的是std::tuple<int, int, int>，python版本用的是tuple。
 
 C++版本用的是结构体，而python版本用的是类。python版本的类属性有一些无关紧要的默认值。
