@@ -200,7 +200,7 @@ class AI(AiClient):
                 reach_pos_with_dis = calculator.reachable(ally, self.map)
                 # 压平
                 reach_pos_list = []
-                for reach_pos in reach_pos_with_dis:
+                for reach_pos in reach_pos_with_dis[1:]:
                     reach_pos_list += reach_pos
                 if len(reach_pos_list) == 0:
                     continue
@@ -219,7 +219,7 @@ class AI(AiClient):
                 reach_pos_with_dis = calculator.reachable(ally, self.map)
                 # 压平
                 reach_pos_list = []
-                for reach_pos in reach_pos_with_dis:
+                for reach_pos in reach_pos_with_dis[1:]:
                     reach_pos_list += reach_pos
                 if len(reach_pos_list) == 0:
                     continue
