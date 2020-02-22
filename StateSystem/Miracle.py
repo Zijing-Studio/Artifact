@@ -1,8 +1,9 @@
-from StateSystem.EventListener import DamageListener
+from StateSystem.EventListener import EventListener
 
 class Miracle:
     def __init__(self,camp,hp,pos,summon_pos_list,state_system):
         self.name = "Miracle (belongs to Player {})".format(camp)
+        self.type = "Miracle"
         self.id = camp
         self.max_hp = hp
         self.hp = hp
@@ -12,7 +13,7 @@ class Miracle:
         self.state_system = state_system
         self.event_listener_list = []
 
-        self.add_event_listener(DamageListener())
+        self.add_event_listener(MiracleDamageListener())
 
     def add_event_listener(self,listener):
         listener.host = self
@@ -35,3 +36,13 @@ class Miracle:
             "name": self.name,
             "id": self.id
         }
+
+class MiracleDamageListener(EventListener):
+    def deal_event(self,event):
+        if event.name == "Damage":
+            try:
+                if event.parameter_dict["target"] == self.host:
+                    self.host.hp -= event.parameter_dict["damage"]
+            except:
+                # print("An Error appears while handling Damage event.")
+                pass

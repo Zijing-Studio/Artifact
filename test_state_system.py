@@ -8,7 +8,7 @@ if __name__ == "__main__":
         "camp": 0,
         "cards": {
             "artifacts": ["SalamanderShield", "InfernoFlame"],
-            "creatures": ["BlackBat", "Priest", "Archer"]
+            "creatures": ["BlackBat", "Priest", "VolcanoDragon"]
         }
     }))
     sys.emit(Event("GameStart",{
@@ -19,12 +19,12 @@ if __name__ == "__main__":
         }
     }))
     sys.start_event_processing()
-    sys.emit(Event("Summon",{"type":"BlackBat","level":1,"pos":(0,0,0),"camp":1}))
+    sys.emit(Event("Summon",{"type":"VolcanoDragon","level":1,"pos":(0,0,0),"camp":0}))
     sys.start_event_processing()
     sys.emit(Event("Summon",{"type":"BlackBat","level":1,"pos":(0,1,-1),"camp":0}))
     sys.start_event_processing()
     a=sys.map.get_unit_at((0,0,0))
-    b=sys.map.get_unit_at((0,1,-1))
+    b=sys.map.miracle_list[1]
     sys.emit(Event("TurnEnd"))
     sys.start_event_processing()
     sys.emit(Event("TurnStart"))
