@@ -537,7 +537,7 @@ class Game:
         opt_dict1 = read_opt()
         if opt_dict1["player"] == self.player1:
             try:
-                self.parser.parse(opt_dict0["content"])
+                self.parser.parse(opt_dict1["content"])
             except Exception:
                 if DEBUG:
                     raise init_error
