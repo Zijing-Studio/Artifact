@@ -33,6 +33,7 @@ class StateSystem:
             ],self)
         ]
         self.map.obstacle_list = [Obstacle("Abyss",ob_pos) for ob_pos in ABYSS_INIT_LIST]
+        self.map.obstacle_list += [Obstacle("Miracle",(-7,7,0)), Obstacle("Miracle",(7,-7,0))]
         self.map.barrack_list = [Barrack(br[0],br[1],br[2]) for br in BARRACK_INIT_LIST]
         self.event_listener_list = []
 
