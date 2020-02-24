@@ -1,19 +1,6 @@
-#ifndef AI_SDK_HPP_
-#define AI_SDK_HPP_
-
-#include <vector>
-#include <iostream>
-
+#include "ai_client.h"
 #include "calculator.h"
-#include "gameunit.hpp"
-#include "json.hpp"
-using json = nlohmann::json;
 
-namespace ai_sdk
-{
-// 通信部分
-
-// 发送字符串长度
 void sendLen(std::string s)
 {
     int len = s.length();
@@ -26,7 +13,6 @@ void sendLen(std::string s)
         printf("%c", lenb[3 - i]);
 }
 
-// 发送操作
 void sendMsg(int player, int round, std::string operation_type, json operation_parameters)
 {
     json message;
@@ -39,11 +25,10 @@ void sendMsg(int player, int round, std::string operation_type, json operation_p
     std::cout.flush();
 }
 
-// 读取信息
 json read()
 {
     std::string len = "";
-    for (int i = 0; i < 4; ++i)
+    for (int i = 0; i < 6; ++i)
         len += getchar();
     std::string recv_msg = "";
     for (int i = std::stoi(len); i > 0; --i)
@@ -51,93 +36,132 @@ json read()
     return json::parse(recv_msg);
 }
 
-// 玩家player选择初始神器artifacts和生物creatures
-void init(int player, std::vector<std::string> artifacts, std::vector<std::string> creatures)
+void AiClient::updateGameInfo()
 {
-    json operation_parameters;
-    operation_parameters["artifacts"] = artifacts;
-    operation_parameters["creatures"] = creatures;
-    sendMsg(player, 0, "init", operation_parameters);
+    json game_info = read();
+    game_info["round"].get_to(round);
+    game_info["camp"].get_to(my_camp);
+    game_info["map"].get_to(map);
+    game_info["players"][0].get_to(players[0]);
+    game_info["players"][1].get_to(players[1]);
 }
 
-// 玩家player在地图[x,y,z]处召唤一个本方类型为type,星级为star的单位
-void summon(int player, int round, int type, int star, int x, int y, int z)
+void AiClient::chooseCards()
+{
+    my_artifacts = {"HolyLight"};
+    my_creatures = {"Archer", "Swordsman", "Priest"};
+    init();
+}
+
+void AiClient::play()
+{
+    if (round < 20)
+        endRound();
+    else
+        exit(0);
+}
+
+void AiClient::init()
+{
+    json operation_parameters;
+    operation_parameters["artifacts"] = my_artifacts;
+    operation_parameters["creatures"] = my_creatures;
+    sendMsg(my_camp, 0, "init", operation_parameters);
+}
+
+void AiClient::summon(int type, int level, int x, int y, int z)
 {
     json operation_parameters;
     std::vector<int> position = {x, y, z};
     operation_parameters["position"] = position;
     operation_parameters["type"] = type;
-    operation_parameters["star"] = star;
-    sendMsg(player, round, "summon", operation_parameters);
+    operation_parameters["level"] = level;
+    sendMsg(my_camp, round, "summon", operation_parameters);
 }
 
-// 玩家player在地图position处召唤一个本方类型为type,星级为star的单位
-void summon(int player, int round, int type, int star, std::vector<int> position)
+void AiClient::summon(int type, int level, std::vector<int> position)
 {
     json operation_parameters;
     operation_parameters["position"] = position;
     operation_parameters["type"] = type;
-    operation_parameters["star"] = star;
-    sendMsg(player, round, "summon", operation_parameters);
+    operation_parameters["level"] = level;
+    sendMsg(my_camp, round, "summon", operation_parameters);
 }
 
-// 玩家player将id为mover的单位移动到地图[x,y,z]处
-void move(int player, int round, int mover, int x, int y, int z)
+void AiClient::summon(int type, int level, std::tuple<int, int, int> position)
+{
+    json operation_parameters;
+    operation_parameters["position"] = position;
+    operation_parameters["type"] = type;
+    operation_parameters["level"] = level;
+    sendMsg(my_camp, round, "summon", operation_parameters);
+}
+
+void AiClient::move(int mover, int x, int y, int z)
 {
     json operation_parameters;
     operation_parameters["mover"] = mover;
     std::vector<int> position = {x, y, z};
     operation_parameters["position"] = position;
-    sendMsg(player, round, "move", operation_parameters);
+    sendMsg(my_camp, round, "move", operation_parameters);
 }
 
-// 玩家player将id为mover的单位移动到地图position处
-void move(int player, int round, int mover, std::vector<int> position)
+void AiClient::move(int mover, std::vector<int> position)
 {
     json operation_parameters;
     operation_parameters["mover"] = mover;
     operation_parameters["position"] = position;
-    sendMsg(player, round, "move", operation_parameters);
+    sendMsg(my_camp, round, "move", operation_parameters);
 }
 
-// 玩家player令id为attacker的单位攻击id为target的单位
-void attack(int player, int round, int attacker, int target)
+void AiClient::move(int mover, std::tuple<int, int, int> position)
+{
+    json operation_parameters;
+    operation_parameters["mover"] = mover;
+    operation_parameters["position"] = position;
+    sendMsg(my_camp, round, "move", operation_parameters);
+}
+
+void AiClient::attack(int attacker, int target)
 {
     json operation_parameters;
     operation_parameters["attacker"] = attacker;
     operation_parameters["target"] = target;
-    sendMsg(player, round, "attack", operation_parameters);
+    sendMsg(my_camp, round, "attack", operation_parameters);
 }
 
-// 玩家player对id为target的目标使用artifact神器
-void use(int player, int round, int artifact, int target)
+void AiClient::use(int artifact, int target)
 {
     json operation_parameters;
     operation_parameters["card"] = artifact;
     operation_parameters["target"] = target;
-    sendMsg(player, round, "attack", operation_parameters);
+    sendMsg(my_camp, round, "attack", operation_parameters);
 }
 
-// 玩家player对地图target处使用artifact神器
-void use(int player, int round, int artifact, std::vector<int> target)
+void AiClient::use(int artifact, std::vector<int> target)
 {
     json operation_parameters;
     operation_parameters["card"] = artifact;
     operation_parameters["target"] = target;
-    sendMsg(player, round, "attack", operation_parameters);
+    sendMsg(my_camp, round, "attack", operation_parameters);
 }
 
-// 玩家player结束当前回合
-void endRound(int player, int round)
+void AiClient::use(int artifact, std::tuple<int, int, int> target)
 {
     json operation_parameters;
-    sendMsg(player, round, "endround", operation_parameters);
+    operation_parameters["card"] = artifact;
+    operation_parameters["target"] = target;
+    sendMsg(my_camp, round, "attack", operation_parameters);
 }
 
-//查询部分
+void AiClient::endRound()
+{
+    json operation_parameters;
+    sendMsg(my_camp, round, "endround", operation_parameters);
+}
 
-// 获取地图map上camp阵营单位从位置pos_a到位置pos_b的地面距离(不经过地面障碍或敌方地面单位)
-int getDistanceOnGround(gameunit::Map map, gameunit::Pos pos_a, gameunit::Pos pos_b, int camp)
+
+int AiClient::getDistanceOnGround(gameunit::Pos pos_a, gameunit::Pos pos_b, int camp)
 {
     //地图边界
     std::vector<gameunit::Pos> obstacles_pos = calculator::MAPBORDER();
@@ -157,8 +181,7 @@ int getDistanceOnGround(gameunit::Map map, gameunit::Pos pos_a, gameunit::Pos po
     return calculator::search_path(pos_a, pos_b, obstacles_pos, {}).size();
 }
 
-// 获取地图map上camp阵营单位从位置pos_a到位置pos_b的飞行距离(不经过飞行障碍或敌方飞行单位)
-int getDistanceInSky(gameunit::Map map, gameunit::Pos pos_a, gameunit::Pos pos_b, int camp)
+int AiClient::getDistanceInSky(gameunit::Pos pos_a, gameunit::Pos pos_b, int camp)
 {
     //地图边界
     std::vector<gameunit::Pos> obstacles_pos = calculator::MAPBORDER();
@@ -178,9 +201,7 @@ int getDistanceInSky(gameunit::Map map, gameunit::Pos pos_a, gameunit::Pos pos_b
     return calculator::search_path(pos_a, pos_b, obstacles_pos, {}).size();
 }
 
-// 对于指定位置pos,判断其驻扎情况
-// 不是驻扎点返回-2,中立返回-1,否则返回占领该驻扎点的阵营(0或1)
-int checkBarrack(gameunit::Map map, gameunit::Pos pos)
+int AiClient::checkBarrack(gameunit::Pos pos)
 {
     for (auto barrack = map.barracks.begin(); barrack != map.barracks.end(); barrack++)
     {
@@ -190,15 +211,14 @@ int checkBarrack(gameunit::Map map, gameunit::Pos pos)
     return -2;
 }
 
-// 判断生物attacker能否攻击到生物target(只考虑攻击力、攻击范围)
-bool canAttack(gameunit::Unit attacker, gameunit::Unit target)
+bool AiClient::canAttack(gameunit::Unit attacker, gameunit::Unit target)
 {
-    //攻击力小于等于0的单位无法攻击
+    //攻击力小于等于0的生物无法攻击
     if (attacker.atk <= 0)
         return false;
     //攻击范围
     int dist = calculator::cube_distance(attacker.pos, target.pos);
-    if (dist < attacker.atk_range.first || dist > attacker.atk_range.second)
+    if (dist < attacker.atk_range[0] || dist > attacker.atk_range[1])
         return false;
     //对空攻击
     if (target.flying && (!attacker.atk_flying))
@@ -206,8 +226,7 @@ bool canAttack(gameunit::Unit attacker, gameunit::Unit target)
     return true;
 }
 
-// 判断能否对位置pos使用神器artifact(不考虑消耗、冷却)
-bool canUseArtifact(gameunit::Map map, gameunit::Artifact artifact, gameunit::Pos pos, int camp)
+bool AiClient::canUseArtifact(gameunit::Artifact artifact, gameunit::Pos pos, int camp)
 {
     if (artifact.name == "HolyLight")
     {
@@ -222,7 +241,7 @@ bool canUseArtifact(gameunit::Map map, gameunit::Artifact artifact, gameunit::Po
                 return false;
         }
         // 距己方神迹范围<=5
-        if (calculator::cube_distance(pos, map.relics[camp].pos) <= 5)
+        if (calculator::cube_distance(pos, map.miracles[camp].pos) <= 5)
             return true;
         // 距己方占领驻扎点范围<=3
         for (auto barrack = map.barracks.begin(); barrack != map.barracks.end(); barrack++)
@@ -234,8 +253,7 @@ bool canUseArtifact(gameunit::Map map, gameunit::Artifact artifact, gameunit::Po
     return false;
 }
 
-// 判断能否对生物pos使用神器artifact(不考虑消耗、冷却)
-bool canUseArtifact(gameunit::Artifact artifact, gameunit::Unit unit)
+bool AiClient::canUseArtifact(gameunit::Artifact artifact, gameunit::Unit unit)
 {
     if (artifact.name == "SalamanderShield")
     {
@@ -245,9 +263,7 @@ bool canUseArtifact(gameunit::Artifact artifact, gameunit::Unit unit)
     return false;
 }
 
-// 获取地图map上位置pos上的生物
-// 如果有,返回对应的Unit,否则返回一个id为-1的Unit
-gameunit::Unit getUnitsByPos(gameunit::Map map, gameunit::Pos pos, bool flying)
+gameunit::Unit AiClient::getUnitsByPos(gameunit::Pos pos, bool flying)
 {
     for (int i = 0; i < map.units.size(); ++i)
     {
@@ -260,9 +276,7 @@ gameunit::Unit getUnitsByPos(gameunit::Map map, gameunit::Pos pos, bool flying)
     return no_unit;
 }
 
-// 获取地图map上id为unit_id的unit
-// 如果有,返回对应的Unit,否则返回一个id为-1的Unit
-gameunit::Unit getUnitById(gameunit::Map map, int unit_id)
+gameunit::Unit AiClient::getUnitById(int unit_id)
 {
     for (int i = 0; i < map.units.size(); ++i)
     {
@@ -275,9 +289,7 @@ gameunit::Unit getUnitById(gameunit::Map map, int unit_id)
     return no_unit;
 }
 
-// 获取地图map上所有阵营为unit_camp的unit
-// 返回camp等于unit_camp的Unit列表(没有时返回空列表)
-std::vector<gameunit::Unit> getUnitsByCamp(gameunit::Map map, int unit_camp)
+std::vector<gameunit::Unit> AiClient::getUnitsByCamp(int unit_camp)
 {
     std::vector<gameunit::Unit> camp_units;
     for (int i = 0; i < map.units.size(); ++i)
@@ -288,22 +300,18 @@ std::vector<gameunit::Unit> getUnitsByCamp(gameunit::Map map, int unit_camp)
     return camp_units;
 }
 
-// 获取地图上所有属于阵营camp的出兵点(初始出兵点+额外出兵点)
-std::vector<gameunit::Pos> getSummonPosByCamp(gameunit::Map map, int camp)
+std::vector<gameunit::Pos> AiClient::getSummonPosByCamp(int camp)
 {
     std::vector<gameunit::Pos> summon_pos;
-    for(auto relic = map.relics.begin();relic!=map.relics.end();relic++)
+    for (auto miracle = map.miracles.begin(); miracle != map.miracles.end(); miracle++)
     {
-        if(relic->camp==camp)
-            summon_pos.insert(summon_pos.end(),relic->summon_pos_list.begin(),relic->summon_pos_list.end());
+        if (miracle->camp == camp)
+            summon_pos.insert(summon_pos.end(), miracle->summon_pos_list.begin(), miracle->summon_pos_list.end());
     }
-    for(auto barrack = map.barracks.begin();barrack!=map.barracks.end();barrack++)
+    for (auto barrack = map.barracks.begin(); barrack != map.barracks.end(); barrack++)
     {
-        if(barrack->camp==camp)
-            summon_pos.insert(summon_pos.end(),barrack->summon_pos_list.begin(),barrack->summon_pos_list.end());
+        if (barrack->camp == camp)
+            summon_pos.insert(summon_pos.end(), barrack->summon_pos_list.begin(), barrack->summon_pos_list.end());
     }
     return summon_pos;
 }
-}; // namespace ai_sdk
-
-#endif

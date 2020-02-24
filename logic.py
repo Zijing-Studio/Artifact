@@ -68,14 +68,13 @@ def send_state(state_dict):
 def send_message_goal(message_str, send_goal):
     '''发送二进制流
     '''
-    if DEBUG:
-        with open('log.txt', 'a') as logfile:
-            logfile.write('logic->'+str(send_goal)+':\n'+message_str+'\n')
+    with open('log.txt', 'a') as logfile:
+        logfile.write('logic->'+str(send_goal)+':\n'+message_str+'\n')
     sys.stdout.buffer.write(logic_convert_byte(message_str, send_goal))
     sys.stdout.flush()
 
 class Game:
-    '''游戏 Artifact
+    '''游戏 神迹之战Miracle
     '''
     # pylint: disable=too-many-instance-attributes
 
@@ -101,8 +100,8 @@ class Game:
         if self._round == 10000:
             self.end(-1)
 
-        hp0 = self.statesystem.get_relic_by_id(0).hp
-        hp1 = self.statesystem.get_relic_by_id(1).hp
+        hp0 = self.statesystem.get_miracle_by_id(0).hp
+        hp1 = self.statesystem.get_miracle_by_id(1).hp
         if hp0 <= 0 and hp1 <= 0:   # 平局
             self.is_end = True
             self.end(-1)
@@ -129,8 +128,11 @@ class Game:
             self.send_game_info()
             opt_dict = read_opt()
             if opt_dict["player"] == self.listen:
-                parser_respond = self.parser.parse(opt_dict["content"])
-                if not parser_respond:
+                try:
+                    self.parser.parse(opt_dict["content"])
+                except Exception as parse_error:
+                    if DEBUG:
+                        raise parse_error
                     continue
                 self.send_media_info()
                 self.check_game_end()
@@ -163,8 +165,8 @@ class Game:
         '''
         # pylint: disable=too-many-branches
         # pylint: disable=too-many-statements
-        creature_names = ["", "Swordman", "Archer",
-                          "BlackBat", "Priest", "VolcanoDargon"]
+        creature_names = ["", "Swordsman", "Archer",
+                          "BlackBat", "Priest", "VolcanoDragon"]
         artifact_names = ["", "HolyLight", "SalamanderShield", "InfernoFlame"]
 
         media_info = bytes()
@@ -320,7 +322,7 @@ class Game:
                         4, 'big', signed=True)
             elif event.name == "GameStart":
                 # round
-                media_info += self._round.to_bytes(4, 'big', signed=True)
+                media_info += int(0).to_bytes(4, 'big', signed=True)
                 # event
                 media_info += int(11).to_bytes(4, 'big', signed=True)
                 # camp
@@ -432,25 +434,11 @@ class Game:
                 # event
                 media_info += int(18).to_bytes(4, 'big', signed=True)
                 # type
-                if event.parameter_dict['source'].type == 'Swordman':
-                    media_info += int(1 + 10 * event.parameter_dict['source'].camp).to_bytes(
-                        4, 'big', signed=True)
-                elif event.parameter_dict['source'].type == 'Archer':
-                    media_info += int(2 + 10 * event.parameter_dict['source'].camp).to_bytes(
-                        4, 'big', signed=True)
-                elif event.parameter_dict['source'].type == 'BlackBat':
-                    media_info += int(3 + 10 * event.parameter_dict['source'].camp).to_bytes(
-                        4, 'big', signed=True)
-                elif event.parameter_dict['source'].type == 'Priest':
-                    media_info += int(4 + 10 * event.parameter_dict['source'].camp).to_bytes(
-                        4, 'big', signed=True)
-                elif event.parameter_dict['source'].type == 'VolcanoDragon':
-                    media_info += int(5 + 10 * event.parameter_dict['source'].camp).to_bytes(
-                        4, 'big', signed=True)
-                else:
-                    pass
+                media_info += int(creature_names.index(event.parameter_dict['type'])
+                                  + 10 * event.parameter_dict['camp']).to_bytes(
+                                      4, 'big', signed=True)
                 # level
-                media_info += int(event.parameter_dict['source'].level).to_bytes(
+                media_info += int(event.parameter_dict['level']).to_bytes(
                     4, 'big', signed=True)
                 # posX
                 media_info += event.parameter_dict['pos'][0].to_bytes(
@@ -469,10 +457,10 @@ class Game:
             media_info: 给播放器的信息字符串 为空时会直接从事件堆中取
         '''
         if media_info == b'':
+            if not self.statesystem.event_heap.record:
+                return
             media_info = self.get_media_info(self.statesystem.event_heap.record)
             self.statesystem.event_heap.record.clear()
-            if media_info != b'':
-                self.send_media_info(media_info)
         with open(self.replay, 'ab') as replay_file:
             replay_file.write(media_info)
         for media in self.media_player:
@@ -490,10 +478,10 @@ class Game:
             message = self.statesystem.parse()
             message['round'] = self._round
             message['camp'] = 0 if self.listen == self.player0 else 1
-        # 前四位表示长度 后面是表示信息的json格式字符串
+        # 前六位表示长度 后面是表示信息的json格式字符串
         json_length = str(len(json.dumps(message)))
         state_dict['content'] = [
-            "0" * (4 - len(json_length)) + json_length + json.dumps(message)]
+            "0" * (6 - len(json_length)) + json_length + json.dumps(message)]
         send_state(state_dict)
 
     def init_player(self, player_list):
@@ -535,14 +523,26 @@ class Game:
         self.send_game_info()
         opt_dict0 = read_opt()
         if opt_dict0["player"] == self.player0:
-            is_player0_ready = self.parser.parse(opt_dict0["content"])
+            try:
+                self.parser.parse(opt_dict0["content"])
+            except Exception as init_error:
+                if DEBUG:
+                    raise init_error
+            else:
+                is_player0_ready = True
         # 1号玩家
         self.state += 1
         self.listen = self.player1
         self.send_game_info()
         opt_dict1 = read_opt()
         if opt_dict1["player"] == self.player1:
-            is_player1_ready = self.parser.parse(opt_dict0["content"])
+            try:
+                self.parser.parse(opt_dict1["content"])
+            except Exception:
+                if DEBUG:
+                    raise init_error
+            else:
+                is_player0_ready = True
         # 双方玩家是否均准备好卡组
         if not is_player0_ready and not is_player1_ready:
             self.is_end = True
@@ -573,10 +573,6 @@ class Game:
         self.parser.set_round(0)
         self.listen = self.player0
         while not self.is_end:
-            self.parser.parse(json.dumps(
-                {"player": 0 if self.listen == self.player0 else 1,
-                 "round": self._round,
-                 "operation_type": "startround", "operation_parameters": {}}))
             self.send_media_info()
             self.check_game_end()
             self.get_round_ope()

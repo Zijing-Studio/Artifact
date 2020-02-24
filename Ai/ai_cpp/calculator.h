@@ -200,7 +200,7 @@ std::vector<Point> get_obstacles_by_unit(gameunit::Unit unit, gameunit::Map _map
     std::vector<gameunit::Unit> obstacle_unit = _map.units;
     for (int i = 0; i < obstacle_unit.size(); i++) {
         gameunit::Unit obstacle = obstacle_unit[i];
-        if (obstacle.camp != unit.camp && obstacle.flying == unit.flying) {
+        if (obstacle.flying == unit.flying) {
             obstacles.push_back(obstacle.pos);
         }
     }

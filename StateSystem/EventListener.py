@@ -208,7 +208,8 @@ class VolcanoDragonAtkListener(EventListener):
     def deal_event(self,event):
         if event.name == "Attacked":
             try:
-                if event.parameter_dict["source"] == self.host:
+                if event.parameter_dict["source"] == self.host and\
+                    event.parameter_dict["target"].type != "Miracle":
                     for unit in self.host.state_system.map.unit_list:
                         if (calculator.cube_distance(unit.pos,self.host.pos) == 2 or
                             calculator.cube_distance(unit.pos,event.parameter_dict["target"].pos) == 1) and \

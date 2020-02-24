@@ -2,43 +2,30 @@
 AI
 '''
 
-import ai_sdk
+from ai_client import AiClient
 
 
-class AI:
+class AI(AiClient):
     '''玩家编写的ai
     '''
 
     def __init__(self):
-        self.map = dict()                       # 地图信息
-        self.players = list()                   # 两名玩家的信息
-        self.round = 0                          # 当前回合
-        self.my_camp = -1                       # 己方阵营
+        super().__init__()
+        # 以下是玩家自己的初始构造
 
     def choose_cards(self):
-        '''(获取阵营后)选择初始卡组
+        '''(根据初始阵营)选择初始卡组
         '''
-        # 先获取阵营后选卡组
-        self.my_camp = ai_sdk.read_opt()['camp']
         # artifacts和creatures可以修改
-        artifacts = ["HolyLight"]
-        creatures = ["Archer", "Swordman", "Priest"]
-        ai_sdk.init(self.my_camp, artifacts, creatures)
-
-    def update_game_info(self):
-        '''更新游戏信息
-        '''
-        game_info = ai_sdk.read_opt()
-        self.round = game_info['round']         # 当前回合
-        self.my_camp = game_info['camp']        # 己方阵营
-        self.map = game_info['map']             # 地图信息
-        self.players = game_info['players']     # 两名玩家的信息
+        self.artifacts = ["HolyLight"]
+        self.creatures = ["Archer", "Swordsman", "VolcanoDragon"]
+        self.init()
 
     def play(self):
         '''玩家需要编写的ai操作函数
         '''
         if self.round < 20:
-            ai_sdk.end_round(self.my_camp, self.round)
+            self.end_round()
         else:
             exit(0)
 

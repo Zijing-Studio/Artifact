@@ -4,14 +4,18 @@
 calculator for hex-grids
 '''
 
-# left-up, right-up, left-down, right-down, left-right, up, down
-MAPBORDER = [(-6+i, -9, 15-i) for i in range(0, 14)] + \
-            [(9, 6-i, -15+i) for i in range(0, 14)] + \
-            [(-9, -6+i, 15-i) for i in range(0, 14)] + \
-            [(6-i, 9, -15+i) for i in range(0, 14)] + \
-            [(-7, -8, 15), (-8, -7, 15), (8, 7, -15), (7, 8, -15)] + \
-            [(7, -8, 1), (8, -8, 0), (8, -7, -1)] + \
-            [(-8, 7, 1), (-8, 8, 0), (-7, 8,  -1)]
+def MAPBORDER():
+    '''
+    return map border'''
+    # left-up, right-up, left-down, right-down, left-right, up, down
+    border = [(-6+i, -9, 15-i) for i in range(0, 14)] + \
+                [(9, 6-i, -15+i) for i in range(0, 14)] + \
+                [(-9, -6+i, 15-i) for i in range(0, 14)] + \
+                [(6-i, 9, -15+i) for i in range(0, 14)] + \
+                [(-7, -8, 15), (-8, -7, 15), (8, 7, -15), (7, 8, -15)] + \
+                [(7, -8, 1), (8, -8, 0), (8, -7, -1)] + \
+                [(-8, 7, 1), (-8, 8, 0), (-7, 8,  -1)]
+    return border
 
 def cube_distance(a, b):
     '''
@@ -44,7 +48,7 @@ def cube_neighbor(pos, dir):
 
 class Node:
     def __init__(self, pos, G, H, parent=None):
-        self.pos = pos
+        self.pos = tuple(pos)
         self.G = G
         self.H = H
         self.parent = parent
@@ -60,13 +64,15 @@ def search_path(start, to, obstacles=[], obstructs=[]):
     '''
     return shortest path
     '''
-    _start = ()
-    _to = ()
-    for i in range(3):
-        _start += (start[i],)
-        _to += (to[i],)
-    if to in obstacles:
-        return False
+    _start = tuple(start)
+    _to = tuple(to)
+    #_start = ()
+    #_to = ()
+    #for i in range(3):
+    #    _start += (start[i],)
+    #    _to += (to[i],)
+    #if to in obstacles:
+    #    return False
     opened = {}
     closed = {}
     opened[_start] =  Node(start, 0, cube_distance(start, to))
@@ -107,7 +113,7 @@ def cube_reachable(start, movement, obstacles=[], obstructs=[]):
         fringes.append([])
         for pos in fringes[i]:
             if pos in obstructs:
-                pass
+                continue
             for j in range(0, 6):
                 neighbor = cube_neighbor(pos, j)
                 if neighbor not in visited and neighbor not in obstacles:
@@ -120,16 +126,18 @@ def get_obstacles_by_unit(unit, _map):
     returns all obstacles for a unit
     unfinished, currently only units have been taken into account
     '''
-    obstacles = MAPBORDER
+    obstacles = MAPBORDER()
     if unit.flying:
-        obstacles += _map.get_flying_obstacles
+        fixed_obstacles = _map.flying_obstacles
     else:
-        obstacles += _map.get_ground_obstacles
-    obstacle_unit = _map.get_units()
+        fixed_obstacles = _map.ground_obstacles
+    for obstacle in fixed_obstacles:
+        obstacles.append(obstacle.pos)
+    obstacle_unit = _map.units
     for obstacle in obstacle_unit:
-        if obstacle.camp != unit.camp:
-            if unit.flying == obstacle.flying:
-                obstacles.append(obstacle.pos)
+        #if obstacle.camp != unit.camp:
+        if unit.flying == obstacle.flying:
+            obstacles.append(obstacle.pos)
     return obstacles
 
 def get_obstructs_by_unit(unit, _map):
@@ -137,8 +145,8 @@ def get_obstructs_by_unit(unit, _map):
     returns all obstructs for a unit, obstructs means the unit can
     stay at that point but cannot pass it
     '''
-    obstructs = MAPBORDER
-    obstacle_unit = _map.get_units()
+    obstructs = []
+    obstacle_unit = _map.units
     for obstruct in obstacle_unit:
         if obstruct.camp != unit.camp:
             for i in range(0, 6):
@@ -175,7 +183,7 @@ def units_in_range(pos, dist, _map, camp=-1, flyingIncluded=True, onlandIncluded
     onlandIncluded = True will include onland units
     '''
     units = []
-    all_units = _map.get_units()
+    all_units = _map.units
     for _unit in all_units:
         if cube_distance(_unit.pos, pos) <= dist and \
            (camp == -1 or camp == _unit.camp) and \
@@ -196,6 +204,18 @@ def in_map(pos):
         return False
     return True
 
+def all_pos_in_map():
+    '''
+    return all positions in map
+    '''
+    all_pos = []
+    for i in range(-8, 9):
+        for j in range(-8, 9):
+            cur_pos = (i, j, -(i+j))
+            if in_map(cur_pos):
+                all_pos.append(cur_pos)
+    return all_pos
+
 if __name__ == "__main__":
-    print(cube_reachable((0, 0, 0), 1, MAPBORDER))
-    print(MAPBORDER)
+    print(cube_reachable((0, 0, 0), 1, MAPBORDER()))
+    print(MAPBORDER())

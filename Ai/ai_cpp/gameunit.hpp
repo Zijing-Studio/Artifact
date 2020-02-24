@@ -14,25 +14,25 @@ typedef std::tuple<int, int, int> Pos; // 坐标
 
 struct Unit // 生物
 {
-    int id;                        // id
-    int camp;                      // 阵营
-    std::string type;              // 种类
-    std::string name;              // 名字
-    int cost;                      // 法力消耗
-    int atk;                       // 攻击
-    int max_hp;                    // 生命上限
-    int hp;                        // 当前生命
-    std::pair<int, int> atk_range; // 最小攻击范围 最大攻击范围
-    int max_move;                  // 行动力
-    int cool_down;                 // 冷却时间
-    Pos pos;                       // 位置
-    int level;                     // 等级
-    bool flying;                   // 是否飞行
-    bool atk_flying;               // 是否对空
-    bool agility;                  // 是否迅捷
-    bool holy_shield;              // 有无圣盾
-    bool can_atk;                  // 能否攻击
-    bool can_move;                 // 能否移动
+    int id;                     // id
+    int camp;                   // 阵营
+    std::string type;           // 种类
+    std::string name;           // 名字
+    int cost;                   // 法力消耗
+    int atk;                    // 攻击
+    int max_hp;                 // 生命上限
+    int hp;                     // 当前生命
+    std::vector<int> atk_range; // 最小攻击范围 最大攻击范围
+    int max_move;               // 行动力
+    int cool_down;              // 冷却时间
+    Pos pos;                    // 位置
+    int level;                  // 等级
+    bool flying;                // 是否飞行
+    bool atk_flying;            // 是否对空
+    bool agility;               // 是否迅捷
+    bool holy_shield;           // 有无圣盾
+    bool can_atk;               // 能否攻击
+    bool can_move;              // 能否移动
 };
 
 struct Barrack // 驻扎点
@@ -42,7 +42,7 @@ struct Barrack // 驻扎点
     std::vector<Pos> summon_pos_list; // 出兵点位置
 };
 
-struct Relic // 神迹
+struct Miracle // 神迹
 {
     int camp;                         // 阵营
     int max_hp;                       // 最大生命值
@@ -57,8 +57,8 @@ struct Obstacle
 {
     std::string type;  // 种类
     Pos pos;           // 位置
-    bool allow_flying; // 是否允许飞行单位通过
-    bool allow_ground; // 是否允许地面单位通过
+    bool allow_flying; // 是否允许飞行生物通过
+    bool allow_ground; // 是否允许地面生物通过
 };
 
 struct Artifact // 神器
@@ -84,7 +84,7 @@ struct Map // 地图
 {
     std::vector<Unit> units;
     std::vector<Barrack> barracks;
-    std::vector<Relic> relics;
+    std::vector<Miracle> miracles;
     std::vector<Obstacle> obstacles;
     std::vector<Obstacle> flying_obstacles;
     std::vector<Obstacle> ground_obstacles;
@@ -126,14 +126,11 @@ void from_json(const json &j, Unit &u)
 void from_json(const json &j, Barrack &b)
 {
     j.at("pos").get_to(b.pos);
-    if (j["camp"].is_null())
-        b.camp = -1;
-    else
-        j.at("camp").get_to(b.camp);
+    j.at("camp").get_to(b.camp);
     j.at("summon_pos_list").get_to(b.summon_pos_list);
 }
 
-void from_json(const json &j, Relic &r)
+void from_json(const json &j, Miracle &r)
 {
     j.at("camp").get_to(r.camp);
     j.at("max_hp").get_to(r.max_hp);
@@ -178,7 +175,7 @@ void from_json(const json &j, Map &m)
     j.at("obstacles").get_to(m.obstacles);
     j.at("ground_obstacles").get_to(m.ground_obstacles);
     j.at("flying_obstacles").get_to(m.flying_obstacles);
-    j.at("relics").get_to(m.relics);
+    j.at("miracles").get_to(m.miracles);
 }
 
 void from_json(const json &j, Player &p)
