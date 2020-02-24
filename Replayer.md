@@ -7,7 +7,7 @@
 | round        | 2(回合结束)  | camp | 0     | 0   | 0   | 0    |
 | round        | 3(召唤)      | type | level | x   | y   | id0  |
 | round        | 4(移动)      | id0  | x     | y   | 0   | 0    |
-| round        | 5(攻击)      | id1  | id2   | 0   | 0   | 0    |
+| round        | 5(攻击前)      | id1  | id2   | 0   | 0   | 0    |
 | round        | 6(伤害)      | id2  | id1   | d   | 0   | 0    |
 | round        | 7(死亡)      | id0  | 0     | 0   | 0   | 0    |
 | round        | 8(治疗)      | id2  | id1   | h   | 0   | 0    |
@@ -16,7 +16,7 @@
 | round        | 11(配置卡组) | camp | a0    | c1  | c2  | c3   |
 | round        | 12(圣盾加持) | id0  | 0     | 0   | 0   | 0    |
 | round        | 13(圣盾击破) | id0  | 0     | 0   | 0   | 0    |
-| round        | 14(攻击前)   | id1  | id2   | 0   | 0   | 0    |
+| round        | 14(攻击中)   | id1  | id2   | 0   | 0   | 0    |
 | round        | 15(攻击后)   | id1  | id2   | 0   | 0   | 0    |
 | round        | 16(离开)     | id0  | x     | y   | 0   | 0    |
 | round        | 17(抵达)     | id0  | x     | y   | 0   | 0    |
