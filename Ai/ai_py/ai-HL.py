@@ -87,7 +87,7 @@ class AI(AiClient):
 
             # 剑士和弓箭手数量不足或者格子不足则召唤火山龙
             if (len(available_summon_pos_list) == 1 or available_count['Swordsman'] + available_count['Archer'] < 2) \
-                    and mana >= CARD_DICT['VolcanoDragon'][1].cost:
+                    and mana >= CARD_DICT['VolcanoDragon'][1].cost and available_count['VolcanoDragon'] > 0:
                 summon_list = ['VolcanoDragon']
                 mana -= CARD_DICT['VolcanoDragon'][1].cost
                 
@@ -195,6 +195,8 @@ class AI(AiClient):
         ally_list = self.get_units_by_camp(self.my_camp)
         ally_list.sort(key=lambda unit: 0 if unit.type == 'Swordsman' else 1 if unit.type == 'Archer' else 2)
         for ally in ally_list:
+            if not ally.can_move:
+                continue
             if ally.type == 'Swordsman':
                 # 获取所有可到达的位置
                 reach_pos_with_dis = calculator.reachable(ally, self.map)
