@@ -210,4 +210,12 @@ Priority = 3 (when in move)
 	}
 }
 ```
+## BuffAdd/BuffRemove
 
+单位得到Buff和Debuff的事件
+
+```
+{
+    "source": Unit
+}
+```
