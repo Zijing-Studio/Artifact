@@ -1,3 +1,5 @@
+from StateSystem.Event import Event
+
 class Buff:
     def __init__(self,state_system):
         self.state_system = state_system
@@ -25,10 +27,16 @@ class Buff:
         # host is a unit
         self.host = host
         host.buff_list.append(self)
+        self.state_system.emit(Event("BuffAdd",{
+            "source": self.host
+        }))
         self.buff()
 
     def delete(self):
         self.host.buff_list.remove(self)
+        self.state_system.emit(Event("BuffRemove",{
+            "source": self.host
+        }))
         self.debuff()
         self.host = None
         self.event_listener_list = []
