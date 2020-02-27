@@ -81,7 +81,8 @@ class AttackListener(EventListener):
                     self.host.emit(Event("Damage",{
                         "source": event.parameter_dict["source"],
                         "target": event.parameter_dict["target"],
-                        "damage": event.parameter_dict["source"].atk
+                        "damage": event.parameter_dict["source"].atk,
+                        "type": "Attack"
                     }))
                     self.host.emit(Event("Attacked",event.parameter_dict))
                     self.host.emit(Event("CheckDeath",priority=4))
@@ -109,7 +110,8 @@ class AttackBackListener(EventListener):
                         self.host.emit(Event("Damage",{
                             "source": event.parameter_dict["target"],
                             "target": event.parameter_dict["source"],
-                            "damage": event.parameter_dict["target"].atk
+                            "damage": event.parameter_dict["target"].atk,
+                            "type": "AttackBack"
                         }))
                         # print("{} (ID: {}) attacks back on {} (ID: {})".format(
                         #     event.parameter_dict["target"].name,
@@ -217,7 +219,8 @@ class VolcanoDragonAtkListener(EventListener):
                             self.host.emit(Event("Damage",{
                                 "source": self.host,
                                 "target": unit,
-                                "damage": self.host.level + 2
+                                "damage": self.host.level + 2,
+                                "type": "VolcanoDragonSplash"
                             },priority=-1))
             except:
                 # print("An Error appears while handling VolcanoDragonAtk event..")

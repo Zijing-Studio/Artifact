@@ -16,7 +16,8 @@ emit(Event(<name>,[parameter_dict = {}],[priority = 0]))
 {
     "source": Unit,
     "target": Unit,
-    "damage": int
+    "damage": int,
+    "type": String,
 }
 ```
 

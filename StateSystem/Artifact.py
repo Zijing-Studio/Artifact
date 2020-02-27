@@ -155,7 +155,8 @@ class InfernoFlameArtifact(Artifact):
                 self.emit(Event("Damage",{
                     "source": self,
                     "target": unit,
-                    "damage": 2
+                    "damage": 2,
+                    "type": "InfernoFlameActivate"
                 },-3))
         self.emit(Event("Summon",{
             "type": "Inferno",
