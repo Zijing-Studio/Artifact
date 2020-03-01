@@ -22,17 +22,20 @@ def logic_convert_byte(data_str, send_goal):
         message += data_str
     return message
 
+
 def read_opt():
     '''读取发过来的操作
     '''
     read_buffer = sys.stdin.buffer
-    data_len = int.from_bytes(read_buffer.read(4), byteorder='big', signed=True)
+    data_len = int.from_bytes(read_buffer.read(
+        4), byteorder='big', signed=True)
     data = read_buffer.read(data_len)
     if DEBUG:
         with open('log.txt', 'a') as logfile:
             logfile.write('judger->logic:\n'+str(json.loads(data))+'\n')
     opt = json.loads(data)
     return opt
+
 
 def send_end_info(end_info):
     '''发送终局信息
@@ -46,12 +49,15 @@ def send_end_info(end_info):
     sys.stdout.buffer.write(logic_convert_byte(json.dumps(end_dict), -1))
     sys.stdout.flush()
 
+
 def send_init(time, length):
     '''发送初始化信息
     '''
     init_dict = {"time": time, "length": length}
-    sys.stdout.buffer.write(logic_convert_byte(json.dumps({"state": 0, "content": init_dict}), -1))
+    sys.stdout.buffer.write(logic_convert_byte(
+        json.dumps({"state": 0, "content": init_dict}), -1))
     sys.stdout.flush()
+
 
 def send_state(state_dict):
     '''发送回合信息
@@ -65,6 +71,7 @@ def send_state(state_dict):
     sys.stdout.buffer.write(logic_convert_byte(json.dumps(state_dict), -1))
     sys.stdout.flush()
 
+
 def send_message_goal(message_str, send_goal):
     '''发送二进制流
     '''
@@ -72,6 +79,7 @@ def send_message_goal(message_str, send_goal):
         logfile.write('logic->'+str(send_goal)+':\n'+message_str+'\n')
     sys.stdout.buffer.write(logic_convert_byte(message_str, send_goal))
     sys.stdout.flush()
+
 
 class Game:
     '''游戏 神迹之战Miracle
@@ -165,43 +173,28 @@ class Game:
         '''
         # pylint: disable=too-many-branches
         # pylint: disable=too-many-statements
+        event_names = ["", "TurnStart", "TurnEnd", "Spawn", "Move", "Attack",
+                       "Damage", "Death", "Heal", "ActivateArtifact",
+                       "GameStart", "GameEnd", "BuffAdd", "BuffRemove",
+                       "Attacking", "Attacked", "Leave", "Arrive", "Summon"]
         creature_names = ["", "Swordsman", "Archer",
                           "BlackBat", "Priest", "VolcanoDragon"]
         artifact_names = ["", "HolyLight", "SalamanderShield", "InfernoFlame"]
 
         media_info = bytes()
         for event in events:
-            if event.name == "TurnStart":
-                # round
-                media_info += self._round.to_bytes(4, 'big', signed=True)
-                # event
-                media_info += int(1).to_bytes(4, 'big', signed=True)
+            if not event.name in event_names:
+                continue
+            # round
+            media_info += self._round.to_bytes(4, 'big', signed=True)
+            # event
+            media_info += int(event_names.index(event.name)
+                              ).to_bytes(4, 'big', signed=True)
+            if event.name == "TurnStart" or event.name == "TurnEnd":
                 # camp
                 media_info += int(self._round %
                                   2).to_bytes(4, 'big', signed=True)
-                # 0
-                media_info += int(0).to_bytes(4, 'big', signed=True)
-                media_info += int(0).to_bytes(4, 'big', signed=True)
-                media_info += int(0).to_bytes(4, 'big', signed=True)
-                media_info += int(0).to_bytes(4, 'big', signed=True)
-            elif event.name == "TurnEnd":
-                # round
-                media_info += self._round.to_bytes(4, 'big', signed=True)
-                # event
-                media_info += int(2).to_bytes(4, 'big', signed=True)
-                # camp
-                media_info += int(self._round %
-                                  2).to_bytes(4, 'big', signed=True)
-                # 0
-                media_info += int(0).to_bytes(4, 'big', signed=True)
-                media_info += int(0).to_bytes(4, 'big', signed=True)
-                media_info += int(0).to_bytes(4, 'big', signed=True)
-                media_info += int(0).to_bytes(4, 'big', signed=True)
             elif event.name == "Spawn":
-                # round
-                media_info += self._round.to_bytes(4, 'big', signed=True)
-                # event
-                media_info += int(3).to_bytes(4, 'big', signed=True)
                 # type
                 media_info += int(creature_names.index(event.parameter_dict['source'].type)
                                   + 10 * event.parameter_dict['source'].camp).to_bytes(
@@ -219,10 +212,6 @@ class Game:
                 media_info += event.parameter_dict['source'].id.to_bytes(
                     4, 'big', signed=True)
             elif event.name == "Move":
-                # round
-                media_info += self._round.to_bytes(4, 'big', signed=True)
-                # event
-                media_info += int(4).to_bytes(4, 'big', signed=True)
                 # id
                 media_info += event.parameter_dict['source'].id.to_bytes(
                     4, 'big', signed=True)
@@ -232,29 +221,24 @@ class Game:
                 # desY
                 media_info += event.parameter_dict['dest'][1].to_bytes(
                     4, 'big', signed=True)
-                # 0
-                media_info += int(0).to_bytes(4, 'big', signed=True)
-                media_info += int(0).to_bytes(4, 'big', signed=True)
-            elif event.name == "Attack":
-                # round
-                media_info += self._round.to_bytes(4, 'big', signed=True)
-                # event
-                media_info += int(5).to_bytes(4, 'big', signed=True)
+            elif event.name == "Leave" or event.name == "Arrive":
+                # id
+                media_info += event.parameter_dict['source'].id.to_bytes(
+                    4, 'big', signed=True)
+                # posX
+                media_info += event.parameter_dict['pos'][0].to_bytes(
+                    4, 'big', signed=True)
+                # posY
+                media_info += event.parameter_dict['pos'][1].to_bytes(
+                    4, 'big', signed=True)
+            elif event.name == "Attack" or event.name == "Attacking" or event.name == "Attacked":
                 # id1
                 media_info += event.parameter_dict['source'].id.to_bytes(
                     4, 'big', signed=True)
                 # id2
                 media_info += event.parameter_dict['target'].id.to_bytes(
                     4, 'big', signed=True)
-                # 0
-                media_info += int(0).to_bytes(4, 'big', signed=True)
-                media_info += int(0).to_bytes(4, 'big', signed=True)
-                media_info += int(0).to_bytes(4, 'big', signed=True)
             elif event.name == "Damage":
-                # round
-                media_info += self._round.to_bytes(4, 'big', signed=True)
-                # event
-                media_info += int(6).to_bytes(4, 'big', signed=True)
                 # id2
                 media_info += event.parameter_dict['target'].id.to_bytes(
                     4, 'big', signed=True)
@@ -264,27 +248,16 @@ class Game:
                 # damage
                 media_info += event.parameter_dict['damage'].to_bytes(
                     4, 'big', signed=True)
-                # 0
-                media_info += int(0).to_bytes(4, 'big', signed=True)
-                media_info += int(0).to_bytes(4, 'big', signed=True)
+                # type
+                damage_type = ["", "Attack",
+                               "AttackBack", "VolcanoDragonSplash"]
+                media_info += int(damage_type.index(
+                    event.parameter_dict['type'])).to_bytes(4, 'big', signed=True)
             elif event.name == "Death":
-                # round
-                media_info += self._round.to_bytes(4, 'big', signed=True)
-                # event
-                media_info += int(7).to_bytes(4, 'big', signed=True)
                 # id
                 media_info += event.parameter_dict['source'].id.to_bytes(
                     4, 'big', signed=True)
-                # 0
-                media_info += int(0).to_bytes(4, 'big', signed=True)
-                media_info += int(0).to_bytes(4, 'big', signed=True)
-                media_info += int(0).to_bytes(4, 'big', signed=True)
-                media_info += int(0).to_bytes(4, 'big', signed=True)
             elif event.name == "Heal":
-                # round
-                media_info += self._round.to_bytes(4, 'big', signed=True)
-                # event
-                media_info += int(8).to_bytes(4, 'big', signed=True)
                 # id2
                 media_info += event.parameter_dict['target'].id.to_bytes(
                     4, 'big', signed=True)
@@ -294,20 +267,13 @@ class Game:
                 # h
                 media_info += event.parameter_dict['heal'].to_bytes(
                     4, 'big', signed=True)
-                # 0
-                media_info += int(0).to_bytes(4, 'big', signed=True)
-                media_info += int(0).to_bytes(4, 'big', signed=True)
             elif event.name == "ActivateArtifact":
-                # round
-                media_info += self._round.to_bytes(4, 'big', signed=True)
-                # event
-                media_info += int(9).to_bytes(4, 'big', signed=True)
                 # camp
                 media_info += event.parameter_dict['camp'].to_bytes(
                     4, 'big', signed=True)
                 media_info += int(artifact_names.index(
                     event.parameter_dict['name']) + 10 * event.parameter_dict['camp']
-                                 ).to_bytes(4, 'big', signed=True)
+                ).to_bytes(4, 'big', signed=True)
                 if (event.parameter_dict['name'] == "HolyLight" or
                         event.parameter_dict['name'] == "InfernoFlame"):
                     media_info += event.parameter_dict['target'][0].to_bytes(
@@ -321,10 +287,6 @@ class Game:
                     media_info += event.parameter_dict['target'].id.to_bytes(
                         4, 'big', signed=True)
             elif event.name == "GameStart":
-                # round
-                media_info += int(0).to_bytes(4, 'big', signed=True)
-                # event
-                media_info += int(11).to_bytes(4, 'big', signed=True)
                 # camp
                 media_info += event.parameter_dict['camp'].to_bytes(
                     4, 'big', signed=True)
@@ -332,107 +294,22 @@ class Game:
                 media_info += int(artifact_names.index(
                     event.parameter_dict['cards']["artifacts"][0]) +
                     10 * event.parameter_dict['camp']
-                                 ).to_bytes(4, 'big', signed=True)
+                ).to_bytes(4, 'big', signed=True)
                 # c1 c2 c3
                 for creature_name in event.parameter_dict['cards']["creatures"]:
                     media_info += int(creature_names.index(creature_name) +
                                       10 * event.parameter_dict['camp']
                                       ).to_bytes(4, 'big', signed=True)
-            elif event.name == "HolyShieldAdd":
-                # round
-                media_info += self._round.to_bytes(4, 'big', signed=True)
-                # event
-                media_info += int(12).to_bytes(4, 'big', signed=True)
+            elif event.name == "BuffAdd" or event.name == "BuffRemove":
                 # id0
                 media_info += event.parameter_dict['source'].id.to_bytes(
                     4, 'big', signed=True)
-                # 0
-                media_info += int(0).to_bytes(4, 'big', signed=True)
-                media_info += int(0).to_bytes(4, 'big', signed=True)
-                media_info += int(0).to_bytes(4, 'big', signed=True)
-                media_info += int(0).to_bytes(4, 'big', signed=True)
-            elif event.name == "HolyShieldBreak":
-                # round
-                media_info += self._round.to_bytes(4, 'big', signed=True)
-                # event
-                media_info += int(13).to_bytes(4, 'big', signed=True)
-                # id0
-                media_info += event.parameter_dict['source'].id.to_bytes(
+                # type
+                buff_names = ["BaseBuff", "PriestAtkBuff", "HolyShield",
+                              "HolyLightAtkBuff", "SalamanderShieldBuff"]
+                media_info += buff_names.index(event.parameter_dict['type']).to_bytes(
                     4, 'big', signed=True)
-                # 0
-                media_info += int(0).to_bytes(4, 'big', signed=True)
-                media_info += int(0).to_bytes(4, 'big', signed=True)
-                media_info += int(0).to_bytes(4, 'big', signed=True)
-                media_info += int(0).to_bytes(4, 'big', signed=True)
-            elif event.name == "Attacking":
-                # round
-                media_info += self._round.to_bytes(4, 'big', signed=True)
-                # event
-                media_info += int(14).to_bytes(4, 'big', signed=True)
-                # id1
-                media_info += event.parameter_dict['source'].id.to_bytes(
-                    4, 'big', signed=True)
-                # id2
-                media_info += event.parameter_dict['target'].id.to_bytes(
-                    4, 'big', signed=True)
-                # 0
-                media_info += int(0).to_bytes(4, 'big', signed=True)
-                media_info += int(0).to_bytes(4, 'big', signed=True)
-                media_info += int(0).to_bytes(4, 'big', signed=True)
-            elif event.name == "Attacked":
-                # round
-                media_info += self._round.to_bytes(4, 'big', signed=True)
-                # event
-                media_info += int(15).to_bytes(4, 'big', signed=True)
-                # id1
-                media_info += event.parameter_dict['source'].id.to_bytes(
-                    4, 'big', signed=True)
-                # id2
-                media_info += event.parameter_dict['target'].id.to_bytes(
-                    4, 'big', signed=True)
-                # 0
-                media_info += int(0).to_bytes(4, 'big', signed=True)
-                media_info += int(0).to_bytes(4, 'big', signed=True)
-                media_info += int(0).to_bytes(4, 'big', signed=True)
-            elif event.name == "Leave":
-                # round
-                media_info += self._round.to_bytes(4, 'big', signed=True)
-                # event
-                media_info += int(16).to_bytes(4, 'big', signed=True)
-                # id0
-                media_info += event.parameter_dict['source'].id.to_bytes(
-                    4, 'big', signed=True)
-                # posX
-                media_info += event.parameter_dict['pos'][0].to_bytes(
-                    4, 'big', signed=True)
-                # posY
-                media_info += event.parameter_dict['pos'][1].to_bytes(
-                    4, 'big', signed=True)
-                # 0
-                media_info += int(0).to_bytes(4, 'big', signed=True)
-                media_info += int(0).to_bytes(4, 'big', signed=True)
-            elif event.name == "Arrive":
-                # round
-                media_info += self._round.to_bytes(4, 'big', signed=True)
-                # event
-                media_info += int(17).to_bytes(4, 'big', signed=True)
-                # id0
-                media_info += event.parameter_dict['source'].id.to_bytes(
-                    4, 'big', signed=True)
-                # posX
-                media_info += event.parameter_dict['pos'][0].to_bytes(
-                    4, 'big', signed=True)
-                # posY
-                media_info += event.parameter_dict['pos'][1].to_bytes(
-                    4, 'big', signed=True)
-                # 0
-                media_info += int(0).to_bytes(4, 'big', signed=True)
-                media_info += int(0).to_bytes(4, 'big', signed=True)
             elif event.name == "Summon":
-                # round
-                media_info += self._round.to_bytes(4, 'big', signed=True)
-                # event
-                media_info += int(18).to_bytes(4, 'big', signed=True)
                 # type
                 media_info += int(creature_names.index(event.parameter_dict['type'])
                                   + 10 * event.parameter_dict['camp']).to_bytes(
@@ -446,8 +323,9 @@ class Game:
                 # posY
                 media_info += event.parameter_dict['pos'][1].to_bytes(
                     4, 'big', signed=True)
-                # 0
-                media_info += int(0).to_bytes(4, 'big', signed=True)
+            if not len(media_info) % 28 == 0:
+                media_info += (7-len(media_info) % 28//4) * \
+                    int(0).to_bytes(4, 'big', signed=True)
         return media_info
 
     def send_media_info(self, media_info=b''):
@@ -459,7 +337,8 @@ class Game:
         if media_info == b'':
             if not self.statesystem.event_heap.record:
                 return
-            media_info = self.get_media_info(self.statesystem.event_heap.record)
+            media_info = self.get_media_info(
+                self.statesystem.event_heap.record)
             self.statesystem.event_heap.record.clear()
         with open(self.replay, 'ab') as replay_file:
             replay_file.write(media_info)
@@ -567,9 +446,9 @@ class Game:
         send_init(3, 2048)
         # 处理初始卡组
         self.select_cards()
+        self._round = 0
         self.send_media_info()
         # 游戏回合
-        self._round = 0
         self.parser.set_round(0)
         self.listen = self.player0
         while not self.is_end:
