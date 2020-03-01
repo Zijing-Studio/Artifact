@@ -5,6 +5,7 @@ class Buff:
         self.state_system = state_system
         self.event_listener_list = []
         self.host = None
+        self.type = "BaseBuff"
     
     def add_event_listener(self,listener):
         listener.host = self
@@ -28,20 +29,26 @@ class Buff:
         self.host = host
         host.buff_list.append(self)
         self.state_system.emit(Event("BuffAdd",{
-            "source": self.host
+            "source": self.host,
+            "type": self.type
         }))
         self.buff()
 
     def delete(self):
         self.host.buff_list.remove(self)
         self.state_system.emit(Event("BuffRemove",{
-            "source": self.host
+            "source": self.host,
+            "type": self.type
         }))
         self.debuff()
         self.host = None
         self.event_listener_list = []
 
 class PriestAtkBuff(Buff):
+    def __init__(self,state_system):
+        Buff.__init__(self,state_system)
+        self.type = "PriestAtkBuff"
+
     def buff(self):
         self.host.atk += 1
 

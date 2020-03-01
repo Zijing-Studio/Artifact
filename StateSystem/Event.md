@@ -216,6 +216,7 @@ Priority = 3 (when in move)
 
 ```
 {
-    "source": Unit
+    "source": Unit,
+    "type": String
 }
 ```

@@ -34,7 +34,10 @@ class DamageListener(EventListener):
                 if event.parameter_dict["target"] == self.host:
                     if self.host.holy_shield:
                         event.parameter_dict["damage"] = 0
-                        self.host.emit(Event("HolyShieldBreak", {"source": self.host}, -1))
+                        self.host.emit(Event("BuffRemove", {
+                            "source": self.host,
+                            "type": "HolyShield"
+                        }, -1))
                     self.host.hp -= event.parameter_dict["damage"]
                     # print("Deal {} damage on {} (ID: {})".format(
                     #     event.parameter_dict["damage"],self.host.name,self.host.id
@@ -45,7 +48,7 @@ class DamageListener(EventListener):
 
 class HolyShieldAddListener(EventListener):
     def deal_event(self,event):
-        if event.name == "HolyShieldAdd":
+        if event.name == "BuffAdd" and event.parameter_dict["type"] == "HolyShield":
             try:
                 if event.parameter_dict["source"] == self.host and not self.host.holy_shield:
                     self.host.holy_shield = True
@@ -59,7 +62,7 @@ class HolyShieldAddListener(EventListener):
 
 class HolyShieldBreakListener(EventListener):
     def deal_event(self,event):
-        if event.name == "HolyShieldBreak":
+        if event.name == "BuffRemove" and event.parameter_dict["type"] == "HolyShield":
             try:
                 if event.parameter_dict["source"] == self.host:
                     if not self.host.holy_shield:
