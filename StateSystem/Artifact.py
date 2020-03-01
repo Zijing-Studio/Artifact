@@ -99,6 +99,7 @@ class HolyLightAtkBuff(Buff):
     def __init__(self,state_system):
         Buff.__init__(self,state_system)
         self.add_event_listener(RemoveOnEndTurnListener())
+        self.type = "HolyLightAtkBuff"
 
     def buff(self):
         self.host.atk += 2
@@ -136,6 +137,7 @@ class SalamanderShieldBuff(Buff):
         Buff.__init__(self,state_system)
         self.add_event_listener(SalamanderShieldRefreshListener())
         self.add_event_listener(SalamanderShieldDeathRecycleListener())
+        self.type = "SalamanderShieldBuff"
 
     def buff(self):
         self.host.max_hp += 4
