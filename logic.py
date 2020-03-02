@@ -175,7 +175,7 @@ class Game:
         # pylint: disable=too-many-statements
         event_names = ["", "TurnStart", "TurnEnd", "Spawn", "Move", "Attack",
                        "Damage", "Death", "Heal", "ActivateArtifact",
-                       "GameStart", "GameEnd", "BuffAdd", "BuffRemove",
+                       "GameEnd", "GameStart", "BuffAdd", "BuffRemove",
                        "Attacking", "Attacked", "Leave", "Arrive", "Summon"]
         creature_names = ["", "Swordsman", "Archer",
                           "BlackBat", "Priest", "VolcanoDragon"]
