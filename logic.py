@@ -30,9 +30,6 @@ def read_opt():
     data_len = int.from_bytes(read_buffer.read(
         4), byteorder='big', signed=True)
     data = read_buffer.read(data_len)
-    if DEBUG:
-        with open('log.txt', 'a') as logfile:
-            logfile.write('judger->logic:\n'+str(json.loads(data))+'\n')
     opt = json.loads(data)
     return opt
 
@@ -43,9 +40,6 @@ def send_end_info(end_info):
     end_dict = {}
     end_dict['state'] = -1
     end_dict['end_info'] = json.dumps(end_info)
-    if DEBUG:
-        with open('log.txt', 'a') as logfile:
-            logfile.write('end:\n'+end_dict['end_info']+'\n')
     sys.stdout.buffer.write(logic_convert_byte(json.dumps(end_dict), -1))
     sys.stdout.flush()
 
@@ -65,9 +59,6 @@ def send_state(state_dict):
     Args:
         state_dict: dict
     '''
-    if DEBUG:
-        with open('log.txt', 'a') as logfile:
-            logfile.write('logic->judger:\n'+json.dumps(state_dict)+'\n')
     sys.stdout.buffer.write(logic_convert_byte(json.dumps(state_dict), -1))
     sys.stdout.flush()
 
@@ -75,8 +66,6 @@ def send_state(state_dict):
 def send_message_goal(message_str, send_goal):
     '''发送二进制流
     '''
-    with open('log.txt', 'a') as logfile:
-        logfile.write('logic->'+str(send_goal)+':\n'+message_str+'\n')
     sys.stdout.buffer.write(logic_convert_byte(message_str, send_goal))
     sys.stdout.flush()
 
@@ -97,6 +86,7 @@ class Game:
         self.state = 0          # 当前消息回合
         self.listen = 0         # 当前监听的玩家(当前回合玩家)
         self._round = -1        # 当前游戏回合
+        self.ope_one_round = 0  # 一个回合内的操作数
         self.is_end = False     # 是否结束
         self.statesystem = StateSystem()
         self.parser = Parser(self.statesystem)
@@ -104,19 +94,23 @@ class Game:
     def check_game_end(self):
         '''判断游戏是否结束，若结束则结束对局
         '''
-        # 最大回合数
-        if self._round == 10000:
-            self.end(-1)
-
         hp0 = self.statesystem.get_miracle_by_id(0).hp
         hp1 = self.statesystem.get_miracle_by_id(1).hp
-        if hp0 <= 0 and hp1 <= 0:   # 平局
+        # 最大回合数
+        if self._round >= 300:
+            if hp0 > 0 and hp0 > hp1:
+                self.end(0)
+            elif hp1 > 0 and hp1 > hp0:
+                self.end(1)
+            else:
+                self.end(-1)
+        if hp0 <= 0 and hp1 <= 0:
             self.is_end = True
             self.end(-1)
-        elif hp1 <= 0:              # 0号玩家胜利
+        elif hp1 <= 0:
             self.is_end = True
             self.end(0)
-        elif hp0 <= 0:              # 1号玩家胜利
+        elif hp0 <= 0:
             self.is_end = True
             self.end(1)
 
@@ -140,12 +134,16 @@ class Game:
                     self.parser.parse(opt_dict["content"])
                 except Exception as parse_error:
                     if DEBUG:
-                        raise parse_error
-                    continue
+                        with open('log.txt', 'a') as logfile:
+                            logfile.write(parse_error+'\n\n')
+                else:
+                    if DEBUG:
+                        with open('log.txt', 'a') as logfile:
+                            logfile.write(opt_dict["content"]+'\n\n')
                 self.send_media_info()
                 self.check_game_end()
                 # 结束回合
-                if json.loads(opt_dict["content"])["operation_type"] == "endround":
+                if json.loads(opt_dict["content"])["operation_type"] == "endround" or self.ope_one_round > 100:
                     break
             # AI异常
             elif opt_dict['player'] == -1:
@@ -178,7 +176,7 @@ class Game:
                        "GameEnd", "GameStart", "BuffAdd", "BuffRemove",
                        "Attacking", "Attacked", "Leave", "Arrive", "Summon"]
         creature_names = ["", "Swordsman", "Archer",
-                          "BlackBat", "Priest", "VolcanoDragon"]
+                          "BlackBat", "Priest", "VolcanoDragon", "Inferno"]
         artifact_names = ["", "HolyLight", "SalamanderShield", "InfernoFlame"]
 
         media_info = bytes()
@@ -357,6 +355,9 @@ class Game:
             message = self.statesystem.parse()
             message['round'] = self._round
             message['camp'] = 0 if self.listen == self.player0 else 1
+            if DEBUG:
+                with open('log.txt', 'a') as logfile:
+                    logfile.write(json.dumps(message)+'\n\n')
         # 前六位表示长度 后面是表示信息的json格式字符串
         json_length = str(len(json.dumps(message)))
         state_dict['content'] = [
@@ -404,10 +405,13 @@ class Game:
         if opt_dict0["player"] == self.player0:
             try:
                 self.parser.parse(opt_dict0["content"])
-            except Exception as init_error:
+            except Exception as parse_error:
                 if DEBUG:
-                    raise init_error
+                    with open('log.txt', 'a') as logfile:
+                        logfile.write(parse_error+'\n\n')
             else:
+                with open('log.txt', 'a') as logfile:
+                    logfile.write(opt_dict0["content"]+'\n\n')
                 is_player0_ready = True
         # 1号玩家
         self.state += 1
@@ -417,10 +421,13 @@ class Game:
         if opt_dict1["player"] == self.player1:
             try:
                 self.parser.parse(opt_dict1["content"])
-            except Exception:
+            except Exception as parse_error:
                 if DEBUG:
-                    raise init_error
+                    with open('log.txt', 'a') as logfile:
+                        logfile.write(parse_error+'\n\n')
             else:
+                with open('log.txt', 'a') as logfile:
+                    logfile.write(opt_dict1["content"]+'\n\n')
                 is_player0_ready = True
         # 双方玩家是否均准备好卡组
         if not is_player0_ready and not is_player1_ready:
