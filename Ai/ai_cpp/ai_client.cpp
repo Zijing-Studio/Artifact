@@ -77,6 +77,7 @@ void AiClient::summon(int type, int level, int x, int y, int z)
     operation_parameters["type"] = type;
     operation_parameters["level"] = level;
     sendMsg(my_camp, round, "summon", operation_parameters);
+    updateGameInfo();
 }
 
 void AiClient::summon(int type, int level, std::vector<int> position)
@@ -86,6 +87,7 @@ void AiClient::summon(int type, int level, std::vector<int> position)
     operation_parameters["type"] = type;
     operation_parameters["level"] = level;
     sendMsg(my_camp, round, "summon", operation_parameters);
+    updateGameInfo();
 }
 
 void AiClient::summon(int type, int level, std::tuple<int, int, int> position)
@@ -95,6 +97,7 @@ void AiClient::summon(int type, int level, std::tuple<int, int, int> position)
     operation_parameters["type"] = type;
     operation_parameters["level"] = level;
     sendMsg(my_camp, round, "summon", operation_parameters);
+    updateGameInfo();
 }
 
 void AiClient::move(int mover, int x, int y, int z)
@@ -104,6 +107,7 @@ void AiClient::move(int mover, int x, int y, int z)
     std::vector<int> position = {x, y, z};
     operation_parameters["position"] = position;
     sendMsg(my_camp, round, "move", operation_parameters);
+    updateGameInfo();
 }
 
 void AiClient::move(int mover, std::vector<int> position)
@@ -112,6 +116,7 @@ void AiClient::move(int mover, std::vector<int> position)
     operation_parameters["mover"] = mover;
     operation_parameters["position"] = position;
     sendMsg(my_camp, round, "move", operation_parameters);
+    updateGameInfo();
 }
 
 void AiClient::move(int mover, std::tuple<int, int, int> position)
@@ -120,6 +125,7 @@ void AiClient::move(int mover, std::tuple<int, int, int> position)
     operation_parameters["mover"] = mover;
     operation_parameters["position"] = position;
     sendMsg(my_camp, round, "move", operation_parameters);
+    updateGameInfo();
 }
 
 void AiClient::attack(int attacker, int target)
@@ -128,6 +134,7 @@ void AiClient::attack(int attacker, int target)
     operation_parameters["attacker"] = attacker;
     operation_parameters["target"] = target;
     sendMsg(my_camp, round, "attack", operation_parameters);
+    updateGameInfo();
 }
 
 void AiClient::use(int artifact, int target)
@@ -136,6 +143,7 @@ void AiClient::use(int artifact, int target)
     operation_parameters["card"] = artifact;
     operation_parameters["target"] = target;
     sendMsg(my_camp, round, "attack", operation_parameters);
+    updateGameInfo();
 }
 
 void AiClient::use(int artifact, std::vector<int> target)
@@ -144,6 +152,7 @@ void AiClient::use(int artifact, std::vector<int> target)
     operation_parameters["card"] = artifact;
     operation_parameters["target"] = target;
     sendMsg(my_camp, round, "attack", operation_parameters);
+    updateGameInfo();
 }
 
 void AiClient::use(int artifact, std::tuple<int, int, int> target)
@@ -152,6 +161,7 @@ void AiClient::use(int artifact, std::tuple<int, int, int> target)
     operation_parameters["card"] = artifact;
     operation_parameters["target"] = target;
     sendMsg(my_camp, round, "attack", operation_parameters);
+    updateGameInfo();
 }
 
 void AiClient::endRound()

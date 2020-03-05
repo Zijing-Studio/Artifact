@@ -48,7 +48,6 @@ class AI(AiClient):
 
             # 在正中心偏右召唤一个弓箭手，用来抢占驻扎点
             self.summon('Archer', 1, self.pos_shift(self.miracle_pos, 'SF'))
-            self.update_game_info()
         else:
             # 神器能用就用，选择覆盖单位数最多的地点
             if self.players[self.my_camp].mana >= 6 and self.players[self.my_camp].artifact[0].state == 'Ready':
@@ -60,7 +59,6 @@ class AI(AiClient):
                     if len(unit_list) > max_benefit:
                         best_pos, max_benefit = pos, len(unit_list)
                 self.use(self.players[self.my_camp].artifact[0].id, best_pos)
-                self.update_game_info()
 
             # 之后先战斗，再移动
             self.battle()
@@ -114,7 +112,6 @@ class AI(AiClient):
                 if not summon_list:
                     break
                 self.summon(summon_list[0], 1, pos)
-                self.update_game_info()
                 summon_list.pop(0)
 
     def battle(self):
@@ -155,12 +152,10 @@ class AI(AiClient):
             if ally.type == 'VolcanoDragon':
                 tar = random.randint(0, len(target_list) - 1)
                 self.attack(ally.id, target_list[tar].id)
-                self.update_game_info()
 
             elif ally.type == 'Swordsman':
                 enemy_list.sort(key=lambda _enemy: _enemy.atk)
                 self.attack(ally.id, target_list[0].id)
-                self.update_game_info()
 
             elif ally.type == 'Archer':
                 enemy_list.sort(key=lambda _enemy: _enemy.atk, reverse=True)
@@ -168,14 +163,12 @@ class AI(AiClient):
                 for enemy in target_list:
                     if not self.can_attack(enemy, ally):
                         self.attack(ally.id, enemy.id)
-                        self.update_game_info()
                         suc = True
                         break
                 if suc:
                     continue
                 enemy_list.sort(key=lambda _enemy: _enemy.atk)
                 self.attack(ally.id, target_list[0].id)
-                self.update_game_info()
 
         # 最后攻击神迹
         ally_list = self.get_units_by_camp(self.my_camp)
@@ -186,7 +179,6 @@ class AI(AiClient):
             dis = calculator.cube_distance(ally.pos, self.enemy_pos)
             if ally.atk_range[0] <= dis <= ally.atk_range[1]:
                 self.attack(ally.id, self.my_camp ^ 1)
-                self.update_game_info()
 
     def march(self):
         """
@@ -210,7 +202,6 @@ class AI(AiClient):
                 # 优先走到距离敌方神迹更近的位置
                 reach_pos_list.sort(key=lambda _pos: calculator.cube_distance(_pos, self.enemy_pos))
                 self.move(ally.id, reach_pos_list[0])
-                self.update_game_info()
 
             else:
                 # 如果已经在兵营就不动了
@@ -230,11 +221,9 @@ class AI(AiClient):
                 if self.get_unit_by_pos(self.target_barrack.pos, False) is None:
                     reach_pos_list.sort(key=lambda _pos: calculator.cube_distance(_pos, self.target_barrack.pos))
                     self.move(ally.id, reach_pos_list[0])
-                    self.update_game_info()
                 else:
                     reach_pos_list.sort(key=lambda _pos: calculator.cube_distance(_pos, self.enemy_pos))
                     self.move(ally.id, reach_pos_list[0])
-                    self.update_game_info()
 
     def pos_shift(self, pos, direct: str):
         """
