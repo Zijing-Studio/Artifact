@@ -566,7 +566,7 @@ class std_thread(threading.Thread):
 			print('> ', end = "", flush = True)
 
 	def run_buffer(self):
-		fd = sys.stdin.fileno()
+		#fd = sys.stdin.fileno()
 		#fl = fcntl.fcntl(fd, fcntl.F_GETFL)
 		#fcntl.fcntl(fd, fcntl.F_SETFL, fl | os.O_NONBLOCK)
 		while True:
