@@ -170,7 +170,6 @@ void AiClient::endRound()
     sendMsg(my_camp, round, "endround", operation_parameters);
 }
 
-
 int AiClient::getDistanceOnGround(gameunit::Pos pos_a, gameunit::Pos pos_b, int camp)
 {
     //地图边界
@@ -244,6 +243,12 @@ bool AiClient::canUseArtifact(gameunit::Artifact artifact, gameunit::Pos pos, in
     }
     else if (artifact.name == "InfernoFlame")
     {
+        // 不处于障碍物上
+        for (auto obstacle = map.obstacles.begin(); obstacle != map.obstacles.end(); obstacle++)
+        {
+            if (obstacle->pos == pos)
+                return false;
+        }
         // 无地面生物
         for (auto unit = map.units.begin(); unit != map.units.end(); unit++)
         {

@@ -283,10 +283,14 @@ class AiClient:
         if isinstance(target, gameunit.Unit):
             if artifact.name == "SalamanderShield":
                 return artifact.camp == target.camp
-        elif isinstance(target, list) and len(target) == 3:
+        elif isinstance(target, tuple) and len(target) == 3:
             if artifact.name == "HolyLight":
                 return calculator.in_map(target)
             if artifact.name == "InfernoFlame":
+                # 不处于障碍物上
+                for obstacle in self.map.obstacles:
+                    if obstacle.pos == target:
+                        return False
                 # 无地面生物
                 for unit in self.map.units:
                     if (unit.pos == target) and (not unit.flying):
