@@ -7,7 +7,7 @@ import random
 from PlayerLegality.player_legality import Parser
 from StateSystem.StateSystem import StateSystem
 
-DEBUG = True  # DEBUG时会生成一个log.txt记录logic收发的信息
+DEBUG = False  # DEBUG时会生成一个log.txt记录logic收发的信息
 
 
 def logic_convert_byte(data_str, send_goal):
