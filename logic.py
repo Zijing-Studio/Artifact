@@ -124,7 +124,7 @@ class Game:
     def get_round_ope(self):
         '''一个游戏回合(主要阶段)内的操作
         '''
-        # pylint: disable=too-many-branches
+        self.ope_one_round = 0
         while not self.is_end:
             self.state += 1
             self.send_game_info()
@@ -271,7 +271,7 @@ class Game:
                     4, 'big', signed=True)
                 media_info += int(artifact_names.index(
                     event.parameter_dict['name']) + 10 * event.parameter_dict['camp']
-                ).to_bytes(4, 'big', signed=True)
+                                 ).to_bytes(4, 'big', signed=True)
                 if (event.parameter_dict['name'] == "HolyLight" or
                         event.parameter_dict['name'] == "InfernoFlame"):
                     media_info += event.parameter_dict['target'][0].to_bytes(
@@ -291,8 +291,8 @@ class Game:
                 # a0
                 media_info += int(artifact_names.index(
                     event.parameter_dict['cards']["artifacts"][0]) +
-                    10 * event.parameter_dict['camp']
-                ).to_bytes(4, 'big', signed=True)
+                                  10 * event.parameter_dict['camp']
+                                 ).to_bytes(4, 'big', signed=True)
                 # c1 c2 c3
                 for creature_name in event.parameter_dict['cards']["creatures"]:
                     media_info += int(creature_names.index(creature_name) +
@@ -343,9 +343,24 @@ class Game:
         for media in self.media_player:
             send_message_goal(media_info, media)
 
+    def send_start_media_info(self):
+        '''发送录像文件初始信息(阵营信息)
+        '''
+        with open(self.replay, 'ab') as replay_file:
+            replay_file.write(int(0).to_bytes(4, 'big', signed=True))
+        for media in self.media_player:
+            if media == self.player0:
+                send_message_goal(int(0).to_bytes(
+                    4, 'big', signed=True), media)
+            elif media == self.player1:
+                send_message_goal(int(1).to_bytes(
+                    4, 'big', signed=True), media)
+
     def send_game_info(self):
         '''向当前回合的玩家发送游戏当前局面信息
         '''
+        if self.listen in self.media_player:
+            return
         state_dict = {'state': self.state, 'listen': [self.listen],
                       'player': [self.listen], 'content': []}
         message = dict()
@@ -375,12 +390,12 @@ class Game:
             2: 该玩家正常进入游戏，且为远程连接播放器
         '''
         for player, status in enumerate(player_list):
-            if status == 1:
+            if status in (1, 2):
                 if self.player0 == -1:
                     self.player0 = player
                 elif self.player1 == -1:
                     self.player1 = player
-            elif status == 2:
+            if status == 2:
                 self.media_player.append(player)
 
         if self.player0 == -1:
@@ -448,7 +463,7 @@ class Game:
         self.init_player(opt_dict['player_list'])
         self.replay = opt_dict['replay']
         # 录像文件初始
-        self.send_media_info(int(0).to_bytes(4, 'big', signed=True))
+        self.send_start_media_info()
         # 每个回合的时间限制和单条消息的最大长度
         send_init(3, 2048)
         # 处理初始卡组
@@ -483,13 +498,13 @@ class Game:
         elif winner == 0:
             media_info += int(0).to_bytes(4, 'big', signed=True)
             # 计算得分
-            end_info[str(self.player0)] = 2
-            end_info[str(self.player1)] = 1
+            end_info[str(self.player0)] = 1
+            end_info[str(self.player1)] = -1
         else:  # winner == 1
             media_info += int(1).to_bytes(4, 'big', signed=True)
             # 计算得分
-            end_info[str(self.player0)] = 1
-            end_info[str(self.player1)] = 2
+            end_info[str(self.player0)] = -1
+            end_info[str(self.player1)] = 1
         media_info += int(0).to_bytes(4, 'big', signed=True)
         media_info += int(0).to_bytes(4, 'big', signed=True)
         media_info += int(0).to_bytes(4, 'big', signed=True)
