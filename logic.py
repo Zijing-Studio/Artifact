@@ -271,7 +271,7 @@ class Game:
                     4, 'big', signed=True)
                 media_info += int(artifact_names.index(
                     event.parameter_dict['name']) + 10 * event.parameter_dict['camp']
-                                 ).to_bytes(4, 'big', signed=True)
+                ).to_bytes(4, 'big', signed=True)
                 if (event.parameter_dict['name'] == "HolyLight" or
                         event.parameter_dict['name'] == "InfernoFlame"):
                     media_info += event.parameter_dict['target'][0].to_bytes(
@@ -291,8 +291,8 @@ class Game:
                 # a0
                 media_info += int(artifact_names.index(
                     event.parameter_dict['cards']["artifacts"][0]) +
-                                  10 * event.parameter_dict['camp']
-                                 ).to_bytes(4, 'big', signed=True)
+                    10 * event.parameter_dict['camp']
+                ).to_bytes(4, 'big', signed=True)
                 # c1 c2 c3
                 for creature_name in event.parameter_dict['cards']["creatures"]:
                     media_info += int(creature_names.index(creature_name) +
@@ -346,15 +346,23 @@ class Game:
     def send_start_media_info(self):
         '''发送录像文件初始信息(阵营信息)
         '''
+        map_type = random.randint(0, 1)
+        day_time = random.randint(0, 1)
+        player0_set_list = [0, 0, 0, map_type, day_time, 0, 0]
+        player1_set_list = [0, 0, 1, map_type, day_time, 0, 0]
+        player0_set = bytes()
+        player1_set = bytes()
+        for setting in player0_set_list:
+            player0_set += int(setting).to_bytes(4, 'big', signed=True)
+        for setting in player1_set_list:
+            player1_set += int(setting).to_bytes(4, 'big', signed=True)
         with open(self.replay, 'ab') as replay_file:
-            replay_file.write(int(0).to_bytes(4, 'big', signed=True))
+            replay_file.write(player0_set)
         for media in self.media_player:
             if media == self.player0:
-                send_message_goal(int(0).to_bytes(
-                    4, 'big', signed=True), media)
+                send_message_goal(player0_set, media)
             elif media == self.player1:
-                send_message_goal(int(1).to_bytes(
-                    4, 'big', signed=True), media)
+                send_message_goal(player1_set, media)
 
     def send_game_info(self):
         '''向当前回合的玩家发送游戏当前局面信息
@@ -425,8 +433,9 @@ class Game:
                     with open('log.txt', 'a') as logfile:
                         logfile.write(parse_error+'\n\n')
             else:
-                with open('log.txt', 'a') as logfile:
-                    logfile.write(opt_dict0["content"]+'\n\n')
+                if DEBUG:
+                    with open('log.txt', 'a') as logfile:
+                        logfile.write(opt_dict0["content"]+'\n\n')
                 is_player0_ready = True
         # 1号玩家
         self.state += 1
@@ -441,8 +450,9 @@ class Game:
                     with open('log.txt', 'a') as logfile:
                         logfile.write(parse_error+'\n\n')
             else:
-                with open('log.txt', 'a') as logfile:
-                    logfile.write(opt_dict1["content"]+'\n\n')
+                if DEBUG:
+                    with open('log.txt', 'a') as logfile:
+                        logfile.write(opt_dict1["content"]+'\n\n')
                 is_player0_ready = True
         # 双方玩家是否均准备好卡组
         if not is_player0_ready and not is_player1_ready:
