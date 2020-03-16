@@ -48,18 +48,21 @@ python版ai位于ai_py文件夹中。
 
 ## 使用judger启动游戏逻辑和ai
 
+附带了可供玩家本地测试用的评测机和游戏逻辑文件（版本与实际版本略有差别）。
+
+其中judger需要websockets库。（pip install websockets）
+
 启动指令: python <judger路径> <启动逻辑command> <启动AI 1 command> <启动AI 2 command> <逻辑生成replay路径>
 
 启动指令示例(在主路径下)
-windows系统: python .\Judger\judger_win.py python+.\\logic.py python+.\\Ai\\ai_py\\ai-HL.py  .\\Ai\\ai_cpp\\ai-HL.exe  record
-linux系统: python ./Judger/judger_linux.py python+./logic.py python+./Ai/ai_py/ai-HL.py  ./Ai/ai_cpp/ai-HL  record
+Windows: python .\Judger\judger.py python+.\\logic.py python+.\\Ai\\ai_py\\ai-HL.py  .\\Ai\\ai_cpp\\ai-HL.exe  record
+Linux/Mac: python ./Judger/judger.py python+./logic.py python+./Ai/ai_py/ai-HL.py  ./Ai/ai_cpp/ai-HL  record
 
 AI可以是C++版本，也可以选择python版本。选择其一即可。
 
 **注意judger与AI的通信使用标准输入/输出流。除了直接使用sdk中相关的函数外，请不要在标准输出流中输出任何信息。**
 
 logic.py中有一个DEBUG参数，设置为True的时候会在当前目录下生成一个log.txt文件，记录收发的信息。
-
 
 # ai_cpp
 
