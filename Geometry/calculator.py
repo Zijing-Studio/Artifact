@@ -128,7 +128,6 @@ def cube_reachable(start, movement, obstacles=[], obstructs=[]):
 def get_obstacles_by_unit(unit, _map):
     '''
     returns all obstacles for a unit
-    unfinished, currently only units have been taken into account
     '''
     obstacles = MAPBORDER()
     #obstacles=[]
@@ -154,8 +153,11 @@ def get_obstructs_by_unit(unit, _map):
     obstacle_unit = _map.get_units()
     for obstruct in obstacle_unit:
         if obstruct.camp != unit.camp:
-            for i in range(0, 6):
-                obstructs.append(cube_neighbor(obstruct.pos, i))
+            if obstruct.flying == unit.flying:
+                for i in range(0, 6):
+                    obstructs.append(cube_neighbor(obstruct.pos, i))
+            else:
+                obstructs.append(obstruct.pos)
     return obstructs
 
 '''
