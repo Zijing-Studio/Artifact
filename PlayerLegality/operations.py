@@ -404,9 +404,7 @@ class Use(AbstractOperation):
                     in_range = True
             if calculator.cube_distance(miracle.pos, self.target) <= 5:
                 in_range = True
-            creature_at_target = self.map.get_unit_at(self.target)
-            no_grd_creature = creature_at_target is None or creature_at_target.flying
-            return in_range and no_grd_creature
+            return in_range and self.map.get_unit_at(self.target, flying = False) is None
 
         elif self.artifact.name == "HolyLight":
             return calculator.in_map(self.target)
