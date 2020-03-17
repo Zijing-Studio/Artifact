@@ -71,7 +71,7 @@ class Game:
     def __init__(self):
         '''初始化变量
         '''
-        self.players = [-1, -1]  # player0, player1对应的编号
+        self.players = [0, 1]   # player0, player1对应的编号
         self.media_players = []  # 播放器
         self.audience = []      # 观众
         self.replay = ""        # 录像文件存储处
@@ -259,7 +259,7 @@ class Game:
                 # a0
                 media_info.append(artifact_names.index(
                     event.parameter_dict['cards']["artifacts"][0]) +
-                                  10 * event.parameter_dict['camp'])
+                    10 * event.parameter_dict['camp'])
                 # c1 c2 c3
                 for creature_name in event.parameter_dict['cards']["creatures"]:
                     media_info.append(creature_names.index(
@@ -350,24 +350,16 @@ class Game:
             1: 该玩家正常进入游戏，且为评测机本地AI或者远程算力
             2: 该玩家正常进入游戏，且为远程连接播放器
         '''
+        if len(player_list) != 2 or (player_list[0] == player_list[1] == 0):
+            self.end(-1)
+        if player_list[0] == 0:
+            self.end(self.players[1])
+        if player_list[1] == 0:
+            self.end(self.players[0])
+
         for player, status in enumerate(player_list):
-            if status in (1, 2):
-                if self.players[0] == -1:
-                    self.players[0] = player
-                elif self.players[1] == -1:
-                    self.players[1] = player
             if status == 2:
                 self.media_players.append(player)
-
-        if self.players[0] == -1:
-            # 没有玩家连入
-            self.end(-1)
-        elif self.players[1] == -1:
-            # 只有一位玩家连入
-            self.end(self.players[0])
-        elif random.randint(0, 1):
-            # 随机分配先后手
-            self.players[0], self.players[1] = self.players[1], self.players[0]
 
     def select_cards(self):
         '''玩家选择初始卡组
