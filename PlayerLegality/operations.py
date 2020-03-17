@@ -396,12 +396,10 @@ class Use(AbstractOperation):
         special check for certain artifact
         '''
         if self.artifact.name == "InfernoFlame":
-            miracle = self.map.get_miracle_by_id(self.player_id)
-            barracks = self.map.get_barracks(self.player_id)
-            for barrack in barracks:
-                if len(calculator.units_in_range(barrack.pos, 3, self.map, flyingIncluded=False)) != 0:
-                    return False
-            return len(calculator.units_in_range(miracle.pos, 5, self.map, flyingIncluded=False)) != 0
+            if self.target is None:
+                return False
+            return self.map.get_unit_at(self.target) is None and \
+                    calculator.in_map(self.target)
         elif self.artifact.name == "HolyLight":
             return calculator.in_map(self.target)
         return True
