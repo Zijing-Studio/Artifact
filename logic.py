@@ -71,9 +71,8 @@ class Game:
     def __init__(self):
         '''初始化变量
         '''
-        self.player0 = -1       # player0对应的编号
-        self.player1 = -1       # player1对应的编号
-        self.media_player = []  # 播放器
+        self.players = [-1, -1]  # player0, player1对应的编号
+        self.media_players = []  # 播放器
         self.audience = []      # 观众
         self.replay = ""        # 录像文件存储处
         self.state = 0          # 当前消息回合
@@ -82,29 +81,29 @@ class Game:
         self.is_end = False     # 是否结束
         self.statesystem = StateSystem()
         self.parser = Parser(self.statesystem)
-        self.map_type = random.randint(0, 1) # 地图类型
-        self.day_time = random.randint(0, 1) # 地图时间
+        self.map_type = random.randint(0, 1)  # 地图类型
+        self.day_time = random.randint(0, 1)  # 地图时间
 
     def check_game_end(self):
         '''判断游戏是否结束，若结束则结束对局
         '''
-        hp0 = self.statesystem.get_miracle_by_id(0).hp
-        hp1 = self.statesystem.get_miracle_by_id(1).hp
+        miracle_hp = [self.statesystem.get_miracle_by_id(
+            0).hp, self.statesystem.get_miracle_by_id(1).hp]
         # 最大回合数
         if self._round >= 300:
-            if hp0 > 0 and hp0 > hp1:
+            if miracle_hp[0] > 0 and miracle_hp[0] > miracle_hp[1]:
                 self.end(0)
-            elif hp1 > 0 and hp1 > hp0:
+            elif miracle_hp[1] > 0 and miracle_hp[1] > miracle_hp[0]:
                 self.end(1)
             else:
                 self.end(-1)
-        if hp0 <= 0 and hp1 <= 0:
+        if miracle_hp[0] <= 0 and miracle_hp[1] <= 0:
             self.is_end = True
             self.end(-1)
-        elif hp1 <= 0:
+        elif miracle_hp[1] <= 0:
             self.is_end = True
             self.end(0)
-        elif hp0 <= 0:
+        elif miracle_hp[0] <= 0:
             self.is_end = True
             self.end(1)
 
@@ -113,7 +112,7 @@ class Game:
         '''
         self._round += 1
         self.parser.set_round(self._round)
-        self.listen = self.player1 if self.listen == self.player0 else self.player0
+        self.listen = self.players[1] if self.listen == self.players[0] else self.players[0]
 
     def get_round_ope(self):
         '''一个游戏回合(主要阶段)内的操作
@@ -137,21 +136,22 @@ class Game:
                 self.send_media_info()
                 self.check_game_end()
                 # 结束回合
-                if json.loads(opt_dict["content"])["operation_type"] == "endround" or ope_one_round > 100:
+                if (json.loads(opt_dict["content"])["operation_type"] == "endround"
+                        or ope_one_round > 100):
                     break
             # AI异常
             elif opt_dict['player'] == -1:
                 opt = json.loads(opt_dict['content'])
                 # AI异常退出
                 if opt['error'] == 0:
-                    if opt['player'] == self.player0:
-                        self.end(self.player1)
+                    if opt['player'] == self.players[0]:
+                        self.end(self.players[1])
                     else:
-                        self.end(self.player0)
+                        self.end(self.players[0])
                 # 超时
                 elif opt['error'] == 1:
                     self.parser.parse(json.dumps(
-                        {"player": 0 if self.listen == self.player0 else 1,
+                        {"player": 0 if self.listen == self.players[0] else 1,
                          "round": self._round,
                          "operation_type": "endround",
                          "operation_parameters": {}}))
@@ -258,7 +258,8 @@ class Game:
                 media_info.append(event.parameter_dict['camp'])
                 # a0
                 media_info.append(artifact_names.index(
-                    event.parameter_dict['cards']["artifacts"][0]) + 10 * event.parameter_dict['camp'])
+                    event.parameter_dict['cards']["artifacts"][0]) +
+                                  10 * event.parameter_dict['camp'])
                 # c1 c2 c3
                 for creature_name in event.parameter_dict['cards']["creatures"]:
                     media_info.append(creature_names.index(
@@ -301,38 +302,35 @@ class Game:
             self.statesystem.event_heap.record.clear()
             if not media_info_list:
                 return
+        if goal == 3:
+            self.send_media_info(media_info_list, -1)
+            self.send_media_info(media_info_list, 0)
+            self.send_media_info(media_info_list, 1)
         if goal == -1:
             with open(self.replay, 'ab') as replay_file:
                 for media_info in media_info_list:
                     replay_file.write(
                         int(media_info).to_bytes(4, 'big', signed=True))
-        elif goal == 0:
-            if self.player0 in self.media_player:
+        elif goal in (0, 1):
+            if self.players[goal] in self.media_players:
                 send_state({'state': self.state, 'listen': [self.listen],
-                            'player': [self.player0], 'content': [json.dumps(media_info_list)]})
-        elif goal == 1:
-            if self.player1 in self.media_player:
-                send_state({'state': self.state, 'listen': [self.listen],
-                            'player': [self.player1], 'content': [json.dumps(media_info_list)]})
-        elif goal == 3:
-            self.send_media_info(media_info_list, -1)
-            self.send_media_info(media_info_list, 0)
-            self.send_media_info(media_info_list, 1)
+                            'player': [self.players[goal]],
+                            'content': [json.dumps(media_info_list)]})
 
     def send_game_info(self):
         '''向当前回合的AI发送游戏当前局面信息
         '''
-        if self.listen in self.media_player:
+        if self.listen in self.media_players:
             return
         state_dict = {'state': self.state, 'listen': [self.listen],
                       'player': [self.listen], 'content': []}
         message = dict()
         if self._round == -1:
-            message = {'camp': 0 if self.listen == self.player0 else 1}
+            message = {'camp': 0 if self.listen == self.players[0] else 1}
         else:
             message = self.statesystem.parse()
             message['round'] = self._round
-            message['camp'] = 0 if self.listen == self.player0 else 1
+            message['camp'] = 0 if self.listen == self.players[1] else 1
             if DEBUG:
                 with open('log.txt', 'a') as logfile:
                     logfile.write(json.dumps(message)+'\n\n')
@@ -354,77 +352,59 @@ class Game:
         '''
         for player, status in enumerate(player_list):
             if status in (1, 2):
-                if self.player0 == -1:
-                    self.player0 = player
-                elif self.player1 == -1:
-                    self.player1 = player
+                if self.players[0] == -1:
+                    self.players[0] = player
+                elif self.players[1] == -1:
+                    self.players[1] = player
             if status == 2:
-                self.media_player.append(player)
+                self.media_players.append(player)
 
-        if self.player0 == -1:
+        if self.players[0] == -1:
             # 没有玩家连入
             self.end(-1)
-        elif self.player1 == -1:
+        elif self.players[1] == -1:
             # 只有一位玩家连入
-            self.end(self.player0)
+            self.end(self.players[0])
         elif random.randint(0, 1):
             # 随机分配先后手
-            self.player0, self.player1 = self.player1, self.player0
+            self.players[0], self.players[1] = self.players[1], self.players[0]
 
     def select_cards(self):
         '''玩家选择初始卡组
         '''
-        media_player0_info = [0, 0, 0, self.map_type, self.day_time, 0, 0]
-        media_player1_info = [0, 0, 1, self.map_type, self.day_time, 0, 0]
-        is_player0_ready = is_player1_ready = False
+        media_players_info = [
+            [0, 0, 0, self.map_type, self.day_time, 0, 0],
+            [0, 0, 1, self.map_type, self.day_time, 0, 0]]
+        is_players_ready = [False, False]
         # 0号玩家
-        self.state += 1
-        self.listen = self.player0
-        if self.player0 in self.media_player:
-            self.send_media_info(media_player0_info, 0)
-        else:
-            self.send_game_info()
-        opt_dict0 = read_opt()
-        if opt_dict0["player"] == self.player0:
-            try:
-                self.parser.parse(opt_dict0["content"])
-            except Exception as parse_error:
-                if DEBUG:
-                    with open('log.txt', 'a') as logfile:
-                        logfile.write(parse_error+'\n\n')
+        for player in range(2):
+            self.state += 1
+            self.listen = self.players[player]
+            if self.players[player] in self.media_players:
+                self.send_media_info(media_players_info[player], 0)
             else:
-                if DEBUG:
-                    with open('log.txt', 'a') as logfile:
-                        logfile.write(opt_dict0["content"]+'\n\n')
-                is_player0_ready = True
-        # 1号玩家
-        self.state += 1
-        self.listen = self.player1
-        if self.player1 in self.media_player:
-            self.send_media_info(media_player1_info, 1)
-        else:
-            self.send_game_info()
-        opt_dict1 = read_opt()
-        if opt_dict1["player"] == self.player1:
-            try:
-                self.parser.parse(opt_dict1["content"])
-            except Exception as parse_error:
-                if DEBUG:
-                    with open('log.txt', 'a') as logfile:
-                        logfile.write(parse_error+'\n\n')
-            else:
-                if DEBUG:
-                    with open('log.txt', 'a') as logfile:
-                        logfile.write(opt_dict1["content"]+'\n\n')
-                is_player1_ready = True
+                self.send_game_info()
+            opt_dict = read_opt()
+            if opt_dict["player"] == self.players[player]:
+                try:
+                    self.parser.parse(opt_dict["content"])
+                except Exception as parse_error:
+                    if DEBUG:
+                        with open('log.txt', 'a') as logfile:
+                            logfile.write(parse_error+'\n\n')
+                else:
+                    if DEBUG:
+                        with open('log.txt', 'a') as logfile:
+                            logfile.write(opt_dict["content"]+'\n\n')
+                    is_players_ready[player] = True
         # 双方玩家是否均准备好卡组
-        if not is_player0_ready and not is_player1_ready:
+        if not is_players_ready[0] and not is_players_ready[1]:
             self.is_end = True
             self.end(-1)
-        elif not is_player0_ready:
+        elif not is_players_ready[0]:
             self.is_end = True
             self.end(1)
-        elif not is_player1_ready:
+        elif not is_players_ready[1]:
             self.is_end = True
             self.end(0)
 
@@ -444,7 +424,7 @@ class Game:
         self.send_media_info()
         # 游戏回合
         self.parser.set_round(0)
-        self.listen = self.player0
+        self.listen = self.players[0]
         while not self.is_end:
             self.send_media_info()
             self.check_game_end()
@@ -462,20 +442,20 @@ class Game:
         media_info_list = []
         media_info_list.append(self._round)
         media_info_list.append(10)
-        end_info = {str(self.player0): 0, str(self.player1): 0}
+        end_info = {str(self.players[0]): 0, str(self.players[1]): 0}
         if winner == -1:
             media_info_list.append(2)
             # 计算得分
         elif winner == 0:
             media_info_list.append(0)
             # 计算得分
-            end_info[str(self.player0)] = 1
-            end_info[str(self.player1)] = -1
+            end_info[str(self.players[0])] = 1
+            end_info[str(self.players[1])] = -1
         else:  # winner == 1
             media_info_list.append(1)
             # 计算得分
-            end_info[str(self.player0)] = -1
-            end_info[str(self.player1)] = 1
+            end_info[str(self.players[0])] = -1
+            end_info[str(self.players[1])] = 1
         media_info_list += [0, 0, 0, 0]
         self.send_media_info(media_info_list)
         self.send_media_info([-1], -1)
