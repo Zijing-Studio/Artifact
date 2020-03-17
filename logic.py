@@ -63,13 +63,6 @@ def send_state(state_dict):
     sys.stdout.flush()
 
 
-def send_message_goal(message_str, send_goal):
-    '''发送二进制流
-    '''
-    sys.stdout.buffer.write(logic_convert_byte(message_str, send_goal))
-    sys.stdout.flush()
-
-
 class Game:
     '''游戏 神迹之战Miracle
     '''
@@ -86,10 +79,11 @@ class Game:
         self.state = 0          # 当前消息回合
         self.listen = 0         # 当前监听的玩家(当前回合玩家)
         self._round = -1        # 当前游戏回合
-        self.ope_one_round = 0  # 一个回合内的操作数
         self.is_end = False     # 是否结束
         self.statesystem = StateSystem()
         self.parser = Parser(self.statesystem)
+        self.map_type = random.randint(0, 1) # 地图类型
+        self.day_time = random.randint(0, 1) # 地图时间
 
     def check_game_end(self):
         '''判断游戏是否结束，若结束则结束对局
@@ -124,7 +118,7 @@ class Game:
     def get_round_ope(self):
         '''一个游戏回合(主要阶段)内的操作
         '''
-        self.ope_one_round = 0
+        ope_one_round = 0
         while not self.is_end:
             self.state += 1
             self.send_game_info()
@@ -143,7 +137,7 @@ class Game:
                 self.send_media_info()
                 self.check_game_end()
                 # 结束回合
-                if json.loads(opt_dict["content"])["operation_type"] == "endround" or self.ope_one_round > 100:
+                if json.loads(opt_dict["content"])["operation_type"] == "endround" or ope_one_round > 100:
                     break
             # AI异常
             elif opt_dict['player'] == -1:
@@ -164,10 +158,13 @@ class Game:
                     break
 
     def get_media_info(self, events):
-        '''把事件转为给播放器的二进制序列
+        '''把事件数组转为给播放器的整数数组
 
         Args:
             events: 事件数组
+
+        Returns:
+            int list
         '''
         # pylint: disable=too-many-branches
         # pylint: disable=too-many-statements
@@ -179,193 +176,151 @@ class Game:
                           "BlackBat", "Priest", "VolcanoDragon", "Inferno"]
         artifact_names = ["", "HolyLight", "SalamanderShield", "InfernoFlame"]
 
-        media_info = bytes()
+        media_info = []
         for event in events:
             if not event.name in event_names:
                 continue
             # round
-            media_info += self._round.to_bytes(4, 'big', signed=True)
+            media_info.append(self._round)
             # event
-            media_info += int(event_names.index(event.name)
-                              ).to_bytes(4, 'big', signed=True)
+            media_info.append(event_names.index(event.name))
             if event.name == "TurnStart" or event.name == "TurnEnd":
                 # camp
-                media_info += int(self._round %
-                                  2).to_bytes(4, 'big', signed=True)
+                media_info.append(self._round % 2)
             elif event.name == "Spawn":
                 # type
-                media_info += int(creature_names.index(event.parameter_dict['source'].type)
-                                  + 10 * event.parameter_dict['source'].camp).to_bytes(
-                                      4, 'big', signed=True)
+                media_info.append(creature_names.index(
+                    event.parameter_dict['source'].type) + 10 * event.parameter_dict['source'].camp)
                 # level
-                media_info += int(event.parameter_dict['source'].level).to_bytes(
-                    4, 'big', signed=True)
+                media_info.append(event.parameter_dict['source'].level)
                 # posX
-                media_info += event.parameter_dict['pos'][0].to_bytes(
-                    4, 'big', signed=True)
+                media_info.append(event.parameter_dict['pos'][0])
                 # posY
-                media_info += event.parameter_dict['pos'][1].to_bytes(
-                    4, 'big', signed=True)
+                media_info.append(event.parameter_dict['pos'][1])
                 # id
-                media_info += event.parameter_dict['source'].id.to_bytes(
-                    4, 'big', signed=True)
+                media_info.append(event.parameter_dict['source'].id)
             elif event.name == "Move":
                 # id
-                media_info += event.parameter_dict['source'].id.to_bytes(
-                    4, 'big', signed=True)
+                media_info.append(event.parameter_dict['source'].id)
                 # desX
-                media_info += event.parameter_dict['dest'][0].to_bytes(
-                    4, 'big', signed=True)
+                media_info.append(event.parameter_dict['dest'][0])
                 # desY
-                media_info += event.parameter_dict['dest'][1].to_bytes(
-                    4, 'big', signed=True)
+                media_info.append(event.parameter_dict['dest'][1])
             elif event.name == "Leave" or event.name == "Arrive":
                 # id
-                media_info += event.parameter_dict['source'].id.to_bytes(
-                    4, 'big', signed=True)
+                media_info.append(event.parameter_dict['source'].id)
                 # posX
-                media_info += event.parameter_dict['pos'][0].to_bytes(
-                    4, 'big', signed=True)
+                media_info.append(event.parameter_dict['pos'][0])
                 # posY
-                media_info += event.parameter_dict['pos'][1].to_bytes(
-                    4, 'big', signed=True)
+                media_info.append(event.parameter_dict['pos'][1])
             elif event.name == "Attack" or event.name == "Attacking" or event.name == "Attacked":
                 # id1
-                media_info += event.parameter_dict['source'].id.to_bytes(
-                    4, 'big', signed=True)
+                media_info.append(event.parameter_dict['source'].id)
                 # id2
-                media_info += event.parameter_dict['target'].id.to_bytes(
-                    4, 'big', signed=True)
+                media_info.append(event.parameter_dict['target'].id)
             elif event.name == "Damage":
                 # id2
-                media_info += event.parameter_dict['target'].id.to_bytes(
-                    4, 'big', signed=True)
+                media_info.append(event.parameter_dict['target'].id)
                 # id1
-                media_info += event.parameter_dict['source'].id.to_bytes(
-                    4, 'big', signed=True)
+                media_info.append(event.parameter_dict['source'].id)
                 # damage
-                media_info += event.parameter_dict['damage'].to_bytes(
-                    4, 'big', signed=True)
+                media_info.append(event.parameter_dict['damage'])
                 # type
                 damage_type = ["", "Attack",
                                "AttackBack", "VolcanoDragonSplash"]
-                media_info += int(damage_type.index(
-                    event.parameter_dict['type'])).to_bytes(4, 'big', signed=True)
+                media_info.append(damage_type.index(
+                    event.parameter_dict['type']))
             elif event.name == "Death":
                 # id
-                media_info += event.parameter_dict['source'].id.to_bytes(
-                    4, 'big', signed=True)
+                media_info.append(event.parameter_dict['source'].id)
             elif event.name == "Heal":
                 # id2
-                media_info += event.parameter_dict['target'].id.to_bytes(
-                    4, 'big', signed=True)
+                media_info.append(event.parameter_dict['target'].id)
                 # id1
-                media_info += event.parameter_dict['source'].id.to_bytes(
-                    4, 'big', signed=True)
+                media_info.append(event.parameter_dict['source'].id)
                 # h
-                media_info += event.parameter_dict['heal'].to_bytes(
-                    4, 'big', signed=True)
+                media_info.append(event.parameter_dict['heal'])
             elif event.name == "ActivateArtifact":
                 # camp
-                media_info += event.parameter_dict['camp'].to_bytes(
-                    4, 'big', signed=True)
-                media_info += int(artifact_names.index(
-                    event.parameter_dict['name']) + 10 * event.parameter_dict['camp']
-                ).to_bytes(4, 'big', signed=True)
+                media_info.append(event.parameter_dict['camp'])
+                media_info.append(artifact_names.index(
+                    event.parameter_dict['name']) + 10 * event.parameter_dict['camp'])
                 if (event.parameter_dict['name'] == "HolyLight" or
                         event.parameter_dict['name'] == "InfernoFlame"):
-                    media_info += event.parameter_dict['target'][0].to_bytes(
-                        4, 'big', signed=True)
-                    media_info += event.parameter_dict['target'][1].to_bytes(
-                        4, 'big', signed=True)
-                    media_info += int(0).to_bytes(4, 'big', signed=True)
+                    media_info.append(event.parameter_dict['target'][0])
+                    media_info.append(event.parameter_dict['target'][1])
                 elif event.parameter_dict['name'] == "SalamanderShield":
-                    media_info += int(0).to_bytes(4, 'big', signed=True)
-                    media_info += int(0).to_bytes(4, 'big', signed=True)
-                    media_info += event.parameter_dict['target'].id.to_bytes(
-                        4, 'big', signed=True)
+                    media_info.append(0)
+                    media_info.append(0)
+                    media_info.append(event.parameter_dict['target'].id)
             elif event.name == "GameStart":
                 # camp
-                media_info += event.parameter_dict['camp'].to_bytes(
-                    4, 'big', signed=True)
+                media_info.append(event.parameter_dict['camp'])
                 # a0
-                media_info += int(artifact_names.index(
-                    event.parameter_dict['cards']["artifacts"][0]) +
-                    10 * event.parameter_dict['camp']
-                ).to_bytes(4, 'big', signed=True)
+                media_info.append(artifact_names.index(
+                    event.parameter_dict['cards']["artifacts"][0]) + 10 * event.parameter_dict['camp'])
                 # c1 c2 c3
                 for creature_name in event.parameter_dict['cards']["creatures"]:
-                    media_info += int(creature_names.index(creature_name) +
-                                      10 * event.parameter_dict['camp']
-                                      ).to_bytes(4, 'big', signed=True)
+                    media_info.append(creature_names.index(
+                        creature_name) + 10 * event.parameter_dict['camp'])
             elif event.name == "BuffAdd" or event.name == "BuffRemove":
                 # id0
-                media_info += event.parameter_dict['source'].id.to_bytes(
-                    4, 'big', signed=True)
+                media_info.append(event.parameter_dict['source'].id)
                 # type
                 buff_names = ["BaseBuff", "PriestAtkBuff", "HolyShield",
                               "HolyLightAtkBuff", "SalamanderShieldBuff"]
-                media_info += buff_names.index(event.parameter_dict['type']).to_bytes(
-                    4, 'big', signed=True)
+                media_info.append(buff_names.index(
+                    event.parameter_dict['type']))
             elif event.name == "Summon":
                 # type
-                media_info += int(creature_names.index(event.parameter_dict['type'])
-                                  + 10 * event.parameter_dict['camp']).to_bytes(
-                                      4, 'big', signed=True)
+                media_info.append(creature_names.index(
+                    event.parameter_dict['type']) + 10 * event.parameter_dict['camp'])
                 # level
-                media_info += int(event.parameter_dict['level']).to_bytes(
-                    4, 'big', signed=True)
+                media_info.append(event.parameter_dict['level'])
                 # posX
-                media_info += event.parameter_dict['pos'][0].to_bytes(
-                    4, 'big', signed=True)
+                media_info.append(event.parameter_dict['pos'][0])
                 # posY
-                media_info += event.parameter_dict['pos'][1].to_bytes(
-                    4, 'big', signed=True)
-            if not len(media_info) % 28 == 0:
-                media_info += (7-len(media_info) % 28//4) * \
-                    int(0).to_bytes(4, 'big', signed=True)
+                media_info.append(event.parameter_dict['pos'][1])
+            if len(media_info) % 7 != 0:
+                media_info += [0] * (7-len(media_info) % 7)
         return media_info
 
-    def send_media_info(self, media_info=b''):
-        '''把信息发给播放器及记录于录像文件
+    def send_media_info(self, media_info_list=None, goal=3):
+        '''把信息发给播放器或记录于录像文件
 
         Args:
-            media_info: 给播放器的信息字符串 为空时会直接从事件堆中取
+            media_info: 给播放器的信息整数数组 为空时会直接从事件堆中取
+
+            goal: 发送的目标 -1表示录像文件 0表示播放器玩家0 1表示播放器玩家1 默认全部发送
         '''
-        if media_info == b'':
+        if not media_info_list:
             if not self.statesystem.event_heap.record:
                 return
-            media_info = self.get_media_info(
+            media_info_list = self.get_media_info(
                 self.statesystem.event_heap.record)
             self.statesystem.event_heap.record.clear()
-        with open(self.replay, 'ab') as replay_file:
-            replay_file.write(media_info)
-        for media in self.media_player:
-            send_message_goal(media_info, media)
-
-    def send_start_media_info(self):
-        '''发送录像文件初始信息(阵营信息)
-        '''
-        map_type = random.randint(0, 1)
-        day_time = random.randint(0, 1)
-        player0_set_list = [0, 0, 0, map_type, day_time, 0, 0]
-        player1_set_list = [0, 0, 1, map_type, day_time, 0, 0]
-        player0_set = bytes()
-        player1_set = bytes()
-        for setting in player0_set_list:
-            player0_set += int(setting).to_bytes(4, 'big', signed=True)
-        for setting in player1_set_list:
-            player1_set += int(setting).to_bytes(4, 'big', signed=True)
-        with open(self.replay, 'ab') as replay_file:
-            replay_file.write(player0_set)
-        for media in self.media_player:
-            if media == self.player0:
-                send_message_goal(player0_set, media)
-            elif media == self.player1:
-                send_message_goal(player1_set, media)
+            if not media_info_list:
+                return
+        if goal == -1:
+            with open(self.replay, 'ab') as replay_file:
+                for media_info in media_info_list:
+                    replay_file.write(
+                        int(media_info).to_bytes(4, 'big', signed=True))
+        elif goal == 0:
+            if self.player0 in self.media_player:
+                send_state({'state': self.state, 'listen': [self.listen],
+                            'player': [self.player0], 'content': [json.dumps(media_info_list)]})
+        elif goal == 1:
+            if self.player1 in self.media_player:
+                send_state({'state': self.state, 'listen': [self.listen],
+                            'player': [self.player1], 'content': [json.dumps(media_info_list)]})
+        elif goal == 3:
+            self.send_media_info(media_info_list, -1)
+            self.send_media_info(media_info_list, 0)
+            self.send_media_info(media_info_list, 1)
 
     def send_game_info(self):
-        '''向当前回合的玩家发送游戏当前局面信息
+        '''向当前回合的AI发送游戏当前局面信息
         '''
         if self.listen in self.media_player:
             return
@@ -419,11 +374,16 @@ class Game:
     def select_cards(self):
         '''玩家选择初始卡组
         '''
+        media_player0_info = [0, 0, 0, self.map_type, self.day_time, 0, 0]
+        media_player1_info = [0, 0, 1, self.map_type, self.day_time, 0, 0]
         is_player0_ready = is_player1_ready = False
         # 0号玩家
         self.state += 1
         self.listen = self.player0
-        self.send_game_info()
+        if self.player0 in self.media_player:
+            self.send_media_info(media_player0_info, 0)
+        else:
+            self.send_game_info()
         opt_dict0 = read_opt()
         if opt_dict0["player"] == self.player0:
             try:
@@ -440,7 +400,10 @@ class Game:
         # 1号玩家
         self.state += 1
         self.listen = self.player1
-        self.send_game_info()
+        if self.player1 in self.media_player:
+            self.send_media_info(media_player1_info, 1)
+        else:
+            self.send_game_info()
         opt_dict1 = read_opt()
         if opt_dict1["player"] == self.player1:
             try:
@@ -453,7 +416,7 @@ class Game:
                 if DEBUG:
                     with open('log.txt', 'a') as logfile:
                         logfile.write(opt_dict1["content"]+'\n\n')
-                is_player0_ready = True
+                is_player1_ready = True
         # 双方玩家是否均准备好卡组
         if not is_player0_ready and not is_player1_ready:
             self.is_end = True
@@ -461,7 +424,7 @@ class Game:
         elif not is_player0_ready:
             self.is_end = True
             self.end(1)
-        elif not is_player0_ready:
+        elif not is_player1_ready:
             self.is_end = True
             self.end(0)
 
@@ -472,12 +435,11 @@ class Game:
         opt_dict = read_opt()
         self.init_player(opt_dict['player_list'])
         self.replay = opt_dict['replay']
-        # 录像文件初始
-        self.send_start_media_info()
         # 每个回合的时间限制和单条消息的最大长度
         send_init(3, 2048)
         # 处理初始卡组
         self.select_cards()
+        self.send_media_info([0, 0, 0, self.map_type, self.day_time, 0, 0], -1)
         self._round = 0
         self.send_media_info()
         # 游戏回合
@@ -497,30 +459,26 @@ class Game:
         Args:
             winner: 胜者。-1表示平局，0/1表示0/1号玩家获胜。
         '''
-        media_info = bytes()
-        media_info += self._round.to_bytes(4, 'big', signed=True)
-        media_info += int(10).to_bytes(4, 'big', signed=True)
+        media_info_list = []
+        media_info_list.append(self._round)
+        media_info_list.append(10)
         end_info = {str(self.player0): 0, str(self.player1): 0}
         if winner == -1:
-            media_info += int(2).to_bytes(4, 'big', signed=True)
+            media_info_list.append(2)
             # 计算得分
-
         elif winner == 0:
-            media_info += int(0).to_bytes(4, 'big', signed=True)
+            media_info_list.append(0)
             # 计算得分
             end_info[str(self.player0)] = 1
             end_info[str(self.player1)] = -1
         else:  # winner == 1
-            media_info += int(1).to_bytes(4, 'big', signed=True)
+            media_info_list.append(1)
             # 计算得分
             end_info[str(self.player0)] = -1
             end_info[str(self.player1)] = 1
-        media_info += int(0).to_bytes(4, 'big', signed=True)
-        media_info += int(0).to_bytes(4, 'big', signed=True)
-        media_info += int(0).to_bytes(4, 'big', signed=True)
-        media_info += int(0).to_bytes(4, 'big', signed=True)
-        media_info += int(-1).to_bytes(4, 'big', signed=True)
-        self.send_media_info(media_info)
+        media_info_list += [0, 0, 0, 0]
+        self.send_media_info(media_info_list)
+        self.send_media_info([-1], -1)
         send_end_info(end_info)
         sys.exit()
 
