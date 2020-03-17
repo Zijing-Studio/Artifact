@@ -128,7 +128,7 @@ class Game:
                 except Exception as parse_error:
                     if DEBUG:
                         with open('log.txt', 'a') as logfile:
-                            logfile.write(parse_error+'\n\n')
+                            logfile.write(parse_error.__str__()+'\n\n')
                 else:
                     if DEBUG:
                         with open('log.txt', 'a') as logfile:
@@ -368,12 +368,11 @@ class Game:
             [0, 0, 0, self.map_type, self.day_time, 0, 0],
             [0, 0, 1, self.map_type, self.day_time, 0, 0]]
         is_players_ready = [False, False]
-        # 0号玩家
-        for player in range(2):
+        for player in self.players:
             self.state += 1
             self.listen = self.players[player]
             if self.players[player] in self.media_players:
-                self.send_media_info(media_players_info[player], 0)
+                self.send_media_info(media_players_info[player], player)
             else:
                 self.send_game_info()
             opt_dict = read_opt()
@@ -383,7 +382,7 @@ class Game:
                 except Exception as parse_error:
                     if DEBUG:
                         with open('log.txt', 'a') as logfile:
-                            logfile.write(parse_error+'\n\n')
+                            logfile.write(parse_error.__str__()+'\n\n')
                 else:
                     if DEBUG:
                         with open('log.txt', 'a') as logfile:
