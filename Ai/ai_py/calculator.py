@@ -149,8 +149,11 @@ def get_obstructs_by_unit(unit, _map):
     obstacle_unit = _map.units
     for obstruct in obstacle_unit:
         if obstruct.camp != unit.camp:
-            for i in range(0, 6):
-                obstructs.append(cube_neighbor(obstruct.pos, i))
+            if obstruct.flying == unit.flying:
+                for i in range(0, 6):
+                    obstructs.append(cube_neighbor(obstruct.pos, i))
+            else:
+                obstructs.append(obstruct.pos)
     return obstructs
 
 '''
