@@ -118,6 +118,7 @@ class AiClient:
             }
         }
         send_opt(json.dumps(message))
+        self.update_game_info()
 
     def move(self, mover: int, position: tuple):
         '''将id为mover的生物移动到位置position处
@@ -137,6 +138,7 @@ class AiClient:
             }
         }
         send_opt(json.dumps(message))
+        self.update_game_info()
 
     def attack(self, attacker: int, target: int):
         '''令id为attacker的生物攻击id为target的生物或神迹
@@ -156,6 +158,7 @@ class AiClient:
             }
         }
         send_opt(json.dumps(message))
+        self.update_game_info()
 
     def use(self, artifact: int, target):
         '''对目标target使用artifact神器
@@ -175,6 +178,7 @@ class AiClient:
             }
         }
         send_opt(json.dumps(message))
+        self.update_game_info()
 
     def end_round(self):
         '''结束当前回合
@@ -279,10 +283,14 @@ class AiClient:
         if isinstance(target, gameunit.Unit):
             if artifact.name == "SalamanderShield":
                 return artifact.camp == target.camp
-        elif isinstance(target, list) and len(target) == 3:
+        elif isinstance(target, tuple) and len(target) == 3:
             if artifact.name == "HolyLight":
                 return calculator.in_map(target)
             if artifact.name == "InfernoFlame":
+                # 不处于障碍物上
+                for obstacle in self.map.obstacles:
+                    if obstacle.pos == target:
+                        return False
                 # 无地面生物
                 for unit in self.map.units:
                     if (unit.pos == target) and (not unit.flying):

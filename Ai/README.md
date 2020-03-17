@@ -28,6 +28,8 @@ python版ai位于ai_py文件夹中。
 
 每次操作后，judger会向ai发送操作后的当前游戏局面信息。
 
+> 在summon、move、attack、use函数中已包含更新信息的操作，玩家无需再次更新。
+
 玩家可以不断发送自己的操作，直到发送结束回合的指令为止。
 
 > 用于结束当前回合的函数是endRound()/self.end_round()函数。
@@ -40,22 +42,27 @@ python版ai位于ai_py文件夹中。
 
 > 不合法的信息发送可能导致回合结束/直接判负等后果。
 
-注意AI的通信使用标准输入/输出流。除了直接使用sdk中相关的函数外，请不要在标准输出流中输出任何信息。
+**注意AI的通信使用标准输入/输出流。除了直接使用sdk中相关的函数外，请不要在标准输出流中输出任何信息。**
 
 # 测试
 
 ## 使用judger启动游戏逻辑和ai
 
+附带了可供玩家本地测试用的评测机和游戏逻辑文件（版本与实际版本略有差别）。
+
+其中judger需要websockets库。（pip install websockets）
+
 启动指令: python <judger路径> <启动逻辑command> <启动AI 1 command> <启动AI 2 command> <逻辑生成replay路径>
 
-启动指令示例: python .\Judger\judger.py python+.\\logic.py python+.\\Ai\\ai_py\\ai-HL.py  python+.\\Ai\\ai_cpp\\ai-HL.exe  record
+启动指令示例(在主路径下)
+Windows: python .\Judger\judger.py python+.\\logic.py python+.\\Ai\\ai_py\\ai-HL.py  .\\Ai\\ai_cpp\\ai-HL.exe  record
+Linux/Mac: python ./Judger/judger.py python+./logic.py python+./Ai/ai_py/ai-HL.py  ./Ai/ai_cpp/ai-HL  record
 
 AI可以是C++版本，也可以选择python版本。选择其一即可。
 
-注意judger与AI的通信使用标准输入/输出流。除了直接使用sdk中相关的函数外，请不要在标准输出流中输出任何信息。
+**注意judger与AI的通信使用标准输入/输出流。除了直接使用sdk中相关的函数外，请不要在标准输出流中输出任何信息。**
 
 logic.py中有一个DEBUG参数，设置为True的时候会在当前目录下生成一个log.txt文件，记录收发的信息。
-
 
 # ai_cpp
 
@@ -280,7 +287,7 @@ void endRound()
 int getDistanceOnGround(gameunit::Pos pos_a, gameunit::Pos pos_b, int camp)
 ```
 
-​		获取camp**阵营生物从位置**pos_a**到位置**pos_b**的地面距离(不经过地面障碍或敌方地面生物)。
+​		获取**camp**阵营生物从位置**pos_a**到位置**pos_b**的地面距离(不经过地面障碍或敌方地面生物)。
 
 
 
@@ -289,7 +296,7 @@ int getDistanceInSky(gameunit::Pos pos_a, gameunit::Pos pos_b, int camp)
 
 ```
 
-​		获取camp**阵营生物从位置**pos_a**到位置**pos_b**的飞行距离(不经过飞行障碍或敌方飞行生物)。
+​		获取**camp**阵营生物从位置**pos_a**到位置**pos_b**的飞行距离(不经过飞行障碍或敌方飞行生物)。
 
 
 
@@ -768,23 +775,23 @@ int。表示神迹的id。
 
 ## Obstacle
 
-表示一个Obstacle
+表示一个地图障碍。
 
 ### type
 
-string。表示Obstacle的种类。
+string。表示障碍的种类。
 
 ### pos
 
-Pos。表示Obstacle的位置。
+Pos。表示障碍的位置。
 
 ### allow_flying
 
-bool。表示Obstacle是否允许飞行生物通过。
+bool。表示障碍是否允许飞行生物通过。
 
 ### allow_ground
 
-bool。表示Obstacle是否允许地面生物通过。
+bool。表示障碍是否允许地面生物通过。
 
 ## Artifact
 
@@ -824,7 +831,7 @@ string。表示神器使用对象的种类（Unit或Pos）。
 
 ## CreatureCapacity
 
-TODO
+生物召唤情况。
 
 ### type
 
@@ -854,15 +861,15 @@ Miracle数组。包括地图上所有神迹。
 
 ### obstacles
 
-Obstacle数组。包括地图上所有Obstacle。
+Obstacle数组。包括地图上所有障碍。
 
 ### flying_obstacles
 
-Obstacle数组。包括地图上所有飞行Obstacle。
+Obstacle数组。包括地图上所有飞行障碍。
 
 ### ground_obstacles
 
-Obstacle数组。包括地图上所有地面Obstacle。
+Obstacle数组。包括地图上所有地面障碍。
 
 ## Player
 
@@ -886,7 +893,7 @@ int。表示玩家最大法力值。
 
 ### creature_capacity
 
-TODO
+CreatureCapacity数组。表示生物的召唤情况。
 
 ### newly_summoned_id_list
 
