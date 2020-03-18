@@ -21,7 +21,7 @@ class CreatureCapacity:
         self.available_count -= 1
 
     def new_cool_down(self,level):
-        self.cool_down_list.append(UNIT_DATA[self.type]["cool_down"][level])
+        self.cool_down_list.append(UNIT_DATA[self.type]["cool_down"][level-1])
 
     def parse(self):
         return {
