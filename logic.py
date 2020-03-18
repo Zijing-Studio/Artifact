@@ -126,9 +126,11 @@ class Game:
                 try:
                     self.parser.parse(opt_dict["content"])
                 except Exception as parse_error:
+                    self.send_media_info(
+                        [self._round, -1, 0, 0, 0, 0, 0], self.players[self.listen])
                     if DEBUG:
                         with open('log.txt', 'a') as logfile:
-                            logfile.write(parse_error.__str__()+'\n\n')
+                            logfile.write(parse_error.__repr__()+'\n\n')
                 else:
                     if DEBUG:
                         with open('log.txt', 'a') as logfile:
@@ -382,7 +384,7 @@ class Game:
                 except Exception as parse_error:
                     if DEBUG:
                         with open('log.txt', 'a') as logfile:
-                            logfile.write(parse_error.__str__()+'\n\n')
+                            logfile.write(parse_error.__repr__()+'\n\n')
                 else:
                     if DEBUG:
                         with open('log.txt', 'a') as logfile:
