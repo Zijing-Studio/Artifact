@@ -130,6 +130,7 @@ class Game:
                         [self._round, -1, 0, 0, 0, 0, 0], self.players[self.listen])
                     if DEBUG:
                         with open('log.txt', 'a') as logfile:
+                            logfile.write(opt_dict["content"]+'\n')
                             logfile.write(parse_error.__repr__()+'\n\n')
                 else:
                     if DEBUG:
@@ -384,6 +385,7 @@ class Game:
                 except Exception as parse_error:
                     if DEBUG:
                         with open('log.txt', 'a') as logfile:
+                            logfile.write(opt_dict["content"]+'\n')
                             logfile.write(parse_error.__repr__()+'\n\n')
                 else:
                     if DEBUG:
