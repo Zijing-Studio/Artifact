@@ -186,8 +186,14 @@ class PriestAtkListener(EventListener):
             try:
                 # Add buff
                 for unit in self.host.state_system.map.unit_list:
-                    if calculator.cube_distance(unit.pos,self.host.pos) <= 1 and unit.camp == self.host.camp:
-                        if not unit in self.host.priest_buff_list:
+                    if calculator.cube_distance(unit.pos,self.host.pos) <= 1 and unit.camp == self.host.camp \
+                        and unit != self.host:
+                        found = False
+                        for buff in self.priest_buff_list:
+                            if buff.host == unit:
+                                found = True
+                                break
+                        if not found:
                             new_buff = PriestAtkBuff(self.host.state_system)
                             new_buff.add_on(unit)
                             self.host.priest_buff_list.append(new_buff)
