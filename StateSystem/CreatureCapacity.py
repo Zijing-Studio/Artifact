@@ -24,8 +24,8 @@ class CreatureCapacity:
         self.cool_down_list.append(UNIT_DATA[self.type]["cool_down"][level-1])
 
     def parse(self):
-        return {
-            "type": self.type,
-            "available_count": self.available_count,
-            "cool_down_list": self.cool_down_list
-        }
+        return [
+            self.type,
+            self.available_count,
+            self.cool_down_list
+        ]

@@ -43,16 +43,15 @@ class Artifact:
         self.state_system.emit(event)
 
     def parse(self):
-        return {
-            "id": self.id,
-            "name": self.name,
-            "camp": self.camp,
-            "cost": self.cost,
-            "max_cool_down": self.max_cool_down,
-            "cool_down_time": self.cool_down_time,
-            "state": self.state,
-            "target_type": self.target_type
-        }
+        return [
+            self.id,
+            self.name,
+            self.cost,
+            self.max_cool_down,
+            self.cool_down_time,
+            self.state,
+            self.target_type
+        ]
 
     def activate(self,target):
         self.state = "In Use"
