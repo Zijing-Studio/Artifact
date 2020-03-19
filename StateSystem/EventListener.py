@@ -224,7 +224,7 @@ class VolcanoDragonAtkListener(EventListener):
                     for unit in self.host.state_system.map.unit_list:
                         if (calculator.cube_distance(unit.pos,self.host.pos) == 2 and
                             calculator.cube_distance(unit.pos,event.parameter_dict["target"].pos) == 1) and \
-                            unit.camp != self.host.camp:
+                            unit.camp != self.host.camp and not unit.flying:
                             self.host.emit(Event("Damage",{
                                 "source": self.host,
                                 "target": unit,
