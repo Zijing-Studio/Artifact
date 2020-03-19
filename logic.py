@@ -8,6 +8,9 @@ from PlayerLegality.player_legality import Parser
 from StateSystem.StateSystem import StateSystem
 
 DEBUG = False  # DEBUG时会生成一个log.txt记录logic收发的信息
+MAX_ROUND = 200
+AI_TIME = 10
+PLAYER_TIME = 60
 
 
 def logic_convert_byte(data_str, send_goal):
@@ -47,9 +50,8 @@ def send_end_info(end_info):
 def send_init(time, length):
     '''发送初始化信息
     '''
-    init_dict = {"time": time, "length": length}
     sys.stdout.buffer.write(logic_convert_byte(
-        json.dumps({"state": 0, "content": init_dict}), -1))
+        json.dumps({"state": 0, "time": time, "length": length}), -1))
     sys.stdout.flush()
 
 
@@ -62,10 +64,6 @@ def send_state(state_dict):
     sys.stdout.buffer.write(logic_convert_byte(json.dumps(state_dict), -1))
     sys.stdout.flush()
 
-
-MAX_ROUND = 200
-AI_TIME = 3
-PLAYER_TIME = 60
 
 class Game:
     '''游戏 神迹之战Miracle
@@ -154,11 +152,11 @@ class Game:
                 # AI异常退出
                 if opt['error'] == 0:
                     if opt['player'] == self.players[0]:
-                        self.end(self.players[1])
+                        self.end(1)
                     else:
-                        self.end(self.players[0])
+                        self.end(0)
                 # 超时
-                elif opt['error'] == 1:
+                else:
                     msg = json.dumps(
                         {"player": 0 if self.listen == self.players[0] else 1,
                          "round": self._round,
@@ -350,7 +348,7 @@ class Game:
         else:
             message = self.statesystem.parse()
             message['round'] = self._round
-            message['camp'] = 0 if self.listen == self.players[1] else 1
+            message['camp'] = 0 if self.listen == self.players[0] else 1
             if DEBUG:
                 with open('log.txt', 'a') as logfile:
                     logfile.write(json.dumps(message)+'\n\n')
