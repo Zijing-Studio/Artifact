@@ -222,7 +222,7 @@ class VolcanoDragonAtkListener(EventListener):
                 if event.parameter_dict["source"] == self.host and\
                     event.parameter_dict["target"].type != "Miracle":
                     for unit in self.host.state_system.map.unit_list:
-                        if (calculator.cube_distance(unit.pos,self.host.pos) == 2 or
+                        if (calculator.cube_distance(unit.pos,self.host.pos) == 2 and
                             calculator.cube_distance(unit.pos,event.parameter_dict["target"].pos) == 1) and \
                             unit.camp != self.host.camp:
                             self.host.emit(Event("Damage",{
