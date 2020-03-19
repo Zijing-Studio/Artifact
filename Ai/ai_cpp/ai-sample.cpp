@@ -3,8 +3,26 @@
 #include "card.h"
 #include "calculator.h"
 
+#include <random>
+
 using gameunit::Pos;
+using gameunit::Unit;
+
+using calculator::cube_distance;
+using calculator::all_pos_in_map;
+using calculator::reachable;
+using calculator::cube_reachable;
+using calculator::units_in_range;
+
 using card::CARD_DICT;
+
+using std::string;
+using std::map;
+using std::vector;
+using std::default_random_engine;
+using std::uniform_int_distribution;
+using std::get;
+using std::make_tuple;
 
 class AI : public AiClient
 {
@@ -15,7 +33,7 @@ private:
 
     Pos target_barrack;
 
-    Pos posShift(Pos pos, std::string direct);
+    Pos posShift(Pos pos, string direct);
 
 public:
     //选择初始卡组
@@ -23,9 +41,9 @@ public:
 
     void play(); //玩家需要编写的ai操作函数
 
-    void battle();
+    void battle(); //处理生物的战斗
 
-    void march();
+    void march(); //处理生物的移动
 };
 
 void AI::chooseCards()
@@ -60,9 +78,9 @@ void AI::play()
 
         target_barrack = map.barracks[0].pos;
         //确定离自己基地最近的驻扎点的位置
-        for (auto barrack:map.barracks) {
-            if (calculator::cube_distance(miracle_pos, barrack.pos) <
-                calculator::cube_distance(miracle_pos, target_barrack))
+        for (const auto &barrack:map.barracks) {
+            if (cube_distance(miracle_pos, barrack.pos) <
+                cube_distance(miracle_pos, target_barrack))
                 target_barrack = barrack.pos;
         }
 
@@ -71,11 +89,11 @@ void AI::play()
     } else {
         //神器能用就用，选择覆盖单位数最多的地点
         if (players[my_camp].mana >= 6 && players[my_camp].artifact[0].state == "Ready") {
-            auto pos_list = calculator::all_pos_in_map();
+            auto pos_list = all_pos_in_map();
             auto best_pos = pos_list[0];
             int max_benefit = 0;
             for (auto pos:pos_list) {
-                auto unit_list = calculator::units_in_range(pos, 2, map, my_camp);
+                auto unit_list = units_in_range(pos, 2, map, my_camp);
                 if (unit_list.size() > max_benefit) {
                     best_pos = pos;
                     max_benefit = unit_list.size();
@@ -93,9 +111,9 @@ void AI::play()
         //将所有本方出兵点按照到对方基地的距离排序，从近到远出兵
         auto summon_pos_list = getSummonPosByCamp(my_camp);
         sort(summon_pos_list.begin(), summon_pos_list.end(), [this](Pos _pos1, Pos _pos2) {
-            return calculator::cube_distance(_pos1, enemy_pos) < calculator::cube_distance(_pos2, enemy_pos);
+            return cube_distance(_pos1, enemy_pos) < cube_distance(_pos2, enemy_pos);
         });
-        std::vector<Pos> available_summon_pos_list;
+        vector<Pos> available_summon_pos_list;
         for (auto pos:summon_pos_list) {
             auto unit_on_pos_ground = getUnitsByPos(pos, false);
             if (unit_on_pos_ground.id == -1) available_summon_pos_list.push_back(pos);
@@ -104,15 +122,15 @@ void AI::play()
         //统计各个生物的可用数量，在假设出兵点无限的情况下，按照1个剑士、1个弓箭手、1个火山龙的顺序召唤
         int mana = players[my_camp].mana;
         auto deck = players[my_camp].creature_capacity;
-        std::map<std::string, int> available_count;
-        for (auto card_unit:deck)
+        ::map<string, int> available_count;
+        for (const auto &card_unit:deck)
             available_count[card_unit.type] = card_unit.available_count;
 
-        std::vector<std::string> summon_list;
+        vector<string> summon_list;
         //剑士和弓箭手数量不足或者格子不足则召唤火山龙
         if ((available_summon_pos_list.size() == 1 || available_count["Swordsman"] + available_count["Archer"] < 2) &&
             mana >= CARD_DICT.at("VolcanoDragon")[1].cost && available_count["VolcanoDragon"] > 0) {
-            summon_list.push_back("VolcanoDragon");
+            summon_list.emplace_back("VolcanoDragon");
             mana -= CARD_DICT.at("VolcanoDragon")[1].cost;
         }
 
@@ -120,19 +138,19 @@ void AI::play()
         while (mana >= 2 && suc) {
             suc = false;
             if (available_count["Swordsman"] > 0 && mana >= CARD_DICT.at("Swordsman")[1].cost) {
-                summon_list.push_back("Swordsman");
+                summon_list.emplace_back("Swordsman");
                 mana -= CARD_DICT.at("Swordsman")[1].cost;
                 available_count["Swordsman"] -= 1;
                 suc = true;
             }
             if (available_count["Archer"] > 0 && mana >= CARD_DICT.at("Archer")[1].cost) {
-                summon_list.push_back("Archer");
+                summon_list.emplace_back("Archer");
                 mana -= CARD_DICT.at("Archer")[1].cost;
                 available_count["Archer"] -= 1;
                 suc = true;
             }
             if (available_count["VolcanoDragon"] > 0 && mana >= CARD_DICT.at("VolcanoDragon")[1].cost) {
-                summon_list.push_back("VolcanoDragon");
+                summon_list.emplace_back("VolcanoDragon");
                 mana -= CARD_DICT.at("VolcanoDragon")[1].cost;
                 available_count["VolcanoDragon"] -= 1;
                 suc = true;
@@ -149,7 +167,7 @@ void AI::play()
     }
 }
 
-Pos AI::posShift(Pos pos, std::string direct)
+Pos AI::posShift(Pos pos, string direct)
 {
     /*
      * 对于给定位置，给出按照自己的视角（神迹在最下方）的某个方向移动一步后的位置
@@ -161,41 +179,179 @@ Pos AI::posShift(Pos pos, std::string direct)
     transform(direct.begin(), direct.end(), direct.begin(), ::toupper);
     if (my_camp == 0) {
         if (direct == "FF")  //正前方
-            return Pos(std::get<0>(pos) + 1, std::get<1>(pos) - 1, std::get<2>(pos));
+            return make_tuple(get<0>(pos) + 1, get<1>(pos) - 1, get<2>(pos));
         else if (direct == "SF")  //优势路前方（自身视角右侧为优势路）
-            return Pos(std::get<0>(pos) + 1, std::get<1>(pos), std::get<2>(pos) - 1);
+            return make_tuple(get<0>(pos) + 1, get<1>(pos), get<2>(pos) - 1);
         else if (direct == "IF")  //劣势路前方
-            return Pos(std::get<0>(pos), std::get<1>(pos) + 1, std::get<2>(pos) - 1);
+            return make_tuple(get<0>(pos), get<1>(pos) + 1, get<2>(pos) - 1);
         else if (direct == "BB")  //正后方
-            return Pos(std::get<0>(pos) - 1, std::get<1>(pos) + 1, std::get<2>(pos));
+            return make_tuple(get<0>(pos) - 1, get<1>(pos) + 1, get<2>(pos));
         else if (direct == "SB")  //优势路后方
-            return Pos(std::get<0>(pos), std::get<1>(pos) - 1, std::get<2>(pos) + 1);
+            return make_tuple(get<0>(pos), get<1>(pos) - 1, get<2>(pos) + 1);
         else if (direct == "IB")  //劣势路后方
-            return Pos(std::get<0>(pos) - 1, std::get<1>(pos), std::get<2>(pos) + 1);
+            return make_tuple(get<0>(pos) - 1, get<1>(pos), get<2>(pos) + 1);
     } else {
         if (direct == "FF")  //正前方
-            return Pos(std::get<0>(pos) - 1, std::get<1>(pos) + 1, std::get<2>(pos));
+            return make_tuple(get<0>(pos) - 1, get<1>(pos) + 1, get<2>(pos));
         else if (direct == "SF")  //优势路前方（自身视角右侧为优势路）
-            return Pos(std::get<0>(pos) - 1, std::get<1>(pos), std::get<2>(pos) + 1);
+            return make_tuple(get<0>(pos) - 1, get<1>(pos), get<2>(pos) + 1);
         else if (direct == "IF")  //劣势路前方
-            return Pos(std::get<0>(pos), std::get<1>(pos) - 1, std::get<2>(pos) + 1);
+            return make_tuple(get<0>(pos), get<1>(pos) - 1, get<2>(pos) + 1);
         else if (direct == "BB")  //正后方
-            return Pos(std::get<0>(pos) + 1, std::get<1>(pos) - 1, std::get<2>(pos));
+            return make_tuple(get<0>(pos) + 1, get<1>(pos) - 1, get<2>(pos));
         else if (direct == "SB")  //优势路后方
-            return Pos(std::get<0>(pos), std::get<1>(pos) + 1, std::get<2>(pos) - 1);
+            return make_tuple(get<0>(pos), get<1>(pos) + 1, get<2>(pos) - 1);
         else if (direct == "IB")  //劣势路后方
-            return Pos(std::get<0>(pos) + 1, std::get<1>(pos), std::get<2>(pos) - 1);
+            return make_tuple(get<0>(pos) + 1, get<1>(pos), get<2>(pos) - 1);
     }
 }
 
 void AI::battle()
 {
+    //处理生物的战斗
 
+    /*
+     * 基本思路，行动顺序:
+     * 火山龙：攻击高>低 （大AOE输出），随机攻击
+     * 剑士：攻击低>高 打消耗，优先打攻击力低的
+     * 弓箭手：攻击高>低 优先打不能反击的攻击力最高的，其次打能反击的攻击力最低的
+     * 对单位的战斗完成后，对神迹进行输出
+     * 【进阶】对战斗范围内敌方目标的价值进行评估，通过一些匹配算法决定最优的战斗方式
+     * 例如占领着驻扎点的敌方生物具有极高的价值，优先摧毁可以使敌方下回合损失很多可用出兵点
+     * 一些生物不攻击而移动，或完全不动，可能能带来更大的威慑力，而赢得更多优势
+     */
+
+    auto ally_list = getUnitsByCamp(my_camp);
+
+    //自定义排列顺序
+    auto cmp = [](const Unit &unit1, const Unit &unit2) {
+        if (unit1.can_atk != unit2.can_atk)  //首先要能动
+            return unit2.can_atk < unit1.can_atk;
+        else if (unit1.type != unit2.type) {//火山龙>剑士>弓箭手
+            auto type_id_gen = [](const string &type_name) {
+                if (type_name == "VolcanoDragon") return 0;
+                else if (type_name == "Swordsman") return 1;
+                else return 2;
+            };
+            return (type_id_gen(unit1.type) < type_id_gen(unit2.type));
+        } else if (unit1.type == "VolcanoDragon" or unit1.type == "Archer")
+            return unit2.atk < unit1.atk;
+        else return unit1.atk < unit2.atk;
+    };
+    //按顺序排列好单位，依次攻击
+    sort(ally_list.begin(), ally_list.end(), cmp);
+    for (const auto &ally:ally_list) {
+        if (!ally.can_atk) break;
+        auto enemy_list = getUnitsByCamp(my_camp ^ 1);
+        vector<Unit> target_list;
+        for (const auto &enemy : enemy_list)
+            if (AiClient::canAttack(ally, enemy))
+                target_list.push_back(enemy);
+        if (target_list.empty()) continue;
+        if (ally.type == "VolcanoDragon") {
+            default_random_engine g(static_cast<unsigned int>(time(nullptr)));
+            int tar = uniform_int_distribution<>(0, target_list.size() - 1)(g);
+            attack(ally.id, target_list[tar].id);
+        } else if (ally.type == "Swordsman") {
+            nth_element(enemy_list.begin(), enemy_list.begin(), enemy_list.end(),
+                        [](const Unit &_enemy1, const Unit &_enemy2) { return _enemy1.atk < _enemy2.atk; });
+            attack(ally.id, target_list[0].id);
+        } else if (ally.type == "Archer") {
+            sort(enemy_list.begin(), enemy_list.end(),
+                 [](const Unit &_enemy1, const Unit &_enemy2) { return _enemy1.atk > _enemy2.atk; });
+            bool suc = false;
+            for (const auto &enemy : target_list)
+                if (!canAttack(enemy, ally)) {
+                    attack(ally.id, enemy.id);
+                    suc = true;
+                    break;
+                }
+            if (suc) continue;
+            nth_element(enemy_list.begin(), enemy_list.begin(), enemy_list.end(),
+                        [](const Unit &_enemy1, const Unit &_enemy2) { return _enemy1.atk < _enemy2.atk; });
+            attack(ally.id, target_list[0].id);
+        }
+    }
+    //最后攻击神迹
+    ally_list = getUnitsByCamp(my_camp);
+    sort(ally_list.begin(), ally_list.end(), cmp);
+    for (auto ally : ally_list) {
+        if (!ally.can_atk) break;
+        int dis = cube_distance(ally.pos, enemy_pos);
+        if (ally.atk_range[0] <= dis <= ally.atk_range[1])
+            attack(ally.id, my_camp ^ 1);
+    }
 }
 
 void AI::march()
 {
+    //处理生物的移动
 
+    /*
+     * 先动所有剑士，尽可能向敌方神迹移动
+     * 若目标驻扎点上没有地面单位，则让弓箭手向目标驻扎点移动，否则尽可能向敌方神迹移动
+     * 然后若目标驻扎点上没有地面单位，则让火山之龙向目标驻扎点移动，否则尽可能向敌方神迹移动
+     * 【进阶】一味向敌方神迹移动并不一定是个好主意
+     * 在移动的时候可以考虑一下避开敌方生物攻击范围实现、为己方强力生物让路、堵住敌方出兵点等策略
+     * 如果采用其他生物组合，可以考虑抢占更多驻扎点
+     */
+    auto ally_list = getUnitsByCamp(my_camp);
+    sort(ally_list.begin(), ally_list.end(), [](const Unit &_unit1, const Unit &_unit2) {
+        auto type_id_gen = [](const string &type_name) {
+            if (type_name == "Swordsman") return 0;
+            else if (type_name == "Archer") return 1;
+            else return 2;
+        };
+        return type_id_gen(_unit1.type) < type_id_gen(_unit2.type);
+    });
+    for (const auto &ally : ally_list) {
+        if (!ally.can_move) continue;
+        if (ally.type == "Swordsman") {
+            //获取所有可到达的位置
+            auto reach_pos_with_dis = reachable(ally, map);
+            //压平
+            vector<Pos> reach_pos_list;
+            for (const auto &reach_pos : reach_pos_with_dis) {
+                for (auto pos : reach_pos)
+                    reach_pos_list.push_back(pos);
+            }
+            if (reach_pos_list.empty()) continue;
+            //优先走到距离敌方神迹更近的位置
+            nth_element(reach_pos_list.begin(), reach_pos_list.begin(), reach_pos_list.end(),
+                        [this](Pos _pos1, Pos _pos2) {
+                            return cube_distance(_pos1, enemy_pos) < cube_distance(_pos2, enemy_pos);
+                        });
+            move(ally.id, reach_pos_list[0]);
+        } else {
+            //如果已经在兵营就不动了
+            //if (ally.pos  [barrack.pos for barrack in self.map.barracks]) continue; //TODO:检测ally是否在驻扎点上
+
+            //获取所有可到达的位置
+            auto reach_pos_with_dis = reachable(ally, map);
+            //压平
+            vector<Pos> reach_pos_list;
+            for (const auto &reach_pos : reach_pos_with_dis) {
+                for (auto pos : reach_pos)
+                    reach_pos_list.push_back(pos);
+            }
+            if (reach_pos_list.empty()) continue;
+
+            //优先走到未被占领的兵营，否则走到
+            if (getUnitsByPos(target_barrack, false).id == -1) {
+                nth_element(reach_pos_list.begin(), reach_pos_list.begin(), reach_pos_list.end(),
+                            [this](Pos _pos1, Pos _pos2) {
+                                return cube_distance(_pos1, target_barrack) < cube_distance(_pos2, target_barrack);
+                            });
+                move(ally.id, reach_pos_list[0]);
+            } else {
+                nth_element(reach_pos_list.begin(), reach_pos_list.begin(), reach_pos_list.end(),
+                            [this](Pos _pos1, Pos _pos2) {
+                                return cube_distance(_pos1, enemy_pos) < cube_distance(_pos2, enemy_pos);
+                            });
+                move(ally.id, reach_pos_list[0]);
+            }
+        }
+    }
 }
 
 int main()
