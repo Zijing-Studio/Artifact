@@ -69,7 +69,7 @@ void AiClient::init()
     sendMsg(my_camp, 0, "init", operation_parameters);
 }
 
-void AiClient::summon(int type, int level, int x, int y, int z)
+void AiClient::summon(std::string type, int level, int x, int y, int z)
 {
     json operation_parameters;
     std::vector<int> position = {x, y, z};
@@ -80,7 +80,7 @@ void AiClient::summon(int type, int level, int x, int y, int z)
     updateGameInfo();
 }
 
-void AiClient::summon(int type, int level, std::vector<int> position)
+void AiClient::summon(std::string type, int level, std::vector<int> position)
 {
     json operation_parameters;
     operation_parameters["position"] = position;
@@ -90,7 +90,7 @@ void AiClient::summon(int type, int level, std::vector<int> position)
     updateGameInfo();
 }
 
-void AiClient::summon(int type, int level, std::tuple<int, int, int> position)
+void AiClient::summon(std::string type, int level, std::tuple<int, int, int> position)
 {
     json operation_parameters;
     operation_parameters["position"] = position;
