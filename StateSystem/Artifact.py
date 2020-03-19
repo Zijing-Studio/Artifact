@@ -119,7 +119,7 @@ class SalamanderShieldArtifact(Artifact):
 
 class SalamanderShieldRefreshListener(EventListener):
     def deal_event(self,event):
-        if event.name == "TurnStart":
+        if event.name == "TurnStart" and not self.host.host.holy_shield:
             self.host.emit(Event("BuffAdd",{
                 "source": self.host.host,
                 "type": "HolyShield"
