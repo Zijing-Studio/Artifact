@@ -26,6 +26,8 @@ public:
     std::vector<std::string> my_artifacts = {"HolyLight"};                           // 己方神器
     std::vector<std::string> my_creatures = {"Archer", "Swordsman", "VolcanoDragon"}; // 己方生物
 
+    AiClient();
+
     // 更新游戏局面信息
     void updateGameInfo();
 

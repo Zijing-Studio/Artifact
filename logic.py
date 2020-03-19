@@ -238,8 +238,8 @@ class Game:
                 # damage
                 media_info.append(event.parameter_dict['damage'])
                 # type
-                damage_type = ["", "Attack",
-                               "AttackBack", "VolcanoDragonSplash"]
+                damage_type = ["", "Attack", "AttackBack", 
+                               "VolcanoDragonSplash","InfernoFlameActivate"]
                 media_info.append(damage_type.index(
                     event.parameter_dict['type']))
             elif event.name == "Death":
@@ -351,11 +351,12 @@ class Game:
             message['camp'] = 0 if self.listen == self.players[0] else 1
             if DEBUG:
                 with open('log.txt', 'a') as logfile:
-                    logfile.write(json.dumps(message)+'\n\n')
+                    logfile.write(json.dumps(message).replace(" ","")+'\n\n')
         # 前六位表示长度 后面是表示信息的json格式字符串
-        json_length = str(len(json.dumps(message)))
+        message_json = json.dumps(message).replace(" ","")
+        json_length = str(len(message_json))
         state_dict['content'] = [
-            "0" * (6 - len(json_length)) + json_length + json.dumps(message)]
+            "0" * (6 - len(json_length)) + json_length + message_json]
         send_state(state_dict)
 
     def init_player(self, player_list):

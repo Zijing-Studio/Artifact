@@ -36,6 +36,12 @@ json read()
     return json::parse(recv_msg);
 }
 
+AiClient::AiClient()
+{
+    json game_info = read();
+    game_info["camp"].get_to(my_camp);
+}
+
 void AiClient::updateGameInfo()
 {
     json game_info = read();
