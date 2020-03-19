@@ -183,6 +183,7 @@ class SummonListener(EventListener):
                         "source": unit,
                         "pos": unit.pos
                     }))
+                    self.host.emit(Event("UpdateRingBuff",priority = 3))
                     # print("{} (ID: {}) spawns at {}".format(
                     #     unit.name,
                     #     unit.id,
