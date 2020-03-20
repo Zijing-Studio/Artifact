@@ -43,16 +43,15 @@ class Artifact:
         self.state_system.emit(event)
 
     def parse(self):
-        return {
-            "id": self.id,
-            "name": self.name,
-            "camp": self.camp,
-            "cost": self.cost,
-            "max_cool_down": self.max_cool_down,
-            "cool_down_time": self.cool_down_time,
-            "state": self.state,
-            "target_type": self.target_type
-        }
+        return [
+            self.id,
+            self.name,
+            self.cost,
+            self.max_cool_down,
+            self.cool_down_time,
+            self.state,
+            self.target_type
+        ]
 
     def activate(self,target):
         self.state = "In Use"
@@ -119,7 +118,8 @@ class SalamanderShieldArtifact(Artifact):
 
 class SalamanderShieldRefreshListener(EventListener):
     def deal_event(self,event):
-        if event.name == "TurnStart":
+        if event.name == "TurnStart" and self.host.host.state_system.current_player_id == self.host.host.camp \
+            and not self.host.host.holy_shield:
             self.host.emit(Event("BuffAdd",{
                 "source": self.host.host,
                 "type": "HolyShield"
@@ -142,7 +142,11 @@ class SalamanderShieldBuff(Buff):
     def buff(self):
         self.host.max_hp += 4
         self.host.hp += 4
-        self.host.holy_shield = True
+        if not self.host.holy_shield:
+            self.state_system.emit(Event("BuffAdd",{
+                    "source": self.host,
+                    "type": "HolyShield"
+                },1))
 
     def debuff(self):
         self.host.max_hp -= 4

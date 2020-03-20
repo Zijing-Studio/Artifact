@@ -17,7 +17,6 @@ struct Unit // 生物
     int id;                     // id
     int camp;                   // 阵营
     std::string type;           // 种类
-    std::string name;           // 名字
     int cost;                   // 法力消耗
     int atk;                    // 攻击
     int max_hp;                 // 生命上限
@@ -40,6 +39,7 @@ struct Barrack // 驻扎点
     Pos pos;                          // 位置
     int camp;                         // 阵营
     std::vector<Pos> summon_pos_list; // 出兵点位置
+    Barrack(int _camp, Pos _pos, std::vector<Pos> _list) : pos(_pos), camp(_camp), summon_pos_list(_list) {}
 };
 
 struct Miracle // 神迹
@@ -49,8 +49,8 @@ struct Miracle // 神迹
     int hp;                           // 当前生命值
     Pos pos;                          // 位置
     std::vector<Pos> summon_pos_list; // 初始出兵点位置
-    std::string name;                 // 名字
     int id;                           // id
+    Miracle(int _camp, int _maxhp, int _hp, Pos _pos, std::vector<Pos> _list, int _id) : camp(_camp), max_hp(_maxhp), hp(_hp), pos(_pos), summon_pos_list(_list), id(_id) {}
 };
 
 struct Obstacle
@@ -59,6 +59,7 @@ struct Obstacle
     Pos pos;           // 位置
     bool allow_flying; // 是否允许飞行生物通过
     bool allow_ground; // 是否允许地面生物通过
+    Obstacle(std::string _type, Pos _pos, bool _f, bool _g) : type(_type), pos(_pos), allow_flying(_f), allow_ground(_g) {}
 };
 
 struct Artifact // 神器
@@ -88,6 +89,21 @@ struct Map // 地图
     std::vector<Obstacle> obstacles;
     std::vector<Obstacle> flying_obstacles;
     std::vector<Obstacle> ground_obstacles;
+    Map()
+    {
+        barracks = {Barrack(-1, {-6, -6, 12}, {{-7, -5, 12}, {-5, -7, 12}, {-5, -6, 11}}),
+                    Barrack(-1, {6, 6, -12}, {{7, 5, -12}, {5, 7, -12}, {5, 6, -11}}),
+                    Barrack(-1, {0, -5, 5}, {{0, -4, 4}, {-1, -4, 5}, {-1, -5, 6}}),
+                    Barrack(-1, {0, 5, -5}, {{0, 4, -4}, {1, 4, -5}, {1, 5, -6}})};
+        miracles = {Miracle(0, 30, 30, {-7, 7, 0}, {{-8, 6, 2}, {-7, 6, 1}, {-6, 6, 0}, {-6, 7, -1}, {-6, 8, -2}}, 0),
+                    Miracle(1, 30, 30, {7, -7, 0}, {{8, -6, -2}, {7, -6, -1}, {6, -6, 0}, {6, -7, 1}, {6, -8, 2}}, 1)};
+        obstacles = {Obstacle("Miracle", {-7, 7, 0}, false, false),
+                     Obstacle("Miracle", {7, -7, 0}, false, false)};
+        std::vector<Pos> ABYSS_POS_LIST = {{0, 0, 0}, {-1, 0, 1}, {0, -1, 1}, {1, -1, 0}, {1, 0, -1}, {0, 1, -1}, {-1, 1, 0}, {-2, -1, 3}, {-1, -2, 3}, {-2, -2, 4}, {-3, -2, 5}, {-4, -4, 8}, {-5, -4, 9}, {-4, -5, 9}, {-5, -5, 10}, {-6, -5, 11}, {1, 2, -3}, {2, 1, -3}, {2, 2, -4}, {3, 2, -5}, {4, 4, -8}, {5, 4, -9}, {4, 5, -9}, {5, 5, -10}, {6, 5, -11}};
+        for (int i = 0; i < ABYSS_POS_LIST.size(); ++i)
+            obstacles.push_back(Obstacle("Abyss", ABYSS_POS_LIST[i], true, false));
+        ground_obstacles = obstacles;
+    }
 };
 
 struct Player // 玩家
@@ -102,90 +118,63 @@ struct Player // 玩家
 
 void from_json(const json &j, Unit &u)
 {
-    j.at("id").get_to(u.id);
-    j.at("camp").get_to(u.camp);
-    j.at("type").get_to(u.type);
-    j.at("name").get_to(u.name);
-    j.at("cost").get_to(u.cost);
-    j.at("atk").get_to(u.atk);
-    j.at("max_hp").get_to(u.max_hp);
-    j.at("hp").get_to(u.hp);
-    j.at("atk_range").get_to(u.atk_range);
-    j.at("max_move").get_to(u.max_move);
-    j.at("cool_down").get_to(u.cool_down);
-    j.at("pos").get_to(u.pos);
-    j.at("level").get_to(u.level);
-    j.at("flying").get_to(u.flying);
-    j.at("atk_flying").get_to(u.atk_flying);
-    j.at("agility").get_to(u.agility);
-    j.at("holy_shield").get_to(u.holy_shield);
-    j.at("can_atk").get_to(u.can_atk);
-    j.at("can_move").get_to(u.can_move);
-}
-
-void from_json(const json &j, Barrack &b)
-{
-    j.at("pos").get_to(b.pos);
-    j.at("camp").get_to(b.camp);
-    j.at("summon_pos_list").get_to(b.summon_pos_list);
-}
-
-void from_json(const json &j, Miracle &r)
-{
-    j.at("camp").get_to(r.camp);
-    j.at("max_hp").get_to(r.max_hp);
-    j.at("hp").get_to(r.hp);
-    j.at("pos").get_to(r.pos);
-    j.at("summon_pos_list").get_to(r.summon_pos_list);
-    j.at("name").get_to(r.name);
-    j.at("id").get_to(r.id);
-}
-
-void from_json(const json &j, Obstacle &o)
-{
-    j.at("type").get_to(o.type);
-    j.at("pos").get_to(o.pos);
-    j.at("allow_flying").get_to(o.allow_flying);
-    j.at("allow_ground").get_to(o.allow_ground);
+    j[0].get_to(u.id);
+    j[1].get_to(u.camp);
+    j[2].get_to(u.type);
+    j[3].get_to(u.cost);
+    j[4].get_to(u.atk);
+    j[5].get_to(u.max_hp);
+    j[6].get_to(u.hp);
+    j[7].get_to(u.atk_range);
+    j[8].get_to(u.max_move);
+    j[9].get_to(u.cool_down);
+    j[10].get_to(u.pos);
+    j[11].get_to(u.level);
+    j[12].get_to(u.flying);
+    j[13].get_to(u.atk_flying);
+    j[14].get_to(u.agility);
+    j[15].get_to(u.holy_shield);
+    j[16].get_to(u.can_atk);
+    j[17].get_to(u.can_move);
 }
 
 void from_json(const json &j, Artifact &a)
 {
-    j.at("id").get_to(a.id);
-    j.at("name").get_to(a.name);
-    j.at("camp").get_to(a.camp);
-    j.at("cost").get_to(a.cost);
-    j.at("max_cool_down").get_to(a.max_cool_down);
-    j.at("cool_down_time").get_to(a.cool_down_time);
-    j.at("state").get_to(a.state);
-    j.at("target_type").get_to(a.target_type);
+    j[0].get_to(a.camp);
+    j[1].get_to(a.name);
+    a.id = a.camp;
+    j[2].get_to(a.cost);
+    j[3].get_to(a.max_cool_down);
+    j[4].get_to(a.cool_down_time);
+    j[5].get_to(a.state);
+    j[6].get_to(a.target_type);
 }
 
 void from_json(const json &j, CreatureCapacity &c)
 {
-    j.at("type").get_to(c.type);
-    j.at("available_count").get_to(c.available_count);
-    j.at("cool_down_list").get_to(c.cool_down_list);
+    j[0].get_to(c.type);
+    j[1].get_to(c.available_count);
+    j[2].get_to(c.cool_down_list);
 }
 
 void from_json(const json &j, Map &m)
 {
     j.at("units").get_to(m.units);
-    j.at("barracks").get_to(m.barracks);
-    j.at("obstacles").get_to(m.obstacles);
-    j.at("ground_obstacles").get_to(m.ground_obstacles);
-    j.at("flying_obstacles").get_to(m.flying_obstacles);
-    j.at("miracles").get_to(m.miracles);
+    json barracks_camp = j["barracks"];
+    for (int i = 0; i < barracks_camp.size(); ++i)
+        m.barracks[i].camp = barracks_camp[i];
+    json miracle_hp = j["miracles"];
+    m.miracles[0].hp = miracle_hp[0];
+    m.miracles[1].hp = miracle_hp[1];
 }
 
 void from_json(const json &j, Player &p)
 {
-    j.at("camp").get_to(p.camp);
-    j.at("artifact").get_to(p.artifact);
-    j.at("mana").get_to(p.mana);
-    j.at("max_mana").get_to(p.max_mana);
-    j.at("creature_capacity").get_to(p.creature_capacity);
-    j.at("newly_summoned_id_list").get_to(p.new_summoned_id_list);
+    j[0].get_to(p.artifact);
+    j[1].get_to(p.mana);
+    j[2].get_to(p.max_mana);
+    j[3].get_to(p.creature_capacity);
+    j[4].get_to(p.new_summoned_id_list);
 }
 
 } // namespace gameunit

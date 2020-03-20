@@ -1,5 +1,4 @@
 #include "ai_client.h"
-#include "gameunit.hpp"
 #include "card.h"
 
 class AI : public AiClient

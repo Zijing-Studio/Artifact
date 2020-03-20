@@ -30,14 +30,13 @@ class Player:
         self.state_system.emit(event)
 
     def parse(self):
-        return {
-            "camp": self.camp,
-            "artifact": [artifact.parse() for artifact in self.artifact_list],
-            "mana": self.mana,
-            "max_mana": self.max_mana,
-            "creature_capacity": [capacity.parse() for capacity in self.creature_capacity_list],
-            "newly_summoned_id_list": self.newly_summoned_id_list
-        }
+        return [
+            [artifact.parse() for artifact in self.artifact_list], # artifact
+            self.mana,
+            self.max_mana,
+            [capacity.parse() for capacity in self.creature_capacity_list],
+            self.newly_summoned_id_list
+        ]
 
 class RefreshListener(EventListener):
     def deal_event(self,event):

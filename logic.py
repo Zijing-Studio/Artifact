@@ -8,6 +8,9 @@ from PlayerLegality.player_legality import Parser
 from StateSystem.StateSystem import StateSystem
 
 DEBUG = False  # DEBUG时会生成一个log.txt记录logic收发的信息
+MAX_ROUND = 200
+AI_TIME = 10
+PLAYER_TIME = 60
 
 
 def logic_convert_byte(data_str, send_goal):
@@ -47,9 +50,8 @@ def send_end_info(end_info):
 def send_init(time, length):
     '''发送初始化信息
     '''
-    init_dict = {"time": time, "length": length}
     sys.stdout.buffer.write(logic_convert_byte(
-        json.dumps({"state": 0, "content": init_dict}), -1))
+        json.dumps({"state": 0, "time": time, "length": length}), -1))
     sys.stdout.flush()
 
 
@@ -90,7 +92,7 @@ class Game:
         miracle_hp = [self.statesystem.get_miracle_by_id(
             0).hp, self.statesystem.get_miracle_by_id(1).hp]
         # 最大回合数
-        if self._round >= 300:
+        if self._round >= MAX_ROUND:
             if miracle_hp[0] > 0 and miracle_hp[0] > miracle_hp[1]:
                 self.end(0)
             elif miracle_hp[1] > 0 and miracle_hp[1] > miracle_hp[0]:
@@ -117,27 +119,32 @@ class Game:
     def get_round_ope(self):
         '''一个游戏回合(主要阶段)内的操作
         '''
-        ope_one_round = 0
+        self.state += 1
+        if self.players[self.listen] in self.media_players:
+            send_init(PLAYER_TIME, 1024)
+        else:
+            send_init(AI_TIME, 1024)
         while not self.is_end:
-            self.state += 1
             self.send_game_info()
             opt_dict = read_opt()
             if opt_dict["player"] == self.listen:
                 try:
                     self.parser.parse(opt_dict["content"])
                 except Exception as parse_error:
+                    self.send_media_info(
+                        [self._round, -1, 0, 0, 0, 0, 0], self.players[self.listen])
                     if DEBUG:
                         with open('log.txt', 'a') as logfile:
-                            logfile.write(parse_error.__str__()+'\n\n')
+                            logfile.write(opt_dict["content"]+',\n\n')
+                            logfile.write(parse_error.__repr__()+'\n\n')
                 else:
                     if DEBUG:
                         with open('log.txt', 'a') as logfile:
-                            logfile.write(opt_dict["content"]+'\n\n')
+                            logfile.write(opt_dict["content"]+',\n\n')
                 self.send_media_info()
                 self.check_game_end()
                 # 结束回合
-                if (json.loads(opt_dict["content"])["operation_type"] == "endround"
-                        or ope_one_round > 100):
+                if json.loads(opt_dict["content"])["operation_type"] == "endround":
                     break
             # AI异常
             elif opt_dict['player'] == -1:
@@ -145,16 +152,21 @@ class Game:
                 # AI异常退出
                 if opt['error'] == 0:
                     if opt['player'] == self.players[0]:
-                        self.end(self.players[1])
+                        self.end(1)
                     else:
-                        self.end(self.players[0])
+                        self.end(0)
                 # 超时
-                elif opt['error'] == 1:
-                    self.parser.parse(json.dumps(
+                else:
+                    msg = json.dumps(
                         {"player": 0 if self.listen == self.players[0] else 1,
                          "round": self._round,
                          "operation_type": "endround",
-                         "operation_parameters": {}}))
+                         "operation_parameters": {}})
+                    self.parser.parse(msg)
+                    if DEBUG:
+                        with open('log.txt', 'a') as logfile:
+                            logfile.write('timeout!\n\n')
+                            logfile.write(msg+',\n\n')
                     break
 
     def get_media_info(self, events):
@@ -226,8 +238,8 @@ class Game:
                 # damage
                 media_info.append(event.parameter_dict['damage'])
                 # type
-                damage_type = ["", "Attack",
-                               "AttackBack", "VolcanoDragonSplash"]
+                damage_type = ["", "Attack", "AttackBack", 
+                               "VolcanoDragonSplash","InfernoFlameActivate"]
                 media_info.append(damage_type.index(
                     event.parameter_dict['type']))
             elif event.name == "Death":
@@ -286,7 +298,7 @@ class Game:
                 media_info += [0] * (7-len(media_info) % 7)
         return media_info
 
-    def send_media_info(self, media_info_list=None, goal=3):
+    def send_media_info(self, media_info_list=None, goal=3, new=False):
         '''把信息发给播放器或记录于录像文件
 
         Args:
@@ -294,6 +306,12 @@ class Game:
 
             goal: 发送的目标 -1表示录像文件 0表示播放器玩家0 1表示播放器玩家1 默认全部发送
         '''
+        if new:
+            with open(self.replay, 'wb') as replay_file:
+                for media_info in [0, 0, 0, self.map_type, self.day_time, 0, 0]:
+                    replay_file.write(
+                        int(media_info).to_bytes(4, 'big', signed=True))
+            return
         if not media_info_list:
             if not self.statesystem.event_heap.record:
                 return
@@ -330,14 +348,15 @@ class Game:
         else:
             message = self.statesystem.parse()
             message['round'] = self._round
-            message['camp'] = 0 if self.listen == self.players[1] else 1
+            message['camp'] = 0 if self.listen == self.players[0] else 1
             if DEBUG:
                 with open('log.txt', 'a') as logfile:
-                    logfile.write(json.dumps(message)+'\n\n')
+                    logfile.write(json.dumps(message).replace(" ","")+'\n\n')
         # 前六位表示长度 后面是表示信息的json格式字符串
-        json_length = str(len(json.dumps(message)))
+        message_json = json.dumps(message).replace(" ","")
+        json_length = str(len(message_json))
         state_dict['content'] = [
-            "0" * (6 - len(json_length)) + json_length + json.dumps(message)]
+            "0" * (6 - len(json_length)) + json_length + message_json]
         send_state(state_dict)
 
     def init_player(self, player_list):
@@ -382,11 +401,12 @@ class Game:
                 except Exception as parse_error:
                     if DEBUG:
                         with open('log.txt', 'a') as logfile:
-                            logfile.write(parse_error.__str__()+'\n\n')
+                            logfile.write(opt_dict["content"]+',\n\n')
+                            logfile.write(parse_error.__repr__()+'\n\n')
                 else:
                     if DEBUG:
                         with open('log.txt', 'a') as logfile:
-                            logfile.write(opt_dict["content"]+'\n\n')
+                            logfile.write(opt_dict["content"]+',\n\n')
                     is_players_ready[player] = True
         # 双方玩家是否均准备好卡组
         if not is_players_ready[0] and not is_players_ready[1]:
@@ -407,10 +427,10 @@ class Game:
         self.init_player(opt_dict['player_list'])
         self.replay = opt_dict['replay']
         # 每个回合的时间限制和单条消息的最大长度
-        send_init(3, 2048)
+        send_init(PLAYER_TIME, 1024)
         # 处理初始卡组
         self.select_cards()
-        self.send_media_info([0, 0, 0, self.map_type, self.day_time, 0, 0], -1)
+        self.send_media_info(new=True)
         self._round = 0
         self.send_media_info()
         # 游戏回合

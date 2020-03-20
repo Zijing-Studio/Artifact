@@ -167,7 +167,7 @@ class HealListener(EventListener):
 
 class PriestHealListener(EventListener):
     def deal_event(self,event):
-        if event.name == "TurnEnd":
+        if event.name == "TurnEnd" and self.host.state_system.current_player_id == self.host.camp:
             try:
                 for unit in self.host.state_system.map.unit_list:
                     if calculator.cube_distance(unit.pos,self.host.pos) <= 2 and unit.camp == self.host.camp:
@@ -189,7 +189,7 @@ class PriestAtkListener(EventListener):
                     if calculator.cube_distance(unit.pos,self.host.pos) <= 1 and unit.camp == self.host.camp \
                         and unit != self.host:
                         found = False
-                        for buff in self.priest_buff_list:
+                        for buff in self.host.priest_buff_list:
                             if buff.host == unit:
                                 found = True
                                 break
@@ -222,9 +222,9 @@ class VolcanoDragonAtkListener(EventListener):
                 if event.parameter_dict["source"] == self.host and\
                     event.parameter_dict["target"].type != "Miracle":
                     for unit in self.host.state_system.map.unit_list:
-                        if (calculator.cube_distance(unit.pos,self.host.pos) == 2 or
+                        if (calculator.cube_distance(unit.pos,self.host.pos) == 2 and
                             calculator.cube_distance(unit.pos,event.parameter_dict["target"].pos) == 1) and \
-                            unit.camp != self.host.camp:
+                            unit.camp != self.host.camp and not unit.flying:
                             self.host.emit(Event("Damage",{
                                 "source": self.host,
                                 "target": unit,

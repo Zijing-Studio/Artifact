@@ -5,11 +5,7 @@ class Barrack:
         self.summon_pos_list = summon_pos_list
 
     def parse(self):
-        return {
-            "pos": self.pos,
-            "camp": self.camp,
-            "summon_pos_list": self.summon_pos_list
-        }
+        return self.camp
 
 BARRACK_INIT_LIST = [
     ((-6,-6,12), -1, [(-7,-5,12), (-5,-7,12), (-5,-6,11)]),

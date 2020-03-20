@@ -91,6 +91,8 @@ class Parser:
                 operation_object = operations.StartRound(self, player_id, self.map)
             elif operation_type == "endround":
                 operation_object = operations.EndRound(self, player_id, self.map)
+            elif operation_type == "surrender":
+                operation_object = operations.Surrender(self, player_id, self.map)
             elif operation_type == "init":
                 operation_object = operations.Init(self, player_id, self.map, params)
             return operation_object

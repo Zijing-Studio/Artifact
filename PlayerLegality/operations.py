@@ -193,7 +193,19 @@ class EndRound(AbstractOperation):
     def act(self):
         self.map.emit(Event("TurnEnd"))
         self.map.start_event_processing()
-    
+
+class Surrender(AbstractOperation):
+    '''
+    one player surrender to the other
+    '''
+    def __init__(self, _parser, _id, _map):
+        AbstractOperation.__init__(self, _parser, _id, _map)
+
+    def check_legality(self):
+        return True
+
+    def act(self):
+        pass
 
 class AbstractAct(AbstractOperation):
     '''
