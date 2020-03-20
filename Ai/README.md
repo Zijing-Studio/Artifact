@@ -338,7 +338,7 @@ bool canUseArtifact(gameunit::Artifact artifact, gameunit::Unit unit)
 
 
 ```cpp
-gameunit::Unit getUnitsByPos(gameunit::Pos pos, bool flying)
+gameunit::Unit getUnitByPos(gameunit::Pos pos, bool flying)
 
 ```
 

@@ -115,7 +115,7 @@ void AI::play()
         });
         vector<Pos> available_summon_pos_list;
         for (auto pos:summon_pos_list) {
-            auto unit_on_pos_ground = getUnitsByPos(pos, false);
+            auto unit_on_pos_ground = getUnitByPos(pos, false);
             if (unit_on_pos_ground.id == -1) available_summon_pos_list.push_back(pos);
         }
 
@@ -343,7 +343,7 @@ void AI::march()
             if (reach_pos_list.empty()) continue;
 
             //优先走到未被占领的兵营，否则走到
-            if (getUnitsByPos(target_barrack, false).id == -1) {
+            if (getUnitByPos(target_barrack, false).id == -1) {
                 nth_element(reach_pos_list.begin(), reach_pos_list.begin(), reach_pos_list.end(),
                             [this](Pos _pos1, Pos _pos2) {
                                 return cube_distance(_pos1, target_barrack) < cube_distance(_pos2, target_barrack);

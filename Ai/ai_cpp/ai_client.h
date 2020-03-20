@@ -94,7 +94,7 @@ public:
 
     // 获取位置pos上的生物
     // 如果有,返回对应的Unit,否则返回一个id为-1的Unit
-    gameunit::Unit getUnitsByPos(gameunit::Pos pos, bool flying);
+    gameunit::Unit getUnitByPos(gameunit::Pos pos, bool flying);
 
     // 获取id为unit_id的生物
     // 如果有,返回对应的Unit,否则返回一个id为-1的Unit
