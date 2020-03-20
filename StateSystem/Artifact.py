@@ -3,6 +3,7 @@ from StateSystem.Event import Event
 from StateSystem.Buff import Buff
 from StateSystem.EventListener import EventListener
 from StateSystem.Unit import Unit
+from UnitData import ARTIFACT_NAME_PARSED,ARTIFACT_STATE_PARSED,ARTIFACT_TARGET_PARSED
 
 ARTIFACT_ID = 0
 
@@ -45,12 +46,12 @@ class Artifact:
     def parse(self):
         return [
             self.id,
-            self.name,
+            ARTIFACT_NAME_PARSED[self.name],
             self.cost,
             self.max_cool_down,
             self.cool_down_time,
-            self.state,
-            self.target_type
+            ARTIFACT_STATE_PARSED[self.state],
+            ARTIFACT_TARGET_PARSED[self.target_type]
         ]
 
     def activate(self,target):
