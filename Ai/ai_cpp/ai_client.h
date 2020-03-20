@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <iostream>
-#include "gameunit.hpp"
+#include "gameunit.h"
 #include "json.hpp"
 using json = nlohmann::json;
 
