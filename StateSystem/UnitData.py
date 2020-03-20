@@ -103,7 +103,7 @@ ARTIFACTS = [
 UNIT_NAME_PARSED = {
     "Archer": 0,
     "Swordsman": 1,
-    "Blackbat": 2,
+    "BlackBat": 2,
     "Priest": 3,
     "VolcanoDragon": 4,
     "Inferno": 5

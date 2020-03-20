@@ -657,7 +657,7 @@ int。表示生物所属阵营。
 
 ### type
 
-string。表示生物的种类。有"Archer", "Swordsman", "Blackbat", "Priest", "VolcanoDragon", "Inferno"六种取值。
+string。表示生物的种类。有"Archer", "Swordsman", "BlackBat", "Priest", "VolcanoDragon", "Inferno"六种取值。
 
 ### cost
 
@@ -827,7 +827,7 @@ string。表示神器使用对象的种类。有"Unit", "Pos"两种取值。
 
 ### type
 
-string。表示生物种类。有"Archer", "Swordsman", "Blackbat", "Priest", "VolcanoDragon", "Inferno"六种取值。
+string。表示生物种类。有"Archer", "Swordsman", "BlackBat", "Priest", "VolcanoDragon", "Inferno"六种取值。
 
 ### available_count
 

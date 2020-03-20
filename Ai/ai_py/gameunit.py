@@ -1,7 +1,7 @@
 '''游戏单位
 '''
 
-UNIT_TYPE = ["Archer", "Swordsman", "Blackbat", "Priest", "VolcanoDragon", "Inferno"]
+UNIT_TYPE = ["Archer", "Swordsman", "BlackBat", "Priest", "VolcanoDragon", "Inferno"]
 ARTIFACT_NAME = ["HolyLight", "SalamanderShield", "InfernoFlame"]
 ARTIFACT_STATE = ["Ready", "In Use", "Cooling Down"]
 ARTIFACT_TARGET = ["Pos", "Unit"]
