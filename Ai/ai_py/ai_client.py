@@ -49,12 +49,12 @@ class AiClient:
     '''
 
     def __init__(self):
-        self.map = gameunit.Map()                               # 地图信息
-        self.players = [gameunit.Player(), gameunit.Player()]   # 两名玩家的信息
-        self.round = 0                                          # 当前回合
-        self.my_camp = read_opt()['camp']                       # 己方阵营
-        self.artifacts = ["HolyLight"]                          # 己方神器
-        self.creatures = ["Archer", "Swordsman", "VolcanoDragon"]  # 己方生物
+        self.map = gameunit.Map()                                   # 地图信息
+        self.players = [gameunit.Player(0), gameunit.Player(1)]     # 两名玩家的信息
+        self.round = 0                                              # 当前回合
+        self.my_camp = read_opt()['camp']                           # 己方阵营
+        self.artifacts = ["HolyLight"]                              # 己方神器
+        self.creatures = ["Archer", "Swordsman", "VolcanoDragon"]   # 己方生物
 
     def update_game_info(self):
         '''更新游戏信息
@@ -62,9 +62,9 @@ class AiClient:
         game_info = read_opt()
         self.round = game_info['round']
         self.my_camp = game_info['camp']
-        self.map = gameunit.Map(game_info['map'])
-        self.players = [gameunit.Player(
-            game_info['players'][0]), gameunit.Player(game_info['players'][1])]
+        self.map.update(game_info['map'])
+        self.players = [gameunit.Player(0, game_info['players'][0]),
+                        gameunit.Player(1, game_info['players'][1])]
 
     def choose_cards(self):
         '''(获取阵营后)选择初始卡组

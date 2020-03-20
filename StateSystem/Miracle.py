@@ -27,15 +27,7 @@ class Miracle:
         self.state_system.emit(event)
     
     def parse(self):
-        return {
-            "camp": self.camp,
-            "max_hp": self.max_hp,
-            "hp": self.hp,
-            "pos": self.pos,
-            "summon_pos_list": self.summon_pos_list,
-            "name": self.name,
-            "id": self.id
-        }
+        return self.hp
 
 class MiracleDamageListener(EventListener):
     def deal_event(self,event):

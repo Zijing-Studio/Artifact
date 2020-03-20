@@ -78,27 +78,26 @@ class Unit:
             )
     
     def parse(self):
-        return {
-            "id": self.id,
-            "camp": self.camp,
-            "type": self.type,
-            "name": self.name,
-            "cost": self.cost,
-            "atk": self.atk,
-            "max_hp": self.max_hp,
-            "hp": self.hp,
-            "atk_range": self.atk_range,
-            "max_move": self.max_move,
-            "cool_down": self.cool_down,
-            "pos": self.pos,
-            "level": self.level,
-            "flying": self.flying,
-            "atk_flying": self.atk_flying,
-            "agility": self.agility,
-            "holy_shield": self.holy_shield,
-            "can_atk": self.can_atk,
-            "can_move": self.can_move
-        }
+        return [
+            self.id,
+            self.camp,
+            self.type,
+            self.cost,
+            self.atk,
+            self.max_hp,
+            self.hp,
+            self.atk_range,
+            self.max_move,
+            self.cool_down,
+            self.pos,
+            self.level,
+            self.flying,
+            self.atk_flying,
+            self.agility,
+            self.holy_shield,
+            self.can_atk,
+            self.can_move
+        ]
 
     def add_event_listener(self,listener):
         listener.host = self

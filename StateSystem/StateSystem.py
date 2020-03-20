@@ -84,8 +84,8 @@ class StateSystem:
     def get_units(self):
         return self.map.unit_list
     
-    def get_unit_at(self,pos):
-        return self.map.get_unit_at(pos)
+    def get_unit_at(self,pos,flying = None):
+        return self.map.get_unit_at(pos,flying)
 
     def get_unit_by_id(self,id):
         return self.map.get_unit_by_id(id)
@@ -183,6 +183,7 @@ class SummonListener(EventListener):
                         "source": unit,
                         "pos": unit.pos
                     }))
+                    self.host.emit(Event("UpdateRingBuff",priority = 3))
                     # print("{} (ID: {}) spawns at {}".format(
                     #     unit.name,
                     #     unit.id,
