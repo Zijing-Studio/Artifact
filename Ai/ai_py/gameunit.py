@@ -1,6 +1,11 @@
 '''游戏单位
 '''
 
+UNIT_TYPE = ["Archer", "Swordsman", "Blackbat", "Priest", "VolcanoDragon", "Inferno"]
+ARTIFACT_NAME = ["HolyLight", "SalamanderShield", "InfernoFlame"]
+ARTIFACT_STATE = ["Ready", "In Use", "Cooling Down"]
+ARTIFACT_TARGET = ["Pos", "Unit"]
+
 
 class Unit:
     '''生物
@@ -8,11 +13,11 @@ class Unit:
 
     def __init__(self, unit_list=None):
         if unit_list is None:
-            unit_list = [-1, -1, '', 0, 0, 0, 0,
+            unit_list = [-1, -1, 0, 0, 0, 0, 0,
                          (0, 0), 0, 0, (0, 0, 0), 0, False, False, False, False, False, False]
         self.id = unit_list[0]  # id
         self.camp = unit_list[1]  # 阵营
-        self.type = unit_list[2]  # 种类
+        self.type = UNIT_TYPE[unit_list[2]]  # 种类
         self.cost = unit_list[3]  # 法力消耗
         self.atk = unit_list[4]  # 攻击
         self.max_hp = unit_list[5]  # 生命上限
@@ -22,12 +27,12 @@ class Unit:
         self.cool_down = unit_list[9]  # 冷却时间
         self.pos = tuple(unit_list[10])  # 位置
         self.level = unit_list[11]  # 等级
-        self.flying = unit_list[12]  # 是否飞行
-        self.atk_flying = unit_list[13]  # 是否对空
-        self.agility = unit_list[14]  # 是否迅捷
-        self.holy_shield = unit_list[15]  # 有无圣盾
-        self.can_atk = unit_list[16]  # 能否攻击
-        self.can_move = unit_list[17]  # 能否移动
+        self.flying = bool(unit_list[12])  # 是否飞行
+        self.atk_flying = bool(unit_list[13])  # 是否对空
+        self.agility = bool(unit_list[14])  # 是否迅捷
+        self.holy_shield = bool(unit_list[15])  # 有无圣盾
+        self.can_atk = bool(unit_list[16])  # 能否攻击
+        self.can_move = bool(unit_list[17])  # 能否移动
 
 
 class Barrack:
@@ -69,22 +74,22 @@ class Artifact:
 
     def __init__(self, artifact_list=None):
         if artifact_list is None:
-            artifact_list = [-1, '',  0, 0, 0, '', '']
+            artifact_list = [-1, 0,  0, 0, 0, 0, 0]
         self.camp = artifact_list[0]
-        self.name = artifact_list[1]
+        self.name = ARTIFACT_NAME[artifact_list[1]]
         self.id = self.camp
         self.cost = artifact_list[2]
         self.max_cool_down = artifact_list[3]
         self.cool_down_time = artifact_list[4]
-        self.state = artifact_list[5]
-        self.target_type = artifact_list[6]
+        self.state = ARTIFACT_STATE[artifact_list[5]]
+        self.target_type = ARTIFACT_TARGET[artifact_list[6]]
 
 
 class CreatureCapacity:
     def __init__(self, cc_list=None):
         if cc_list is None:
-            cc_list = ['', 0, []]
-        self.type = cc_list[0]         # 种类
+            cc_list = [0, 0, []]
+        self.type = UNIT_TYPE[cc_list[0]]         # 种类
         self.available_count = cc_list[1]  # 生物槽容量
         self.cool_down_list = cc_list[2]  # 冷却时间
 
