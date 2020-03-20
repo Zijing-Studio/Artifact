@@ -46,6 +46,7 @@ parser.parse(operation)
 - move
 - attack
 - use
+- surrender
 
 ### operation parameters
 
@@ -201,3 +202,13 @@ null（不需要额外参数）
 
 - 法力消耗
 - 再装填时间
+
+##### 投降
+
+```json
+//operation_type: "surrender"
+{
+    
+}
+```
+
