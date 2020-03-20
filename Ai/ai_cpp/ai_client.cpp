@@ -38,6 +38,8 @@ json read()
 
 AiClient::AiClient()
 {
+    players[0].camp = 0;
+    players[1].camp = 1;
     json game_info = read();
     game_info["camp"].get_to(my_camp);
 }
