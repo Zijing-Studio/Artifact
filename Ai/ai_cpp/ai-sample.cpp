@@ -324,7 +324,13 @@ void AI::march()
             move(ally.id, reach_pos_list[0]);
         } else {
             //如果已经在兵营就不动了
-            //if (ally.pos  [barrack.pos for barrack in self.map.barracks]) continue; //TODO:检测ally是否在驻扎点上
+            bool on_barrack = false;
+            for (const auto &barrack:map.barracks)
+                if (ally.pos == barrack.pos) {
+                    on_barrack = true;
+                    break;
+                }
+            if (on_barrack) continue;
 
             //获取所有可到达的位置
             auto reach_pos_with_dis = reachable(ally, map);
