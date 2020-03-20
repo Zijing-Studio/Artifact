@@ -2,3 +2,7 @@
 __pycache__/
 
 test_state_system.py
+
+.idea/
+Judger/log.txt
+record.txt

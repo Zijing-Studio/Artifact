@@ -286,10 +286,9 @@ bool AiClient::canUseArtifact(gameunit::Artifact artifact, gameunit::Unit unit)
     return false;
 }
 
-gameunit::Unit AiClient::getUnitsByPos(gameunit::Pos pos, bool flying)
+gameunit::Unit AiClient::getUnitByPos(gameunit::Pos pos, bool flying)
 {
-    for (int i = 0; i < map.units.size(); ++i)
-    {
+    for (int i = 0; i < map.units.size(); ++i) {
         if (map.units[i].pos == pos && map.units[i].flying == flying)
             return map.units[i];
     }
