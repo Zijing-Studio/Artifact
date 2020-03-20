@@ -9,7 +9,7 @@ from StateSystem.StateSystem import StateSystem
 
 DEBUG = False  # DEBUG时会生成一个log.txt记录logic收发的信息
 MAX_ROUND = 200
-AI_TIME = 10
+AI_TIME = 3
 PLAYER_TIME = 60
 
 
@@ -119,7 +119,6 @@ class Game:
     def get_round_ope(self):
         '''一个游戏回合(主要阶段)内的操作
         '''
-        self.state += 1
         if self.players[self.listen] in self.media_players:
             send_init(PLAYER_TIME, 1024)
         else:
@@ -444,6 +443,7 @@ class Game:
         self.parser.set_round(0)
         self.listen = self.players[0]
         while not self.is_end:
+            self.state += 1
             self.send_media_info()
             self.check_game_end()
             self.get_round_ope()
