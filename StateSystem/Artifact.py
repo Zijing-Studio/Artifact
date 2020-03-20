@@ -3,7 +3,7 @@ from StateSystem.Event import Event
 from StateSystem.Buff import Buff
 from StateSystem.EventListener import EventListener
 from StateSystem.Unit import Unit
-from UnitData import ARTIFACT_NAME_PARSED,ARTIFACT_STATE_PARSED,ARTIFACT_TARGET_PARSED
+from StateSystem.UnitData import ARTIFACT_NAME_PARSED,ARTIFACT_STATE_PARSED,ARTIFACT_TARGET_PARSED
 
 ARTIFACT_ID = 0
 
