@@ -1,9 +1,10 @@
 #include "ai_client.h"
-#include "gameunit.hpp"
+#include "gameunit.h"
 #include "card.h"
 #include "calculator.h"
 
 #include <random>
+#include <time.h>
 
 using gameunit::Pos;
 using gameunit::Unit;
@@ -163,8 +164,8 @@ void AI::play()
             summon(summon_list[i], 1, pos);
             ++i;
         }
-        endRound();
     }
+    endRound();
 }
 
 Pos AI::posShift(Pos pos, string direct)
@@ -278,7 +279,7 @@ void AI::battle()
     for (auto ally : ally_list) {
         if (!ally.can_atk) break;
         int dis = cube_distance(ally.pos, enemy_pos);
-        if (ally.atk_range[0] <= dis <= ally.atk_range[1])
+        if (ally.atk_range[0] <= dis && dis <= ally.atk_range[1])
             attack(ally.id, my_camp ^ 1);
     }
 }
