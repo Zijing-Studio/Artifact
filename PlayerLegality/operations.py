@@ -50,9 +50,9 @@ class AbstractOperation:
         '''
         judge if unit will conflict with another unit
         '''
-        target = self.map.get_unit_at(pos)
+        target = self.map.get_unit_at(pos, flying=unit.flying)
         result = True
-        if target is None or unit.flying != target.flying:
+        if target is None:
             result = False
         return result
 
@@ -259,9 +259,9 @@ class Summon(AbstractAct):
         override, check if the summon position already had a creature on it
         '''
         flying = UNIT_DATA[creature_type]["flying"]
-        target = self.map.get_unit_at(pos)
+        target = self.map.get_unit_at(pos, flying=flying)
         result = True
-        if target is None or flying != target.flying:
+        if target is None:
             result = False
         return result
 
