@@ -222,6 +222,7 @@ class CheckBarrackListener(EventListener):
         if event.name == "CheckBarrack":
             try:
                 for barrack in self.host.map.barrack_list:
+                    barrack.camp = -1
                     for unit in self.host.map.unit_list:
                         if unit.pos == barrack.pos and unit.flying == False:
                             barrack.camp = unit.camp
