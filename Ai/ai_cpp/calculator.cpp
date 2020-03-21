@@ -58,7 +58,7 @@ Point cube_neighbor(Point pos, int dir) {
 }
 
 Node::Node() {}
-Node::Node(Point pos, int G, int H, Node* parent=nullptr) :
+Node::Node(Point pos, int G, int H, Node* parent) :
         _pos(pos), _G(G), _H(H), _parent(parent) {}
 bool Node::operator< (const Node& b) const {
     return this->_G + this->_H < b._G + b._H;
@@ -102,15 +102,15 @@ Node* Node::setParent(Node* p) {
             F: {},
            '''.format(self.pos, self.G, self.H)*/
 
-/*bool contained(const Point& pos, std::map<Point, Node> map) {
+bool contained(const Point& pos, std::map<Point, Node> map) {
     for (auto it = map.begin(); it != map.end(); it++) {
         if (pos == it->first) return true;
     }
     return false;
-}*/
+}
 
 std::vector<Point> search_path(Point start, Point to,
-    std::vector<Point> obstacles={}, std::vector<Point> obstructs={}) {
+    std::vector<Point> obstacles, std::vector<Point> obstructs) {
     //return shortest path
     Point _start = start;
     Point _to = to;
@@ -155,7 +155,7 @@ std::vector<Point> search_path(Point start, Point to,
 }
 
 std::vector<std::vector<Point>> cube_reachable(Point start, int movement, 
-        std::vector<Point> obstacles={}, std::vector<Point> obstructs={}) {
+        std::vector<Point> obstacles, std::vector<Point> obstructs) {
     //return reachable position from start Point in steps limited by movement
     std::vector<Point> visited = {};    // positions that have been visited
     visited.push_back(start);
@@ -241,8 +241,8 @@ std::vector<std::vector<Point>> reachable(gameunit::Unit unit, gameunit::Map _ma
     return result;
 }
 
-std::vector<gameunit::Unit> units_in_range(Point pos, int dist, gameunit::Map _map, int camp=-1,
-                                bool flyingIncluded=true, bool onlandIncluded=true) {
+std::vector<gameunit::Unit> units_in_range(Point pos, int dist, gameunit::Map _map, int camp,
+                                bool flyingIncluded, bool onlandIncluded) {
     /*return list of units whose distance to the pos is less than dist
     default camp = -1, return units of both camp, 0 for the first camp, 1 for the second
     flyingIncluded = True will include flying units,
