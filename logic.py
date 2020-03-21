@@ -98,10 +98,10 @@ class Game:
             elif miracle_hp[1] > 0 and miracle_hp[1] > miracle_hp[0]:
                 self.end(1)
             else:
-                self.end(-1)
+                self.end(2)
         if miracle_hp[0] <= 0 and miracle_hp[1] <= 0:
             self.is_end = True
-            self.end(-1)
+            self.end(2)
         elif miracle_hp[1] <= 0:
             self.is_end = True
             self.end(0)
@@ -162,7 +162,7 @@ class Game:
                     else:
                         self.end(0)
                 # 超时
-                else:
+                elif opt['state'] == self.state and opt['player'] == self.listen:
                     msg = json.dumps(
                         {"player": 0 if self.listen == self.players[0] else 1,
                          "round": self._round,
@@ -355,9 +355,6 @@ class Game:
             message = self.statesystem.parse()
             message['round'] = self._round
             message['camp'] = 0 if self.listen == self.players[0] else 1
-            if DEBUG:
-                with open('log.txt', 'a') as logfile:
-                    logfile.write(json.dumps(message).replace(" ","")+'\n\n')
         # 前六位表示长度 后面是表示信息的json格式字符串
         message_json = json.dumps(message).replace(" ","")
         json_length = str(len(message_json))
@@ -376,7 +373,7 @@ class Game:
             2: 该玩家正常进入游戏，且为远程连接播放器
         '''
         if len(player_list) != 2 or (player_list[0] == player_list[1] == 0):
-            self.end(-1)
+            self.end(2)
         if player_list[0] == 0:
             self.end(self.players[1])
         if player_list[1] == 0:
@@ -417,7 +414,7 @@ class Game:
         # 双方玩家是否均准备好卡组
         if not is_players_ready[0] and not is_players_ready[1]:
             self.is_end = True
-            self.end(-1)
+            self.end(2)
         elif not is_players_ready[0]:
             self.is_end = True
             self.end(1)
@@ -455,26 +452,9 @@ class Game:
         '''游戏终局处理
 
         Args:
-            winner: 胜者。-1表示平局，0/1表示0/1号玩家获胜。
+            winner: 胜者。0/1表示0/1号玩家获胜，2表示平局。
         '''
-        media_info_list = []
-        media_info_list.append(self._round)
-        media_info_list.append(10)
-        end_info = {str(self.players[0]): 0, str(self.players[1]): 0}
-        if winner == -1:
-            media_info_list.append(2)
-            # 计算得分
-        elif winner == 0:
-            media_info_list.append(0)
-            # 计算得分
-            end_info[str(self.players[0])] = 1
-            end_info[str(self.players[1])] = -1
-        else:  # winner == 1
-            media_info_list.append(1)
-            # 计算得分
-            end_info[str(self.players[0])] = -1
-            end_info[str(self.players[1])] = 1
-        media_info_list += [0, 0, 0, 0]
+        media_info_list = [self._round, 10, winner, 0, 0, 0, 0]
         self.send_media_info(media_info_list)
         self.send_media_info([-1], -1)
         if DEBUG:
@@ -483,6 +463,8 @@ class Game:
                     logfile.write('draw!\n\n')
                 else:
                     logfile.write('player '+str(winner)+' win!'+'\n\n')
+        end_info = {str(self.players[0]): self.statesystem.get_player_score(0),
+                    str(self.players[1]): self.statesystem.get_player_score(1)}
         send_end_info(end_info)
         sys.exit()
 
