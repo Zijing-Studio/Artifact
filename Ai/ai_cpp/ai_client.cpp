@@ -150,7 +150,7 @@ void AiClient::use(int artifact, int target)
     json operation_parameters;
     operation_parameters["card"] = artifact;
     operation_parameters["target"] = target;
-    sendMsg(my_camp, round, "attack", operation_parameters);
+    sendMsg(my_camp, round, "use", operation_parameters);
     updateGameInfo();
 }
 
@@ -159,7 +159,7 @@ void AiClient::use(int artifact, std::vector<int> target)
     json operation_parameters;
     operation_parameters["card"] = artifact;
     operation_parameters["target"] = target;
-    sendMsg(my_camp, round, "attack", operation_parameters);
+    sendMsg(my_camp, round, "use", operation_parameters);
     updateGameInfo();
 }
 
@@ -168,7 +168,7 @@ void AiClient::use(int artifact, std::tuple<int, int, int> target)
     json operation_parameters;
     operation_parameters["card"] = artifact;
     operation_parameters["target"] = target;
-    sendMsg(my_camp, round, "attack", operation_parameters);
+    sendMsg(my_camp, round, "use", operation_parameters);
     updateGameInfo();
 }
 
