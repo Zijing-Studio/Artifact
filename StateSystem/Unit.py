@@ -2,7 +2,7 @@
 Definition of unit classes
 '''
 from .EventListener import *
-from .UnitData import UNIT_DATA
+from .UnitData import UNIT_DATA,UNIT_NAME_PARSED
 
 UNIT_ID = 3
 
@@ -81,7 +81,7 @@ class Unit:
         return [
             self.id,
             self.camp,
-            self.type,
+            UNIT_NAME_PARSED[self.type],
             self.cost,
             self.atk,
             self.max_hp,
@@ -91,12 +91,12 @@ class Unit:
             self.cool_down,
             self.pos,
             self.level,
-            self.flying,
-            self.atk_flying,
-            self.agility,
-            self.holy_shield,
-            self.can_atk,
-            self.can_move
+            int(self.flying),
+            int(self.atk_flying),
+            int(self.agility),
+            int(self.holy_shield),
+            int(self.can_atk),
+            int(self.can_move)
         ]
 
     def add_event_listener(self,listener):

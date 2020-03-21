@@ -3,7 +3,7 @@
 #include<tuple>
 #include<map>
 #include<algorithm>
-#include"gameunit.hpp"
+#include"gameunit.h"
 
 namespace calculator {
 typedef std::tuple<int, int, int> Point;

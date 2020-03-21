@@ -9,7 +9,7 @@ from StateSystem.StateSystem import StateSystem
 
 DEBUG = False  # DEBUG时会生成一个log.txt记录logic收发的信息
 MAX_ROUND = 200
-AI_TIME = 10
+AI_TIME = 3
 PLAYER_TIME = 60
 
 
@@ -119,7 +119,6 @@ class Game:
     def get_round_ope(self):
         '''一个游戏回合(主要阶段)内的操作
         '''
-        self.state += 1
         if self.players[self.listen] in self.media_players:
             send_init(PLAYER_TIME, 1024)
         else:
@@ -137,15 +136,22 @@ class Game:
                         with open('log.txt', 'a') as logfile:
                             logfile.write(opt_dict["content"]+',\n\n')
                             logfile.write(parse_error.__repr__()+'\n\n')
+                    continue
                 else:
                     if DEBUG:
                         with open('log.txt', 'a') as logfile:
                             logfile.write(opt_dict["content"]+',\n\n')
                 self.send_media_info()
                 self.check_game_end()
-                # 结束回合
-                if json.loads(opt_dict["content"])["operation_type"] == "endround":
+                # 结束回合 / 投降
+                special_type = json.loads(opt_dict["content"])["operation_type"]
+                if special_type == "endround":
                     break
+                if special_type == "surrender":
+                    if opt_dict['player'] == self.players[0]:
+                        self.end(1)
+                    else:
+                        self.end(0)
             # AI异常
             elif opt_dict['player'] == -1:
                 opt = json.loads(opt_dict['content'])
@@ -437,6 +443,7 @@ class Game:
         self.parser.set_round(0)
         self.listen = self.players[0]
         while not self.is_end:
+            self.state += 1
             self.send_media_info()
             self.check_game_end()
             self.get_round_ope()
@@ -470,6 +477,12 @@ class Game:
         media_info_list += [0, 0, 0, 0]
         self.send_media_info(media_info_list)
         self.send_media_info([-1], -1)
+        if DEBUG:
+            with open('log.txt', 'a') as logfile:
+                if winner == -1:
+                    logfile.write('draw!\n\n')
+                else:
+                    logfile.write('player '+str(winner)+' win!'+'\n\n')
         send_end_info(end_info)
         sys.exit()
 

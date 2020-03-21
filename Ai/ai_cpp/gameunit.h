@@ -1,5 +1,5 @@
-#ifndef GAMEUNIT_HPP_
-#define GAMEUNIT_HPP_
+#ifndef GAMEUNIT_H_
+#define GAMEUNIT_H_
 
 #include <vector>
 #include <string>
@@ -11,6 +11,11 @@ namespace gameunit
 {
 
 typedef std::tuple<int, int, int> Pos; // 坐标
+
+const std::string UNIT_TYPE[6] = {"Archer", "Swordsman", "BlackBat", "Priest", "VolcanoDragon", "Inferno"};
+const std::string ARTIFACT_NAME[3] = {"HolyLight", "SalamanderShield", "InfernoFlame"};
+const std::string ARTIFACT_STATE[3] = {"Ready", "In Use", "Cooling Down"};
+const std::string ARTIFACT_TARGET[2] = {"Pos", "Unit"};
 
 struct Unit // 生物
 {
@@ -89,21 +94,7 @@ struct Map // 地图
     std::vector<Obstacle> obstacles;
     std::vector<Obstacle> flying_obstacles;
     std::vector<Obstacle> ground_obstacles;
-    Map()
-    {
-        barracks = {Barrack(-1, {-6, -6, 12}, {{-7, -5, 12}, {-5, -7, 12}, {-5, -6, 11}}),
-                    Barrack(-1, {6, 6, -12}, {{7, 5, -12}, {5, 7, -12}, {5, 6, -11}}),
-                    Barrack(-1, {0, -5, 5}, {{0, -4, 4}, {-1, -4, 5}, {-1, -5, 6}}),
-                    Barrack(-1, {0, 5, -5}, {{0, 4, -4}, {1, 4, -5}, {1, 5, -6}})};
-        miracles = {Miracle(0, 30, 30, {-7, 7, 0}, {{-8, 6, 2}, {-7, 6, 1}, {-6, 6, 0}, {-6, 7, -1}, {-6, 8, -2}}, 0),
-                    Miracle(1, 30, 30, {7, -7, 0}, {{8, -6, -2}, {7, -6, -1}, {6, -6, 0}, {6, -7, 1}, {6, -8, 2}}, 1)};
-        obstacles = {Obstacle("Miracle", {-7, 7, 0}, false, false),
-                     Obstacle("Miracle", {7, -7, 0}, false, false)};
-        std::vector<Pos> ABYSS_POS_LIST = {{0, 0, 0}, {-1, 0, 1}, {0, -1, 1}, {1, -1, 0}, {1, 0, -1}, {0, 1, -1}, {-1, 1, 0}, {-2, -1, 3}, {-1, -2, 3}, {-2, -2, 4}, {-3, -2, 5}, {-4, -4, 8}, {-5, -4, 9}, {-4, -5, 9}, {-5, -5, 10}, {-6, -5, 11}, {1, 2, -3}, {2, 1, -3}, {2, 2, -4}, {3, 2, -5}, {4, 4, -8}, {5, 4, -9}, {4, 5, -9}, {5, 5, -10}, {6, 5, -11}};
-        for (int i = 0; i < ABYSS_POS_LIST.size(); ++i)
-            obstacles.push_back(Obstacle("Abyss", ABYSS_POS_LIST[i], true, false));
-        ground_obstacles = obstacles;
-    }
+    Map();
 };
 
 struct Player // 玩家
@@ -116,66 +107,15 @@ struct Player // 玩家
     std::vector<int> new_summoned_id_list; // 最新召唤的生物id
 };
 
-void from_json(const json &j, Unit &u)
-{
-    j[0].get_to(u.id);
-    j[1].get_to(u.camp);
-    j[2].get_to(u.type);
-    j[3].get_to(u.cost);
-    j[4].get_to(u.atk);
-    j[5].get_to(u.max_hp);
-    j[6].get_to(u.hp);
-    j[7].get_to(u.atk_range);
-    j[8].get_to(u.max_move);
-    j[9].get_to(u.cool_down);
-    j[10].get_to(u.pos);
-    j[11].get_to(u.level);
-    j[12].get_to(u.flying);
-    j[13].get_to(u.atk_flying);
-    j[14].get_to(u.agility);
-    j[15].get_to(u.holy_shield);
-    j[16].get_to(u.can_atk);
-    j[17].get_to(u.can_move);
-}
+void from_json(const json &j, Unit &u);
 
-void from_json(const json &j, Artifact &a)
-{
-    j[0].get_to(a.camp);
-    j[1].get_to(a.name);
-    a.id = a.camp;
-    j[2].get_to(a.cost);
-    j[3].get_to(a.max_cool_down);
-    j[4].get_to(a.cool_down_time);
-    j[5].get_to(a.state);
-    j[6].get_to(a.target_type);
-}
+void from_json(const json &j, Artifact &a);
 
-void from_json(const json &j, CreatureCapacity &c)
-{
-    j[0].get_to(c.type);
-    j[1].get_to(c.available_count);
-    j[2].get_to(c.cool_down_list);
-}
+void from_json(const json &j, CreatureCapacity &c);
 
-void from_json(const json &j, Map &m)
-{
-    j.at("units").get_to(m.units);
-    json barracks_camp = j["barracks"];
-    for (int i = 0; i < barracks_camp.size(); ++i)
-        m.barracks[i].camp = barracks_camp[i];
-    json miracle_hp = j["miracles"];
-    m.miracles[0].hp = miracle_hp[0];
-    m.miracles[1].hp = miracle_hp[1];
-}
+void from_json(const json &j, Map &m);
 
-void from_json(const json &j, Player &p)
-{
-    j[0].get_to(p.artifact);
-    j[1].get_to(p.mana);
-    j[2].get_to(p.max_mana);
-    j[3].get_to(p.creature_capacity);
-    j[4].get_to(p.new_summoned_id_list);
-}
+void from_json(const json &j, Player &p);
 
 } // namespace gameunit
 

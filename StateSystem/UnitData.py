@@ -99,3 +99,29 @@ ARTIFACTS = [
         "cool_down": 6
     }
 ]
+
+UNIT_NAME_PARSED = {
+    "Archer": 0,
+    "Swordsman": 1,
+    "BlackBat": 2,
+    "Priest": 3,
+    "VolcanoDragon": 4,
+    "Inferno": 5
+}
+
+ARTIFACT_NAME_PARSED = {
+    "HolyLight": 0,
+    "SalamanderShield": 1,
+    "InfernoFlame": 2
+}
+
+ARTIFACT_STATE_PARSED = {
+    "Ready": 0,
+    "In Use": 1,
+    "Cooling Down":2
+}
+
+ARTIFACT_TARGET_PARSED = {
+    "Pos": 0,
+    "Unit": 1
+}

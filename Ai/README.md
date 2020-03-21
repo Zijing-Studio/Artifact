@@ -34,7 +34,7 @@ python版ai位于ai_py文件夹中。
 
 > 用于结束当前回合的函数是endRound()/self.end_round()函数。
 
-> 一些其它的状况也可能导致回合结束，比如超时/一回合内的操作数超出上限等。
+> 一些其它的状况也可能导致回合结束，比如超时等。
 
 2、非当前回合的ai将不会接收到任何信息，发出的信息也不会得到接收。
 
@@ -338,7 +338,7 @@ bool canUseArtifact(gameunit::Artifact artifact, gameunit::Unit unit)
 
 
 ```cpp
-gameunit::Unit getUnitsByPos(gameunit::Pos pos, bool flying)
+gameunit::Unit getUnitByPos(gameunit::Pos pos, bool flying)
 
 ```
 
@@ -657,11 +657,7 @@ int。表示生物所属阵营。
 
 ### type
 
-string。表示生物的种类。
-
-### name
-
-string。表示生物的名字。
+string。表示生物的种类。有"Archer", "Swordsman", "BlackBat", "Priest", "VolcanoDragon", "Inferno"六种取值。
 
 ### cost
 
@@ -765,10 +761,6 @@ Pos。表示神迹的位置。
 
 Pos数组。表示神迹控制的初始出兵点的位置。
 
-### name
-
-string。表示神迹的名字。
-
 ### id
 
 int。表示神迹的id。
@@ -803,7 +795,7 @@ int。表示神器的id。
 
 ### name
 
-string。表示神器的名字。
+string。表示神器的名字。有"HolyLight", "SalamanderShield", "InfernoFlame"三种取值。
 
 ### camp
 
@@ -823,11 +815,11 @@ int。表示神器的目前冷却时间。
 
 ### state
 
-string。表示神器的目前使用状态。
+string。表示神器的目前使用状态。有"Ready", "In Use", "Cooling Down"三种取值。
 
 ### target_type
 
-string。表示神器使用对象的种类（Unit或Pos）。
+string。表示神器使用对象的种类。有"Unit", "Pos"两种取值。
 
 ## CreatureCapacity
 
@@ -835,7 +827,7 @@ string。表示神器使用对象的种类（Unit或Pos）。
 
 ### type
 
-string。表示生物种类。
+string。表示生物种类。有"Archer", "Swordsman", "BlackBat", "Priest", "VolcanoDragon", "Inferno"六种取值。
 
 ### available_count
 
@@ -898,4 +890,3 @@ CreatureCapacity数组。表示生物的召唤情况。
 ### newly_summoned_id_list
 
 int数组。表示玩家最新召唤的生物的id。
-

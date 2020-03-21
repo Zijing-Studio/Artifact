@@ -1,4 +1,4 @@
-from .UnitData import UNIT_DATA
+from .UnitData import UNIT_DATA,UNIT_NAME_PARSED
 
 class CreatureCapacity:
     def __init__(self,name):
@@ -25,7 +25,7 @@ class CreatureCapacity:
 
     def parse(self):
         return [
-            self.type,
+            UNIT_NAME_PARSED[self.type],
             self.available_count,
             self.cool_down_list
         ]
