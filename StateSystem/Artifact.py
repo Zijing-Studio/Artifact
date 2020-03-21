@@ -141,8 +141,8 @@ class SalamanderShieldBuff(Buff):
         self.type = "SalamanderShieldBuff"
 
     def buff(self):
-        self.host.max_hp += 4
-        self.host.hp += 4
+        self.host.max_hp += 3
+        self.host.hp += 3
         if not self.host.holy_shield:
             self.state_system.emit(Event("BuffAdd",{
                     "source": self.host,
@@ -150,7 +150,7 @@ class SalamanderShieldBuff(Buff):
                 },1))
 
     def debuff(self):
-        self.host.max_hp -= 4
+        self.host.max_hp -= 3
         self.host.hp = min(self.host.hp, self.host.max_hp)
 
 class InfernoFlameArtifact(Artifact):

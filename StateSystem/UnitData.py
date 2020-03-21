@@ -2,8 +2,8 @@ UNIT_DATA = {
     "Archer": {
         "cost": [2,4,6],
         "atk": [1,2,3],
-        "hp": [1,3,5],
-        "atk_range": [(2,4),(2,4),(2,4)],
+        "hp": [1,2,3],
+        "atk_range": [(3,4),(3,4),(3,4)],
         "max_move": [3,3,3],
         "cool_down": [4,4,4],
         "duplicate": 3,
@@ -27,12 +27,12 @@ UNIT_DATA = {
     },
     "BlackBat": {
         "cost": [2,3,5],
-        "atk": [1,2,3],
+        "atk": [1,3,5],
         "hp": [1,1,2],
         "atk_range": [(0,1),(0,1),(0,1)],
         "max_move": [5,5,5],
         "cool_down": [2,2,2],
-        "duplicate": 4,
+        "duplicate": 3,
         "flying": True,
         "atk_flying": True,
         "agility": False,
@@ -90,7 +90,7 @@ ARTIFACTS = [
         "name": "SalamanderShield",
         "target_type": "Unit",
         "cost": 6,
-        "cool_down": 6
+        "cool_down": 4
     },
     {
         "name": "InfernoFlame",
