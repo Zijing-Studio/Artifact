@@ -49,15 +49,15 @@ namespace card
 
 // 弓箭手
     const Creature ARCHER[4] = {Creature("Archer", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-                                Creature("Archer", 3, 2, 1, 1, 2, 4, 3, 4, 0, 1, 0, 0),
-                                Creature("Archer", 3, 4, 2, 3, 2, 4, 3, 4, 0, 1, 0, 0),
-                                Creature("Archer", 3, 6, 3, 5, 2, 4, 3, 4, 0, 1, 0, 0)};
+                                Creature("Archer", 3, 2, 1, 1, 3, 4, 3, 4, 0, 1, 0, 0),
+                                Creature("Archer", 3, 4, 2, 2, 3, 4, 3, 4, 0, 1, 0, 0),
+                                Creature("Archer", 3, 6, 3, 3, 3, 4, 3, 4, 0, 1, 0, 0)};
 
 // 黑蝙蝠
-    const Creature BLACKBAT[4] = {Creature("Archer", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-                                  Creature("Archer", 4, 2, 1, 1, 0, 1, 5, 2, 1, 1, 0, 0),
-                                  Creature("Archer", 4, 3, 2, 1, 0, 1, 5, 2, 1, 1, 0, 0),
-                                  Creature("Archer", 4, 5, 3, 2, 0, 1, 5, 2, 1, 1, 0, 0)};
+    const Creature BLACKBAT[4] = {Creature("BlackBat", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+                                  Creature("BlackBat", 4, 2, 1, 1, 0, 1, 5, 2, 1, 1, 0, 0),
+                                  Creature("BlackBat", 4, 3, 3, 1, 0, 1, 5, 2, 1, 1, 0, 0),
+                                  Creature("BlackBat", 4, 5, 5, 2, 0, 1, 5, 2, 1, 1, 0, 0)};
 
 // 牧师
     const Creature PRIEST[4] = {Creature("Priest", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
@@ -74,7 +74,7 @@ namespace card
 // 圣光之耀
     const Artifact HOLYLIGHT = Artifact("HolyLight", 8, 6, "Pos");
 // 阳炎之盾
-    const Artifact SALAMANDERSHIELD = Artifact("SalamanderShield", 6, 6, "Unit");
+    const Artifact SALAMANDERSHIELD = Artifact("SalamanderShield", 6, 4, "Unit");
 // 地狱之火
     const Artifact INFERNOFLAME = Artifact("InfernoFlame", 6, 6, "Pos");
 // 地狱火
