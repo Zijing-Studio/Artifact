@@ -12,11 +12,13 @@ class Player:
         self.mana = mana
         self.state_system = state_system
         self.event_listener_list = []
+        self.score = 0
 
         self.add_event_listener(RefreshListener())
         self.add_event_listener(IntoCoolDownListener())
         self.add_event_listener(SummonListener())
         self.add_event_listener(ActivateArtifactListener())
+        self.add_event_listener(ScoreListener())
 
     def add_event_listener(self,listener):
         listener.host = self
@@ -98,3 +100,11 @@ class ActivateArtifactListener(EventListener):
                         artifact.activate(event.parameter_dict["target"])
                         # print("Player {} activate {} !!!".format(self.host.camp,artifact.name))
                         return
+
+class ScoreListener(EventListener):
+    def deal_event(self,event):
+        if event.name == "Damage" and event.parameter_dict["target"].type == "Miracle" \
+            and event.parameter_dict["target"].camp != self.host.camp:
+            self.host.score += event.parameter_dict["damage"] * 1000
+        if event.name == "Death" and event.parameter_dict["source"].camp != self.host.camp:
+            self.host.score += event.parameter_dict["source"].level

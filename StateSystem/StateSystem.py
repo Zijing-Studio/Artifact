@@ -125,6 +125,11 @@ class StateSystem:
 
     def get_miracle_by_id(self,player_camp):
         return self.map.get_miracle_by_id(player_camp)
+    
+    def get_player_score(self,camp=None):
+        if camp == None:
+            return [player.score for player in self.player_list]
+        return self.player_list[camp].score
 
 class SummonListener(EventListener):
     '''
