@@ -76,7 +76,7 @@ logic.py中有一个DEBUG参数，设置为True的时候会在当前目录下生
 
 需要调用该json库的地方已经给出相关代码，您不必关注相关细节。
 
-## gameunit.hpp
+## gameunit.h & gameunit.cpp
 
 包含若干结构体，用于表述游戏中各单位的信息。
 
@@ -86,7 +86,7 @@ logic.py中有一个DEBUG参数，设置为True的时候会在当前目录下生
 
 包含生物、神器的基本属性。
 
-## calculator.h
+## calculator.h & calculator.cpp
 
 计算几何库。包含以下函数。您可以调用以下函数来进行相关的位置计算。
 
@@ -377,6 +377,10 @@ std::vector<gameunit::Pos> getSummonPosByCamp(int camp)
 
 同时该文件中也包含main()函数，用于启动AI。
 
+## ai-sample.cpp
+
+一个样例AI，玩家可以用于参考。
+
 # ai_py
 
 此为对C++版本的AI的文件夹内的各文件的解释。
@@ -633,7 +637,7 @@ get_summon_pos_by_camp(camp)
 
 同时该文件中也包含main()函数，用于启动AI。
 
-## ai-HL.py
+## ai-sample.py
 
 一个样例AI，玩家可以用于参考。
 
