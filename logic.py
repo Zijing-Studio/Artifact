@@ -150,7 +150,8 @@ class Game:
                     else:
                         self.end(self.statesystem.get_player_score(0) + 1, 0)
                 # 超时
-                elif opt['state'] == self.state and opt['player'] == self.listen:
+                else:
+                # elif opt['state'] == self.state and opt['player'] == self.listen:
                     if self.listen in self.media_players and self.time_out[self.listen] < 3:
                         self.time_out[self.listen] += 1
                         msg = json.dumps(
