@@ -1,4 +1,5 @@
 from StateSystem.EventListener import EventListener
+from StateSystem.Event import Event
 
 class Miracle:
     def __init__(self,camp,hp,pos,summon_pos_list,state_system):
@@ -34,7 +35,12 @@ class MiracleDamageListener(EventListener):
         if event.name == "Damage":
             try:
                 if event.parameter_dict["target"] == self.host:
+                    hp_loss = min(self.host.hp,event.parameter_dict["damage"])
                     self.host.hp -= event.parameter_dict["damage"]
+                    self.host.emit(Event("MiracleHurt",{
+                        "source": self.host,
+                        "hp_loss": hp_loss
+                    }))
             except:
                 # print("An Error appears while handling Damage event.")
                 pass

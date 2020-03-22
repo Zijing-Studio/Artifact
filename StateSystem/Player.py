@@ -103,8 +103,7 @@ class ActivateArtifactListener(EventListener):
 
 class ScoreListener(EventListener):
     def deal_event(self,event):
-        if event.name == "Damage" and event.parameter_dict["target"].type == "Miracle" \
-            and event.parameter_dict["target"].camp != self.host.camp:
-            self.host.score += event.parameter_dict["damage"] * 1000
+        if event.name == "MiracleHurt" and event.parameter_dict["source"].camp != self.host.camp:
+            self.host.score += event.parameter_dict["hp_loss"] * 1000
         if event.name == "Death" and event.parameter_dict["source"].camp != self.host.camp:
             self.host.score += event.parameter_dict["source"].level
