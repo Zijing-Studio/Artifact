@@ -387,7 +387,7 @@ class Game:
                 send_init(PLAYER_TIME, 1024)
                 self.send_media_info(media_players_info[player], player)
             else:
-                send_init(AI_TIME, 1024)
+                send_init(10, 1024)
                 self.send_game_info()
             opt_dict = read_opt()
             if opt_dict["player"] == player:
