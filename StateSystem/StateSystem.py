@@ -58,13 +58,13 @@ class StateSystem:
     def start_event_processing(self):
         while self.event_heap.len():
             current_event = self.event_heap.pop()
-            self.deal_event(current_event)
             for player in self.player_list:
                 player.deal_event(current_event)
             for unit in self.map.unit_list:
                 unit.deal_event(current_event)
             for miracle in self.map.miracle_list:
                 miracle.deal_event(current_event)
+            self.deal_event(current_event)
         # Check Death
         new_unit_list = []
         for unit in self.map.unit_list:
