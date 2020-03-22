@@ -45,7 +45,7 @@ UNIT_DATA = {
         "atk_range": [(0,0),(0,0),(0,0)],
         "max_move": [3,3,3],
         "cool_down": [4,4,5],
-        "duplicate": 4,
+        "duplicate": 3,
         "flying": False,
         "atk_flying": False,
         "agility": False,
@@ -56,7 +56,7 @@ UNIT_DATA = {
         "atk": [3,4,5],
         "hp": [5,7,9],
         "atk_range": [(1,2),(1,2),(1,2)],
-        "max_move": [3,3,3],
+        "max_move": [2,2,2],
         "cool_down": [5,5,5],
         "duplicate": 3,
         "flying": False,
@@ -67,7 +67,7 @@ UNIT_DATA = {
     "Inferno": {
         "cost": [8],
         "atk": [8],
-        "hp": [8],
+        "hp": [12],
         "atk_range": [(1,1)],
         "max_move": [3],
         "cool_down": [999],
@@ -84,7 +84,7 @@ ARTIFACTS = [
         "name": "HolyLight",
         "target_type": "Pos",
         "cost": 6,
-        "cool_down": 6
+        "cool_down": 4
     },
     {
         "name": "SalamanderShield",
