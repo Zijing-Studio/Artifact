@@ -61,24 +61,24 @@ namespace card
 
 // 牧师
     const Creature PRIEST[4] = {Creature("Priest", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-                                Creature("Priest", 4, 2, 0, 2, 0, 0, 3, 4, 0, 0, 0, 0),
-                                Creature("Priest", 4, 3, 0, 2, 0, 0, 3, 4, 0, 0, 0, 0),
-                                Creature("Priest", 4, 5, 0, 3, 0, 0, 3, 5, 0, 0, 0, 0)};
+                                Creature("Priest", 3, 2, 0, 2, 0, 0, 3, 4, 0, 0, 0, 0),
+                                Creature("Priest", 3, 3, 0, 2, 0, 0, 3, 4, 0, 0, 0, 0),
+                                Creature("Priest", 3, 5, 0, 3, 0, 0, 3, 5, 0, 0, 0, 0)};
 
 // 火山之龙
     const Creature VOLCANOGRAGON[4] = {Creature("VolcanoDragon", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-                                       Creature("VolcanoDragon", 3, 5, 3, 5, 1, 2, 3, 5, 0, 0, 0, 0),
-                                       Creature("VolcanoDragon", 3, 7, 4, 7, 1, 2, 3, 5, 0, 0, 0, 0),
-                                       Creature("VolcanoDragon", 3, 9, 5, 9, 1, 2, 3, 5, 0, 0, 0, 0)};
+                                       Creature("VolcanoDragon", 3, 5, 3, 5, 1, 2, 2, 5, 0, 0, 0, 0),
+                                       Creature("VolcanoDragon", 3, 7, 4, 7, 1, 2, 2, 5, 0, 0, 0, 0),
+                                       Creature("VolcanoDragon", 3, 9, 5, 9, 1, 2, 2, 5, 0, 0, 0, 0)};
 
 // 圣光之耀
-    const Artifact HOLYLIGHT = Artifact("HolyLight", 8, 6, "Pos");
+    const Artifact HOLYLIGHT = Artifact("HolyLight", 8, 4, "Pos");
 // 阳炎之盾
     const Artifact SALAMANDERSHIELD = Artifact("SalamanderShield", 6, 4, "Unit");
 // 地狱之火
     const Artifact INFERNOFLAME = Artifact("InfernoFlame", 6, 6, "Pos");
 // 地狱火
-    const Creature INFERNO = Creature("Inferno", 0, 0, 8, 8, 1, 1, 3, 0, 0, 0, 0, 0);
+    const Creature INFERNO = Creature("Inferno", 0, 0, 8, 12, 1, 1, 3, 0, 0, 0, 0, 0);
 
     const std::map<std::string, const Creature *> CARD_DICT = {
             std::map<std::string, const Creature *>::value_type("Swordsman", SWORDSMAN),

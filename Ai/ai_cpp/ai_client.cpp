@@ -263,13 +263,13 @@ bool AiClient::canUseArtifact(gameunit::Artifact artifact, gameunit::Pos pos, in
             if ((unit->pos == pos) && (not unit->flying))
                 return false;
         }
-        // 距己方神迹范围<=5
-        if (calculator::cube_distance(pos, map.miracles[camp].pos) <= 5)
+        // 距己方神迹范围<=7
+        if (calculator::cube_distance(pos, map.miracles[camp].pos) <= 7)
             return true;
-        // 距己方占领驻扎点范围<=3
+        // 距己方占领驻扎点范围<=5
         for (auto barrack = map.barracks.begin(); barrack != map.barracks.end(); barrack++)
         {
-            if ((barrack->camp == camp) && (calculator::cube_distance(pos, barrack->pos) <= 3))
+            if ((barrack->camp == camp) && (calculator::cube_distance(pos, barrack->pos) <= 5))
                 return true;
         }
     }

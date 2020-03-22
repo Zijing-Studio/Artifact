@@ -295,13 +295,13 @@ class AiClient:
                 for unit in self.map.units:
                     if (unit.pos == target) and (not unit.flying):
                         return False
-                # 神迹范围<=5
-                if calculator.cube_distance(target, self.map.miracles[camp].pos) <= 5:
+                # 神迹范围<=7
+                if calculator.cube_distance(target, self.map.miracles[camp].pos) <= 7:
                     return True
-                # 占领驻扎点范围<=3
+                # 占领驻扎点范围<=5
                 for barrack in self.map.barracks:
                     if (barrack.camp == camp and
-                            calculator.cube_distance(target, barrack.pos) <= 3):
+                            calculator.cube_distance(target, barrack.pos) <= 5):
                         return True
         return False
 

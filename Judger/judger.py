@@ -80,6 +80,7 @@ class Player(threading.Thread):
         while not self.end_tag:
             # print(sum)
             return_code = self.subpro.poll()
+            #print(return_code)
             if return_code is not None:
                 self.judge_thread.send_run_error(self.player_id)
                 break
@@ -223,7 +224,8 @@ class Judger(threading.Thread):
     def receive_message(self, data, player_id):
         player_message_dict = {'player': player_id, 'content': data}
         if self.debug_ai:#pragma no cover
-            self.std_buffer.write(bytes(json.dumps(player_message_dict), encoding='utf-8'))
+            print(player_message_dict)
+            #self.std_buffer.write(bytes(json.dumps(player_message_dict), encoding='utf-8'))
         send_flag = False
         self.mutex_listen.acquire()
         for listen_id in self.listen_list:
@@ -241,7 +243,7 @@ class Judger(threading.Thread):
         解析json并发送消息
         '''
         if self.debug_logic:#pragma no cover
-            self.std_buffer.write(logic_data)
+            print(logic_data)
         if send_goal != -1:
             try:
                 assert send_goal >= 0
@@ -273,7 +275,7 @@ class Judger(threading.Thread):
                 tmp_list = []
                 for i in self.listen_list:
                     tmp_dict = {"position": i, 'time': self.last_message[i]}
-                    tmp_dict['memory'] = 0
+                    # tmp_dict['memory'] = 0
                     if self.re_flag[i]:
                         tmp_dict['status'] = 'RE'
                     elif self.ole_flag[i]:
@@ -308,6 +310,21 @@ class Judger(threading.Thread):
                     self.std_buffer.logic_send_error(logic_data.decode())
                     return True
         elif game_state < 0:
+            if self.start_flag:
+                tmp_list = []
+                for i in self.listen_list:
+                    tmp_dict = {"position": i, 'time': self.last_message[i]}
+                    tmp_dict['memory'] = 0
+                    if self.re_flag[i]:
+                        tmp_dict['status'] = 'RE'
+                    elif self.ole_flag[i]:
+                        tmp_dict['status'] = 'OLE'
+                    elif self.tle_flag:
+                        tmp_dict['status'] = 'TLE'
+                    else:
+                        tmp_dict['status'] = 'OK'
+                    tmp_list.append(tmp_dict)
+                self.record.append(tmp_list)
             self.clear_all()
             try:
                 end_str = data['end_info']
@@ -346,6 +363,7 @@ class Judger(threading.Thread):
         error_content = {'player': player_id, 'state': self.state, 'error': 0, 'error_log': "RUN ERROR"}
         error_data = {'player': -1, 'content': json.dumps(error_content)}
         self.write(convert_byte(json.dumps(error_data)))
+        print(error_data)
 
     def send_ole_error(self, player_id):
         '''

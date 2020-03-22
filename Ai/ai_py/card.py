@@ -50,22 +50,22 @@ BLACKBAT = [Creature("BlackBat", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
             Creature("BlackBat", 4, 5, 5, 2, 0, 1, 5, 2, 1, 1, 0, 0)]
 
 PRIEST = [Creature("Priest", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-          Creature("Priest", 4, 2, 0, 2, 0, 0, 3, 4, 0, 0, 0, 0),
-          Creature("Priest", 4, 3, 0, 2, 0, 0, 3, 4, 0, 0, 0, 0),
-          Creature("Priest", 4, 5, 0, 3, 0, 0, 3, 5, 0, 0, 0, 0)]
+          Creature("Priest", 3, 2, 0, 2, 0, 0, 3, 4, 0, 0, 0, 0),
+          Creature("Priest", 3, 3, 0, 2, 0, 0, 3, 4, 0, 0, 0, 0),
+          Creature("Priest", 3, 5, 0, 3, 0, 0, 3, 5, 0, 0, 0, 0)]
 
 VOLCANOGRAGON = [Creature("VolcanoDragon", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-                 Creature("VolcanoDragon", 3, 5, 3, 5, 1, 2, 3, 5, 0, 0, 0, 0),
-                 Creature("VolcanoDragon", 3, 7, 4, 7, 1, 2, 3, 5, 0, 0, 0, 0),
-                 Creature("VolcanoDragon", 3, 9, 5, 9, 1, 2, 3, 5, 0, 0, 0, 0)]
+                 Creature("VolcanoDragon", 3, 5, 3, 5, 1, 2, 2, 5, 0, 0, 0, 0),
+                 Creature("VolcanoDragon", 3, 7, 4, 7, 1, 2, 2, 5, 0, 0, 0, 0),
+                 Creature("VolcanoDragon", 3, 9, 5, 9, 1, 2, 2, 5, 0, 0, 0, 0)]
 
-HOLYLIGHT = Artifact("HolyLight", 8, 6, "Pos")
+HOLYLIGHT = Artifact("HolyLight", 8, 4, "Pos")
 
 SALAMANDERSHIELD = Artifact("SalamanderShield", 6, 4, "Unit")
 
 INFERNOFLAME = Artifact("InfernoFlame", 6, 6, "Pos")
 
-INFERNO = Creature("Inferno", 0, 0, 8, 8, 1, 1, 3, 0, 0, 0, 0, 0)
+INFERNO = Creature("Inferno", 0, 0, 8, 12, 1, 1, 3, 0, 0, 0, 0, 0)
 
 CARD_DICT = {
     'Swordsman': SWORDSMAN,
