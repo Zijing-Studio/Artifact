@@ -85,29 +85,16 @@ class Game:
         self.parser = Parser(self.statesystem)
         self.map_type = random.randint(0, 1)  # 地图类型
         self.day_time = random.randint(0, 1)  # 地图时间
+        self.time_out = [0, 0]  # 超时次数
 
     def check_game_end(self):
         '''判断游戏是否结束，若结束则结束对局
         '''
-        miracle_hp = [self.statesystem.get_miracle_by_id(
-            0).hp, self.statesystem.get_miracle_by_id(1).hp]
-        # 最大回合数
-        if self._round >= MAX_ROUND:
-            if miracle_hp[0] > 0 and miracle_hp[0] > miracle_hp[1]:
-                self.end(0)
-            elif miracle_hp[1] > 0 and miracle_hp[1] > miracle_hp[0]:
-                self.end(1)
-            else:
-                self.end(2)
-        if miracle_hp[0] <= 0 and miracle_hp[1] <= 0:
+        miracle_hp = [self.statesystem.get_miracle_by_id(0).hp,
+                      self.statesystem.get_miracle_by_id(1).hp]
+        if self._round >= MAX_ROUND or miracle_hp[0] <= 0 or miracle_hp[1] <= 0:
             self.is_end = True
-            self.end(2)
-        elif miracle_hp[1] <= 0:
-            self.is_end = True
-            self.end(0)
-        elif miracle_hp[0] <= 0:
-            self.is_end = True
-            self.end(1)
+            self.end(self.statesystem.get_player_score(0), self.statesystem.get_player_score(1))
 
     def change_round(self):
         '''回合转换,切换到下一个玩家
@@ -148,31 +135,37 @@ class Game:
                 if special_type == "endround":
                     break
                 if special_type == "surrender":
+                    self.is_end = True
                     if opt_dict['player'] == self.players[0]:
-                        self.end(1)
+                        self.end(0, self.statesystem.get_player_score(1) + 1)
                     else:
-                        self.end(0)
+                        self.end(self.statesystem.get_player_score(0) + 1, 0)
             # AI异常
             elif opt_dict['player'] == -1:
                 opt = json.loads(opt_dict['content'])
                 # AI异常退出
                 if opt['error'] == 0:
+                    self.is_end = True
                     if opt['player'] == self.players[0]:
-                        self.end(1)
+                        self.end(0, self.statesystem.get_player_score(1) + 1)
                     else:
-                        self.end(0)
+                        self.end(self.statesystem.get_player_score(0) + 1, 0)
                 # 超时
                 elif opt['state'] == self.state and opt['player'] == self.listen:
-                    msg = json.dumps(
-                        {"player": 0 if self.listen == self.players[0] else 1,
-                         "round": self._round,
-                         "operation_type": "endround",
-                         "operation_parameters": {}})
-                    self.parser.parse(msg)
-                    if DEBUG:
-                        with open('log.txt', 'a') as logfile:
-                            logfile.write('timeout!\n\n')
-                            logfile.write(msg+',\n\n')
+                    if self.listen in self.media_players and self.time_out[self.listen] < 3:
+                        self.time_out[self.listen] += 1
+                        msg = json.dumps(
+                            {"player": 0 if self.listen == self.players[0] else 1,
+                             "round": self._round,
+                             "operation_type": "endround",
+                             "operation_parameters": {}})
+                        self.parser.parse(msg)
+                    else:
+                        self.is_end = True
+                        if opt['player'] == self.players[0]:
+                            self.end(0, self.statesystem.get_player_score(1) + 1)
+                        else:
+                            self.end(self.statesystem.get_player_score(0) + 1, 0)
                     break
 
     def get_media_info(self, events):
@@ -356,7 +349,7 @@ class Game:
             message['round'] = self._round
             message['camp'] = 0 if self.listen == self.players[0] else 1
         # 前六位表示长度 后面是表示信息的json格式字符串
-        message_json = json.dumps(message).replace(" ","")
+        message_json = json.dumps(message).replace(" ", "")
         json_length = str(len(message_json))
         state_dict['content'] = [
             "0" * (6 - len(json_length)) + json_length + message_json]
@@ -372,12 +365,10 @@ class Game:
             1: 该玩家正常进入游戏，且为评测机本地AI或者远程算力
             2: 该玩家正常进入游戏，且为远程连接播放器
         '''
-        if len(player_list) != 2 or (player_list[0] == player_list[1] == 0):
-            self.end(2)
         if player_list[0] == 0:
-            self.end(self.players[1])
+            self.end(0, 1)
         if player_list[1] == 0:
-            self.end(self.players[0])
+            self.end(1, 0)
 
         for player, status in enumerate(player_list):
             if status == 2:
@@ -394,8 +385,10 @@ class Game:
             self.state += 1
             self.listen = self.players[player]
             if self.players[player] in self.media_players:
+                send_init(PLAYER_TIME, 1024)
                 self.send_media_info(media_players_info[player], player)
             else:
+                send_init(AI_TIME, 1024)
                 self.send_game_info()
             opt_dict = read_opt()
             if opt_dict["player"] == self.players[player]:
@@ -412,15 +405,12 @@ class Game:
                             logfile.write(opt_dict["content"]+',\n\n')
                     is_players_ready[player] = True
         # 双方玩家是否均准备好卡组
-        if not is_players_ready[0] and not is_players_ready[1]:
+        if not is_players_ready[0]:
             self.is_end = True
-            self.end(2)
-        elif not is_players_ready[0]:
-            self.is_end = True
-            self.end(1)
+            self.end(0, 1)
         elif not is_players_ready[1]:
             self.is_end = True
-            self.end(0)
+            self.end(1, 0)
 
     def start(self):
         '''开始游戏
@@ -429,8 +419,6 @@ class Game:
         opt_dict = read_opt()
         self.init_player(opt_dict['player_list'])
         self.replay = opt_dict['replay']
-        # 每个回合的时间限制和单条消息的最大长度
-        send_init(PLAYER_TIME, 1024)
         # 处理初始卡组
         self.select_cards()
         self.send_media_info(new=True)
@@ -448,23 +436,24 @@ class Game:
             self.check_game_end()
             self.change_round()
 
-    def end(self, winner):
+    def end(self, player0_score, player1_score):
         '''游戏终局处理
 
         Args:
-            winner: 胜者。0/1表示0/1号玩家获胜，2表示平局。
+            player0_score: 先手玩家得分
+            player1_score: 后手玩家得分
         '''
+        if player0_score == player1_score:
+            player1_score += 1
+        winner = 0 if player0_score > player1_score else 1
         media_info_list = [self._round, 10, winner, 0, 0, 0, 0]
         self.send_media_info(media_info_list)
         self.send_media_info([-1], -1)
         if DEBUG:
             with open('log.txt', 'a') as logfile:
-                if winner == -1:
-                    logfile.write('draw!\n\n')
-                else:
-                    logfile.write('player '+str(winner)+' win!'+'\n\n')
-        end_info = {str(self.players[0]): self.statesystem.get_player_score(0),
-                    str(self.players[1]): self.statesystem.get_player_score(1)}
+                logfile.write('player '+str(winner)+' win!'+'\n\n')
+        end_info = {"0": player0_score if self.players[0] == 0 else player1_score,
+                    "1": player1_score if self.players[1] == 1 else player0_score}
         send_end_info(end_info)
         sys.exit()
 
