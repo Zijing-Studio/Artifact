@@ -73,7 +73,6 @@ class Game:
     def __init__(self):
         '''初始化变量
         '''
-        self.players = [0, 1]   # player0, player1对应的编号
         self.media_players = []  # 播放器
         self.audience = []      # 观众
         self.replay = ""        # 录像文件存储处
@@ -101,12 +100,12 @@ class Game:
         '''
         self._round += 1
         self.parser.set_round(self._round)
-        self.listen = self.players[1] if self.listen == self.players[0] else self.players[0]
+        self.listen = 1 - self.listen
 
     def get_round_ope(self):
         '''一个游戏回合(主要阶段)内的操作
         '''
-        if self.players[self.listen] in self.media_players:
+        if self.listen in self.media_players:
             send_init(PLAYER_TIME, 1024)
         else:
             send_init(AI_TIME, 1024)
@@ -118,7 +117,7 @@ class Game:
                     self.parser.parse(opt_dict["content"])
                 except Exception as parse_error:
                     self.send_media_info(
-                        [self._round, -1, 0, 0, 0, 0, 0], self.players[self.listen])
+                        [self._round, -1, 0, 0, 0, 0, 0], self.listen)
                     if DEBUG:
                         with open('log.txt', 'a') as logfile:
                             logfile.write(opt_dict["content"]+',\n\n')
@@ -136,7 +135,7 @@ class Game:
                     break
                 if special_type == "surrender":
                     self.is_end = True
-                    if opt_dict['player'] == self.players[0]:
+                    if opt_dict['player'] == 0:
                         self.end(0, self.statesystem.get_player_score(1) + 1)
                     else:
                         self.end(self.statesystem.get_player_score(0) + 1, 0)
@@ -146,7 +145,7 @@ class Game:
                 # AI异常退出
                 if opt['error'] == 0:
                     self.is_end = True
-                    if opt['player'] == self.players[0]:
+                    if opt['player'] == 0:
                         self.end(0, self.statesystem.get_player_score(1) + 1)
                     else:
                         self.end(self.statesystem.get_player_score(0) + 1, 0)
@@ -155,14 +154,14 @@ class Game:
                     if self.listen in self.media_players and self.time_out[self.listen] < 3:
                         self.time_out[self.listen] += 1
                         msg = json.dumps(
-                            {"player": 0 if self.listen == self.players[0] else 1,
+                            {"player": 0 if self.listen == 0 else 1,
                              "round": self._round,
                              "operation_type": "endround",
                              "operation_parameters": {}})
                         self.parser.parse(msg)
                     else:
                         self.is_end = True
-                        if opt['player'] == self.players[0]:
+                        if opt['player'] == 0:
                             self.end(0, self.statesystem.get_player_score(1) + 1)
                         else:
                             self.end(self.statesystem.get_player_score(0) + 1, 0)
@@ -329,9 +328,9 @@ class Game:
                     replay_file.write(
                         int(media_info).to_bytes(4, 'big', signed=True))
         elif goal in (0, 1):
-            if self.players[goal] in self.media_players:
+            if goal in self.media_players:
                 send_state({'state': self.state, 'listen': [self.listen],
-                            'player': [self.players[goal]],
+                            'player': [goal],
                             'content': [json.dumps(media_info_list)]})
 
     def send_game_info(self):
@@ -343,11 +342,11 @@ class Game:
                       'player': [self.listen], 'content': []}
         message = dict()
         if self._round == -1:
-            message = {'camp': 0 if self.listen == self.players[0] else 1}
+            message = {'camp': 0 if self.listen == 0 else 1}
         else:
             message = self.statesystem.parse()
             message['round'] = self._round
-            message['camp'] = 0 if self.listen == self.players[0] else 1
+            message['camp'] = 0 if self.listen == 0 else 1
         # 前六位表示长度 后面是表示信息的json格式字符串
         message_json = json.dumps(message).replace(" ", "")
         json_length = str(len(message_json))
@@ -381,17 +380,17 @@ class Game:
             [0, 0, 0, self.map_type, self.day_time, 0, 0],
             [0, 0, 1, self.map_type, self.day_time, 0, 0]]
         is_players_ready = [False, False]
-        for player in self.players:
+        for player in [0, 1]:
             self.state += 1
-            self.listen = self.players[player]
-            if self.players[player] in self.media_players:
+            self.listen = player
+            if player in self.media_players:
                 send_init(PLAYER_TIME, 1024)
                 self.send_media_info(media_players_info[player], player)
             else:
                 send_init(AI_TIME, 1024)
                 self.send_game_info()
             opt_dict = read_opt()
-            if opt_dict["player"] == self.players[player]:
+            if opt_dict["player"] == player:
                 try:
                     self.parser.parse(opt_dict["content"])
                 except Exception as parse_error:
@@ -426,7 +425,7 @@ class Game:
         self.send_media_info()
         # 游戏回合
         self.parser.set_round(0)
-        self.listen = self.players[0]
+        self.listen = 0
         while not self.is_end:
             self.state += 1
             self.send_media_info()
@@ -452,8 +451,7 @@ class Game:
         if DEBUG:
             with open('log.txt', 'a') as logfile:
                 logfile.write('player '+str(winner)+' win!'+'\n\n')
-        end_info = {"0": player0_score if self.players[0] == 0 else player1_score,
-                    "1": player1_score if self.players[1] == 1 else player0_score}
+        end_info = {"0": player0_score, "1": player1_score}
         send_end_info(end_info)
         sys.exit()
 
