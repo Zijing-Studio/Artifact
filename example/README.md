@@ -2,9 +2,9 @@
 
 # 概述
 
-C++版ai位于ai_cpp文件夹中。
+C++版ai位于example_cpp文件夹中。
 
-python版ai位于ai_py文件夹中。
+python版ai位于example_py文件夹中。
 
 以下是对ai运行流程、文件夹中各文件结构等的解释。
 
@@ -69,6 +69,10 @@ main.py中有一个DEBUG参数，设置为True的时候会在当前目录下生�
 # example_cpp
 
 此为对C++版本的AI的文件夹内的各文件的解释。
+
+## makefile
+
+C++的makefile文件，目前仅适用于样例AI。玩家编写自己的AI后，需要根据实际情况修改makefile。
 
 ## json.hpp
 
@@ -389,7 +393,7 @@ std::vector<gameunit::Pos> getSummonPosByCamp(int camp)
 
 包含若干类，用于表述游戏中各单位的信息。
 
-> 具体的类的结构可查看gameinfo.md。
+> 具体的类的结构可查看gameunit板块。
 
 ## card.py
 
@@ -643,7 +647,7 @@ get_summon_pos_by_camp(camp)
 
 # gameunit
 
-ai回合开始时/每次执行非结束回合的游戏操作时会收到一个表述游戏当前局面信息的json格式的字符串。对该字符串的解析已于updateGameInfo()函数中实现。(gameunit.hpp中的from_json()用于把json转化成相应对象，细节此处不表。)updateGameInfo()函数会将相关的信息以结构体的形式存入类属性中。相关的结构体在gameunit.hpp中给出。以下为gameunit.hpp相关结构体的具体参数的解释。
+ai回合开始时/每次执行非结束回合的游戏操作时会收到一个表述游戏当前局面信息的json格式的字符串。对该字符串的解析已于updateGameInfo()函数中实现。(gameunit.h中的from_json()用于把json转化成相应对象，细节此处不表。)updateGameInfo()函数会将相关的信息以结构体的形式存入类属性中。相关的结构体在gameunit.h中给出。以下为gameunit.h相关结构体的具体参数的解释。
 
 python版本的gameunit与C++版本的gameunit的设计完全相同（不过由于类型上的不同，C++的vector对应python的list，C++的std::tuple<>对应python的tuple，等），此处不再赘述。
 
