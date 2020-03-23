@@ -53,20 +53,20 @@ python版ai位于ai_py文件夹中。
 启动指令: python <judger路径> <启动逻辑command> <启动AI 1 command> <启动AI 2 command> <逻辑生成replay路径>
 
 启动指令示例(注意确认路径是否正确)
-Windows: python .\Judger\judger.py python+.\\logic.py python+.\\Ai\\ai_py\\ai-sample.py  .\\Ai\\ai_cpp\\ai.exe  record
-Linux/Mac: python ./Judger/judger.py python+./logic.py python+./Ai/ai_py/ai-sample.py  ./Ai/ai_cpp/ai  record
+Windows: python .\game\Judger\judger.py python+.\\game\\main.py python+.\\example\\example_py\\main.py  .\\example\\example_cpp\\main.exe  record
+Linux/Mac: python ./game/Judger/judger.py python+./game/main.py python+./example/example_py/main.py  ./example/example_cpp/main  record
 
 AI可以是C++版本，也可以选择python版本。选择其一即可。C++版本的AI需要使用对应的可执行文件，python版本的AI需要使用对应的.py文件。
 
-（对于样例C++版本AI，可以使用`g++ gameunit.cpp calculator.cpp ai_client.cpp ai-sample.cpp -o ai`命令编译出对应的可执行文件。）
+（对于样例C++版本AI，可以使用`make`命令编译出对应的可执行文件。）
 
 运行结束后，会输出`{"end_info": "{\"0\": ..., \"1\": ...}", "record": [...]}`，其中end_info表示0、1号玩家的得分，record记录了每个回合AI的物理用时和状态。（得分=1000*对对手神迹造成的伤害+击杀对手生物总星数。掉线/超时AI得分会被清零，同时其对手得分加1。得分相同时会额外再给后手玩家加一分，判定后手玩家胜利。此得分仅表示游戏得分，与天梯积分无关。）
 
 **注意judger与AI的通信使用标准输入/输出流。除了直接使用sdk中相关的函数外，请不要在标准输出流中输出任何信息。**
 
-logic.py中有一个DEBUG参数，设置为True的时候会在当前目录下生成一个log.txt文件，记录收发的信息。
+main.py中有一个DEBUG参数，设置为True的时候会在当前目录下生成一个log.txt文件，记录收发的信息。
 
-# ai_cpp
+# example_cpp
 
 此为对C++版本的AI的文件夹内的各文件的解释。
 
@@ -381,9 +381,9 @@ std::vector<gameunit::Pos> getSummonPosByCamp(int camp)
 
 一个样例AI，玩家可以用于参考。
 
-# ai_py
+# example_py
 
-此为对C++版本的AI的文件夹内的各文件的解释。
+此为对python版本的AI的文件夹内的各文件的解释。
 
 ## gameunit.py
 
@@ -637,9 +637,9 @@ get_summon_pos_by_camp(camp)
 
 同时该文件中也包含main()函数，用于启动AI。
 
-## ai-sample.py
+## main.py
 
-一个样例AI，玩家可以用于参考。
+（即ai-sample）一个样例AI，玩家可以用于参考。
 
 # gameunit
 
