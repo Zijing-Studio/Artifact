@@ -112,6 +112,8 @@ class Game:
         while not self.is_end:
             self.send_game_info()
             opt_dict = read_opt()
+            while opt_dict["player"] == 1 - self.listen:
+                opt_dict = read_opt()
             if opt_dict["player"] == self.listen:
                 try:
                     self.parser.parse(opt_dict["content"])
@@ -355,21 +357,23 @@ class Game:
             "0" * (6 - len(json_length)) + json_length + message_json]
         send_state(state_dict)
 
-    def init_player(self, player_list):
-        '''根据玩家列表进行初始化处理
+    def init(self):
+        '''根据玩家列表、录像文件地址进行初始化处理
 
-        Args:
-            player_list:
+        player_list:
             [1, 0, 2]表示0号玩家为本地AI或者远程算力连接，1号玩家未正常启动进程，2号玩家是远程连接播放器
             0: 该玩家进入游戏失败
             1: 该玩家正常进入游戏，且为评测机本地AI或者远程算力
             2: 该玩家正常进入游戏，且为远程连接播放器
         '''
+        opt_dict = read_opt()
+        self.replay = opt_dict['replay']
+        self.send_media_info(new=True)
+        player_list = opt_dict['player_list']
         if player_list[0] == 0:
             self.end(0, 1)
         if player_list[1] == 0:
             self.end(1, 0)
-
         for player, status in enumerate(player_list):
             if status == 2:
                 self.media_players.append(player)
@@ -391,6 +395,15 @@ class Game:
                 send_init(10, 1024)
                 self.send_game_info()
             opt_dict = read_opt()
+            while opt_dict["player"] == 1 - player:
+                opt_dict = read_opt()
+            if opt_dict["player"] == -1:
+                error_player = json.loads(opt_dict['content'])["player"]
+                is_players_ready[error_player] = False
+                if error_player == 1 and player == 0:
+                    opt_dict = read_opt()
+                else:
+                    continue
             if opt_dict["player"] == player:
                 try:
                     self.parser.parse(opt_dict["content"])
@@ -404,6 +417,8 @@ class Game:
                         with open('log.txt', 'a') as logfile:
                             logfile.write(opt_dict["content"]+',\n\n')
                     is_players_ready[player] = True
+            else:
+                is_players_ready[json.loads(opt_dict['content'])["player"]] = False
         # 双方玩家是否均准备好卡组
         if not is_players_ready[0]:
             self.is_end = True
@@ -415,13 +430,9 @@ class Game:
     def start(self):
         '''开始游戏
         '''
-        # 设置玩家、播放器
-        opt_dict = read_opt()
-        self.init_player(opt_dict['player_list'])
-        self.replay = opt_dict['replay']
+        self.init()
         # 处理初始卡组
         self.select_cards()
-        self.send_media_info(new=True)
         self._round = 0
         self.send_media_info()
         # 游戏回合
