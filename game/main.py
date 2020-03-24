@@ -96,19 +96,21 @@ class Game:
             self.end(self.statesystem.get_player_score(0), self.statesystem.get_player_score(1))
 
     def change_round(self):
-        '''回合转换,切换到下一个玩家
+        '''切换到下一个玩家，其回合开始
         '''
-        self._round += 1
-        self.parser.set_round(self._round)
+        self.state += 1
         self.listen = 1 - self.listen
-
-    def get_round_ope(self):
-        '''一个游戏回合(主要阶段)内的操作
-        '''
         if self.listen in self.media_players:
             send_init(PLAYER_TIME, 1024)
         else:
             send_init(AI_TIME, 1024)
+
+        self._round += 1
+        self.parser.set_round(self._round)
+
+    def get_round_ope(self):
+        '''一个游戏回合(主要阶段)内的操作
+        '''
         while not self.is_end:
             self.send_game_info()
             opt_dict = read_opt()
@@ -152,8 +154,11 @@ class Game:
                     else:
                         self.end(self.statesystem.get_player_score(0) + 1, 0)
                 # 超时
-                else:
-                # elif opt['state'] == self.state and opt['player'] == self.listen:
+                # else:
+                elif opt['state'] == self.state and opt['player'] == self.listen:
+                    if DEBUG:
+                        with open('log.txt', 'a') as logfile:
+                            logfile.write('timeout!\n\n')
                     if self.listen in self.media_players and self.time_out[self.listen] < 3:
                         self.time_out[self.listen] += 1
                         msg = json.dumps(
@@ -431,21 +436,14 @@ class Game:
         '''开始游戏
         '''
         self.init()
-        # 处理初始卡组
         self.select_cards()
-        self._round = 0
-        self.send_media_info()
-        # 游戏回合
-        self.parser.set_round(0)
-        self.listen = 0
         while not self.is_end:
-            self.state += 1
+            self.change_round()
             self.send_media_info()
             self.check_game_end()
             self.get_round_ope()
             self.send_media_info()
             self.check_game_end()
-            self.change_round()
 
     def end(self, player0_score, player1_score):
         '''游戏终局处理
