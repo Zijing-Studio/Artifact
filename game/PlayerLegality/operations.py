@@ -135,7 +135,7 @@ class Init(AbstractOperation):
     def artifact_legality(self):
         all_artifacts = []
         for art in ARTIFACTS:
-            all_artifacts.append(art["name"])
+            all_artifacts.append(art)
         for item in self.artifacts:
             if item not in all_artifacts:
                 return False
