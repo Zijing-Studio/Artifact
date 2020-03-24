@@ -1,4 +1,5 @@
 from StateSystem.Event import Event
+from StateSystem.UnitData import UNIT_DATA
 
 class Buff:
     def __init__(self,state_system):
@@ -50,7 +51,7 @@ class PriestAtkBuff(Buff):
         self.type = "PriestAtkBuff"
 
     def buff(self):
-        self.host.atk += 1
+        self.host.atk += UNIT_DATA["Priest"]["atk_up"]
 
     def debuff(self):
-        self.host.atk -= 1
+        self.host.atk -= UNIT_DATA["Priest"]["atk_up"]

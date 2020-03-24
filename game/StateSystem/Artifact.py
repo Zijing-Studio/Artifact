@@ -3,7 +3,7 @@ from StateSystem.Event import Event
 from StateSystem.Buff import Buff
 from StateSystem.EventListener import EventListener
 from StateSystem.Unit import Unit
-from StateSystem.UnitData import ARTIFACT_NAME_PARSED,ARTIFACT_STATE_PARSED,ARTIFACT_TARGET_PARSED
+from StateSystem.UnitData import ARTIFACT_NAME_PARSED,ARTIFACT_STATE_PARSED,ARTIFACT_TARGET_PARSED,ARTIFACTS
 
 ARTIFACT_ID = 0
 
@@ -18,19 +18,19 @@ def gen_artifact_by_name(name,camp,state_system):
         return None
 
 class Artifact:
-    def __init__(self,camp,cost,cool_down,state_system):
+    def __init__(self,camp,name,state_system):
         global ARTIFACT_ID
         self.id = ARTIFACT_ID
         ARTIFACT_ID += 1
         self.state_system = state_system
         self.event_listener_list = []
-        self.cost = cost
-        self.max_cool_down = cool_down
+        self.cost = ARTIFACTS[name]["cost"]
+        self.max_cool_down = ARTIFACTS[name]["cool_down"]
         self.cool_down_time = 0
         self.state = "Ready"
         self.camp = camp
-        self.name = ""
-        self.target_type = None
+        self.name = name
+        self.target_type = ARTIFACTS[name]["target_type"]
     
     def add_event_listener(self,listener):
         listener.host = self
@@ -74,13 +74,12 @@ class Artifact:
 
 class HolyLightArtifact(Artifact):
     def __init__(self,camp,state_system):
-        Artifact.__init__(self,camp,6,6,state_system)
-        self.name = "HolyLight"
-        self.target_type = "Pos"
+        Artifact.__init__(self,camp,"HolyLight",state_system)
 
     def effect(self,target):
         for unit in self.state_system.map.unit_list:
-            if calculator.cube_distance(unit.pos,target) <= 2 and unit.camp == self.camp:
+            if calculator.cube_distance(unit.pos,target) <= ARTIFACTS["HolyLight"]["affect_range"] \
+                and unit.camp == self.camp:
                 self.emit(Event("Heal",{
                     "source": self,
                     "target": unit,
@@ -102,16 +101,14 @@ class HolyLightAtkBuff(Buff):
         self.type = "HolyLightAtkBuff"
 
     def buff(self):
-        self.host.atk += 2
+        self.host.atk += ARTIFACTS["HolyLight"]["atk_up"]
 
     def debuff(self):
-        self.host.atk -= 2
+        self.host.atk -= ARTIFACTS["HolyLight"]["atk_up"]
 
 class SalamanderShieldArtifact(Artifact):
     def __init__(self,camp,state_system):
-        Artifact.__init__(self,camp,6,6,state_system)
-        self.name = "SalamanderShield"
-        self.target_type = "Unit"
+        Artifact.__init__(self,camp,"SalamanderShield",state_system)
 
     def effect(self,target):
         new_buff = SalamanderShieldBuff(self.state_system, self)
@@ -141,8 +138,8 @@ class SalamanderShieldBuff(Buff):
         self.type = "SalamanderShieldBuff"
 
     def buff(self):
-        self.host.max_hp += 3
-        self.host.hp += 3
+        self.host.max_hp += ARTIFACTS["SalamanderShield"]["hp_up"]
+        self.host.hp += ARTIFACTS["SalamanderShield"]["hp_up"]
         if not self.host.holy_shield:
             self.state_system.emit(Event("BuffAdd",{
                     "source": self.host,
@@ -150,26 +147,25 @@ class SalamanderShieldBuff(Buff):
                 },1))
 
     def debuff(self):
-        self.host.max_hp -= 3
+        self.host.max_hp -= ARTIFACTS["SalamanderShield"]["hp_up"]
         self.host.hp = min(self.host.hp, self.host.max_hp)
 
 class InfernoFlameArtifact(Artifact):
     def __init__(self,camp,state_system):
-        Artifact.__init__(self,camp,6,6,state_system)
-        self.name = "InfernoFlame"
-        self.target_type = "Pos"
+        Artifact.__init__(self,camp,"InfernoFlame",state_system)
 
     def effect(self,target):
         for unit in self.state_system.map.unit_list:
-            if calculator.cube_distance(unit.pos,target) <= 2 and unit.camp != self.camp:
+            if calculator.cube_distance(unit.pos,target) <= ARTIFACTS[self.name]["affect_range"] \
+                and unit.camp != self.camp:
                 self.emit(Event("Damage",{
                     "source": self,
                     "target": unit,
-                    "damage": 2,
+                    "damage": ARTIFACTS[self.name]["damage"],
                     "type": "InfernoFlameActivate"
                 },-3))
         self.emit(Event("Summon",{
-            "type": "Inferno",
+            "type": ARTIFACTS[self.name]["summon"],
             "level": 1,
             "pos": target,
             "camp": self.camp,

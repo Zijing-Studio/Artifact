@@ -1,6 +1,7 @@
-from .Event import Event
+from StateSystem.Event import Event
 from Geometry import calculator
-from .Buff import PriestAtkBuff
+from StateSystem.Buff import PriestAtkBuff
+from StateSystem.UnitData import UNIT_DATA
 
 class EventListener:
     def __init__(self):
@@ -170,11 +171,12 @@ class PriestHealListener(EventListener):
         if event.name == "TurnEnd" and self.host.state_system.current_player_id == self.host.camp:
             try:
                 for unit in self.host.state_system.map.unit_list:
-                    if calculator.cube_distance(unit.pos,self.host.pos) <= 2 and unit.camp == self.host.camp:
+                    if calculator.cube_distance(unit.pos,self.host.pos) <= UNIT_DATA["Priest"]["heal_range"] \
+                        and unit.camp == self.host.camp:
                         self.host.emit(Event("Heal",{
                             "source": self.host,
                             "target": unit,
-                            "heal": 1
+                            "heal": UNIT_DATA["Priest"]["heal"]
                         },-3))
             except:
                 # print("An Error appears while handling PriestHeal event..")
@@ -186,7 +188,8 @@ class PriestAtkListener(EventListener):
             try:
                 # Add buff
                 for unit in self.host.state_system.map.unit_list:
-                    if calculator.cube_distance(unit.pos,self.host.pos) <= 1 and unit.camp == self.host.camp \
+                    if calculator.cube_distance(unit.pos,self.host.pos) <= UNIT_DATA["Priest"]["atk_up_range"] \
+                        and unit.camp == self.host.camp \
                         and unit != self.host:
                         found = False
                         for buff in self.host.priest_buff_list:
@@ -199,7 +202,7 @@ class PriestAtkListener(EventListener):
                             self.host.priest_buff_list.append(new_buff)
                 # Delete Buff
                 for buff in self.host.priest_buff_list:
-                    if calculator.cube_distance(buff.host.pos,self.host.pos) > 1:
+                    if calculator.cube_distance(buff.host.pos,self.host.pos) > UNIT_DATA["Priest"]["atk_up_range"]:
                         buff.delete()
                         self.host.priest_buff_list.remove(buff)
             except:
@@ -222,13 +225,13 @@ class VolcanoDragonAtkListener(EventListener):
                 if event.parameter_dict["source"] == self.host and\
                     event.parameter_dict["target"].type != "Miracle":
                     for unit in self.host.state_system.map.unit_list:
-                        if (calculator.cube_distance(unit.pos,self.host.pos) == 2 and
-                            calculator.cube_distance(unit.pos,event.parameter_dict["target"].pos) == 1) and \
+                        if (calculator.cube_distance(unit.pos,self.host.pos) == UNIT_DATA["VolcanoDragon"]["self_range"] and
+                            calculator.cube_distance(unit.pos,event.parameter_dict["target"].pos) == UNIT_DATA["VolcanoDragon"]["target_range"]) and \
                             unit.camp != self.host.camp and not unit.flying:
                             self.host.emit(Event("Damage",{
                                 "source": self.host,
                                 "target": unit,
-                                "damage": self.host.level + 2,
+                                "damage": UNIT_DATA["VolcanoDragon"]["splash_damage"][self.host.level],
                                 "type": "VolcanoDragonSplash"
                             },priority=-1))
             except:
