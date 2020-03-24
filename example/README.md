@@ -1,4 +1,4 @@
-[TOC]
+
 
 # 概述
 
@@ -52,9 +52,11 @@ python版ai位于example_py文件夹中。
 
 启动指令: python <judger路径> <启动逻辑command> <启动AI 1 command> <启动AI 2 command> <逻辑生成replay路径>
 
-启动指令示例(注意确认路径是否正确)
-Windows: python .\game\Judger\judger.py python+.\\game\\main.py python+.\\example\\example_py\\main.py  .\\example\\example_cpp\\main.exe  record
-Linux/Mac: python ./game/Judger/judger.py python+./game/main.py python+./example/example_py/main.py  ./example/example_cpp/main  record
+启动指令示例(在根目录下运行，注意确认路径是否正确)
+
+```
+python ./game/Judger/judger.py python+./game/main.py python+./example/example_py/main.py  ./example/example_cpp/main  record
+```
 
 AI可以是C++版本，也可以选择python版本。选择其一即可。C++版本的AI需要使用对应的可执行文件，python版本的AI需要使用对应的.py文件。
 
