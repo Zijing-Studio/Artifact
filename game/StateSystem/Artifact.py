@@ -67,10 +67,11 @@ class Artifact:
         self.cool_down_time = self.max_cool_down
 
     def cool_down(self):
-        if self.cool_down_time > 0:
-            self.cool_down_time -= 1
-        if self.cool_down_time == 0:
-            self.state = "Ready"
+        if self.state == "Cooling Down":
+            if self.cool_down_time > 0:
+                self.cool_down_time -= 1
+            if self.cool_down_time == 0:
+                self.state = "Ready"
 
 class HolyLightArtifact(Artifact):
     def __init__(self,camp,state_system):

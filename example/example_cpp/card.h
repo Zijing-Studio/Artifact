@@ -72,11 +72,11 @@ namespace card
                                        Creature("VolcanoDragon", 3, 9, 5, 9, 1, 2, 2, 5, 0, 0, 0, 0)};
 
 // 圣光之耀
-    const Artifact HOLYLIGHT = Artifact("HolyLight", 8, 4, "Pos");
+    const Artifact HOLYLIGHT = Artifact("HolyLight", 6, 4, "Pos");
 // 阳炎之盾
     const Artifact SALAMANDERSHIELD = Artifact("SalamanderShield", 6, 4, "Unit");
 // 地狱之火
-    const Artifact INFERNOFLAME = Artifact("InfernoFlame", 6, 6, "Pos");
+    const Artifact INFERNOFLAME = Artifact("InfernoFlame", 8, 6, "Pos");
 // 地狱火
     const Creature INFERNO = Creature("Inferno", 0, 0, 8, 12, 1, 1, 3, 0, 0, 0, 0, 0);
 
