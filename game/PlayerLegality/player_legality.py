@@ -55,7 +55,10 @@ class Parser:
             #return operation_object
             raise operation_object
         # check legality
-        legality = operation_object.check_legality()
+        try:
+            legality = operation_object.check_legality()
+        except Exception:
+            legality = str(Exception)
         if legality is True:
             #emit responding event
             #print("emit " + operation_object.name)
