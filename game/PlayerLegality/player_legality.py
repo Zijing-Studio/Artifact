@@ -97,11 +97,11 @@ class Parser:
                 operation_object = operations.Init(self, player_id, self.map, params)
             return operation_object
         except KeyError as error:
-            return KeyError("KeyError: " + str(error))
+            return KeyError("From player legality, KeyError: " + str(error))
         except ValueError as error:
-            return ValueError("ValueError: " + str(error).split(':')[-1])
+            return ValueError("From player legalit, ValueError: " + str(error).split(':')[-1])
         except Exception as error:
-            return Exception(str(error))
+            return Exception("From player legality" + str(error))
 
 if __name__ == "__main__":
     example = {
