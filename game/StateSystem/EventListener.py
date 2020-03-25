@@ -189,7 +189,7 @@ class VolcanoDragonAtkListener(EventListener):
                         self.host.emit(Event("Damage",{
                             "source": self.host,
                             "target": unit,
-                            "damage": UNIT_DATA["VolcanoDragon"]["splash_damage"][self.host.level],
+                            "damage": UNIT_DATA["VolcanoDragon"]["splash_damage"][self.host.level-1],
                             "type": "VolcanoDragonSplash"
                         },priority=-1))
                 
