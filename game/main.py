@@ -10,7 +10,7 @@ from StateSystem.StateSystem import StateSystem
 DEBUG = False  # DEBUG时会生成一个log.txt记录logic收发的信息
 MAX_ROUND = 200
 AI_TIME = 3
-PLAYER_TIME = 60
+PLAYER_TIME = 300
 
 
 def logic_convert_byte(data_str, send_goal):
@@ -84,7 +84,6 @@ class Game:
         self.parser = Parser(self.statesystem)
         self.map_type = random.randint(0, 1)  # 地图类型
         self.day_time = random.randint(0, 1)  # 地图时间
-        self.time_out = [0, 0]  # 超时次数
 
     def check_game_end(self):
         '''判断游戏是否结束，若结束则结束对局
@@ -159,8 +158,7 @@ class Game:
                     if DEBUG:
                         with open('log.txt', 'a') as logfile:
                             logfile.write('timeout!\n\n')
-                    if self.listen in self.media_players and self.time_out[self.listen] < 3:
-                        self.time_out[self.listen] += 1
+                    if self.listen == -1:
                         msg = json.dumps(
                             {"player": 0 if self.listen == 0 else 1,
                              "round": self._round,
