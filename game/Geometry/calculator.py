@@ -158,6 +158,8 @@ def get_obstructs_by_unit(unit, _map):
                     obstructs.append(cube_neighbor(obstruct.pos, i))
             else:
                 obstructs.append(obstruct.pos)
+    if unit.pos in obstructs:
+        obstructs.remove(unit.pos)
     return obstructs
 
 '''
