@@ -206,9 +206,11 @@ std::vector<Point> get_obstructs_by_unit(gameunit::Unit unit, gameunit::Map _map
         if (obstacle.camp != unit.camp) {
 			if (obstacle.flying == unit.flying) {
 				for (int j = 0; j < 6; j++) {
-					obstructs.push_back(cube_neighbor(obstacle.pos, j));
+					Point cur = cube_neighbor(obstacle.pos, j);
+					if (cur != unit.pos)
+						obstructs.push_back(cube_neighbor(obstacle.pos, j));
 				}
-			} else {
+			} else if (obstacle.pos != unit.pos) {
 				obstructs.push_back(obstacle.pos);
 			}
         }
