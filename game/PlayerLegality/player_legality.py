@@ -62,7 +62,10 @@ class Parser:
         if legality is True:
             #emit responding event
             #print("emit " + operation_object.name)
-            operation_object.act()
+            try:
+                operation_object.act()
+            except Exception:
+                raise Exception("from StateSystem:"+str(Exception))
             #return "OK"
         else:
             #return error message
