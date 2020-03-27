@@ -128,7 +128,8 @@
         "BlackBat": 2,
         "Priest": 3,
         "VolcanoDragon": 4,
-        "Inferno": 5
+        "Inferno": 5,
+        "AquaDragon": 6
     },
     "ArtifactNameParsed": {
         "HolyLight": 0,
