@@ -84,6 +84,7 @@ ARCHER = [Creature("Archer")] + get_creature_data("Archer") # 弓箭手
 BLACKBAT = [Creature("BlackBat")] + get_creature_data("BlackBat") # 黑蝙蝠
 PRIEST = [Creature("Priest")] + get_creature_data("Priest") # 牧师
 VOLCANOGRAGON = [Creature("VolcanoDragon")] + get_creature_data("VolcanoDragon") # 火山龙
+AQUADRAGON = [Creature("AquaDragon")] + get_creature_data("AquaDragon") # 海洋之龙
 INFERNO = get_creature_data("Inferno")[0] # 地狱火
 
 HOLYLIGHT = get_artifact_data("HolyLight") # 圣光之耀
@@ -95,7 +96,8 @@ CARD_DICT = {
     'Archer': ARCHER,
     'BlackBat': BLACKBAT,
     'Priest': PRIEST,
-    'VolcanoDragon': VOLCANOGRAGON
+    'VolcanoDragon': VOLCANOGRAGON,
+    'AquaDragon': AQUADRAGON
 }
 
 if __name__ == "__main__":
