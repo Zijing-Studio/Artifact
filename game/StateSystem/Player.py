@@ -44,23 +44,16 @@ class RefreshListener(EventListener):
     def deal_event(self,event):
         if event.name == "Refresh" and event.parameter_dict["camp"] == self.host.camp:
             if self.host.max_mana < 12:
-                self.host.max_mana += 1
+                # on the 4kth turn camp=1 player
+                # on the 4k+1st turn camp=0 player
+                if event.parameter_dict["turn"] % 4 == 1 - self.host.camp:
+                    self.host.max_mana += 1
             self.host.mana = self.host.max_mana
-            # print("Player {}'s mana refreshed to {}".format(
-            #     self.host.camp,
-            #     self.host.mana
-            #     ))
             for capacity in self.host.creature_capacity_list:
                 capacity.cool_down()
             for artifact in self.host.artifact_list:
                 artifact.cool_down()
-            # print("Player {}'s creatures and artifacts cool down".format(
-            #     self.host.camp
-            # ))
             self.host.newly_summoned_id_list = []
-            # print("Player {}'s newly summoned list cleared.".format(
-            #     self.host.camp
-            # ))
 
 class IntoCoolDownListener(EventListener):
     '''

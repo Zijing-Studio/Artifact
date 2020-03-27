@@ -180,3 +180,15 @@ class VolcanoDragon(Unit):
         )
 
         self.add_event_listener(VolcanoDragonAtkListener())
+
+class AquaDragon(Unit):
+    def __init__(self,camp,level,pos,state_system):
+        name = "AquaDragon"
+        Unit.__init__(
+            self,
+            camp,
+            name,
+            level,
+            pos,
+            state_system
+        )

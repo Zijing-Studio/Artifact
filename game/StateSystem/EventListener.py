@@ -147,7 +147,7 @@ class PriestHealListener(EventListener):
                     self.host.emit(Event("Heal",{
                         "source": self.host,
                         "target": unit,
-                        "heal": UNIT_DATA["Priest"]["heal"]
+                        "heal": UNIT_DATA["Priest"]["heal"][self.host.level-1]
                     },-3))
 
 class PriestAtkListener(EventListener):
@@ -164,7 +164,7 @@ class PriestAtkListener(EventListener):
                             found = True
                             break
                     if not found:
-                        new_buff = PriestAtkBuff(self.host.state_system)
+                        new_buff = PriestAtkBuff(self.host.level,self.host.state_system)
                         new_buff.add_on(unit)
                         self.host.priest_buff_list.append(new_buff)
             # Delete Buff
