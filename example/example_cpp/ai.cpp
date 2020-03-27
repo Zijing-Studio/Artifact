@@ -1,5 +1,8 @@
 #include "ai_client.h"
-#include "card.h"
+#include "card.hpp"
+
+#include <fstream>
+#include <stdlib.h>
 
 class AI : public AiClient
 {
@@ -24,6 +27,11 @@ public:
 
 int main()
 {
+    std::ifstream datafile("Data.json");
+    json all_data;
+    datafile>>all_data;
+    card::get_data_from_json(all_data);
+
     AI player_ai;
     player_ai.chooseCards();
     while (true)

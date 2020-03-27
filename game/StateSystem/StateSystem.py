@@ -137,66 +137,62 @@ class SummonListener(EventListener):
     '''
     def deal_event(self,event):
         if event.name == "Summon":
-            try:
-                unit = None
-                if event.parameter_dict["type"] == "Archer":
-                    unit = Archer(
-                        event.parameter_dict["camp"],
-                        event.parameter_dict["level"],
-                        event.parameter_dict["pos"],
-                        self.host
-                    )
-                elif event.parameter_dict["type"] == "Swordsman":
-                    unit = Swordsman(
-                        event.parameter_dict["camp"],
-                        event.parameter_dict["level"],
-                        event.parameter_dict["pos"],
-                        self.host
-                    )
-                elif event.parameter_dict["type"] == "BlackBat":
-                    unit = BlackBat(
-                        event.parameter_dict["camp"],
-                        event.parameter_dict["level"],
-                        event.parameter_dict["pos"],
-                        self.host
-                    )
-                elif event.parameter_dict["type"] == "Priest":
-                    unit = Priest(
-                        event.parameter_dict["camp"],
-                        event.parameter_dict["level"],
-                        event.parameter_dict["pos"],
-                        self.host
-                    )
-                elif event.parameter_dict["type"] == "VolcanoDragon":
-                    unit = VolcanoDragon(
-                        event.parameter_dict["camp"],
-                        event.parameter_dict["level"],
-                        event.parameter_dict["pos"],
-                        self.host
-                    )
-                elif event.parameter_dict["type"] == "Inferno":
-                    unit = Inferno(
-                        event.parameter_dict["camp"],
-                        event.parameter_dict["level"],
-                        event.parameter_dict["pos"],
-                        self.host,
-                        event.parameter_dict["artifact_host"]
-                    )
-                if unit:
-                    self.host.map.add_unit(unit)
-                    self.host.emit(Event("Spawn",{
-                        "source": unit,
-                        "pos": unit.pos
-                    }))
-                    self.host.emit(Event("UpdateRingBuff",priority = 3))
-                    # print("{} (ID: {}) spawns at {}".format(
-                    #     unit.name,
-                    #     unit.id,
-                    #     unit.pos
-                    # ))
-            except:
-                # print("Parameter Dict Error.")
-                pass
+            unit = None
+            if event.parameter_dict["type"] == "Archer":
+                unit = Archer(
+                    event.parameter_dict["camp"],
+                    event.parameter_dict["level"],
+                    event.parameter_dict["pos"],
+                    self.host
+                )
+            elif event.parameter_dict["type"] == "Swordsman":
+                unit = Swordsman(
+                    event.parameter_dict["camp"],
+                    event.parameter_dict["level"],
+                    event.parameter_dict["pos"],
+                    self.host
+                )
+            elif event.parameter_dict["type"] == "BlackBat":
+                unit = BlackBat(
+                    event.parameter_dict["camp"],
+                    event.parameter_dict["level"],
+                    event.parameter_dict["pos"],
+                    self.host
+                )
+            elif event.parameter_dict["type"] == "Priest":
+                unit = Priest(
+                    event.parameter_dict["camp"],
+                    event.parameter_dict["level"],
+                    event.parameter_dict["pos"],
+                    self.host
+                )
+            elif event.parameter_dict["type"] == "VolcanoDragon":
+                unit = VolcanoDragon(
+                    event.parameter_dict["camp"],
+                    event.parameter_dict["level"],
+                    event.parameter_dict["pos"],
+                    self.host
+                )
+            elif event.parameter_dict["type"] == "Inferno":
+                unit = Inferno(
+                    event.parameter_dict["camp"],
+                    event.parameter_dict["level"],
+                    event.parameter_dict["pos"],
+                    self.host,
+                    event.parameter_dict["artifact_host"]
+                )
+            if unit:
+                self.host.map.add_unit(unit)
+                self.host.emit(Event("Spawn",{
+                    "source": unit,
+                    "pos": unit.pos
+                }))
+                self.host.emit(Event("UpdateRingBuff",priority = 3))
+                # print("{} (ID: {}) spawns at {}".format(
+                #     unit.name,
+                #     unit.id,
+                #     unit.pos
+                # ))
 
 class CheckDeathListener(EventListener):
     '''
@@ -204,20 +200,16 @@ class CheckDeathListener(EventListener):
     '''
     def deal_event(self,event):
         if event.name == "CheckDeath":
-            try:
-                for unit in self.host.map.unit_list:
-                    if unit.hp <= 0 and not unit.death_flag:
-                        unit.death_flag = True
-                        self.host.emit(Event("Death", {
-                            "source": unit
-                        }))
-                        # print("{} (ID: {}) is announced to be dead.".format(
-                        #     unit.name,
-                        #     unit.id
-                        # ))
-            except:
-                # print("Parameter Dict Error.")
-                pass
+            for unit in self.host.map.unit_list:
+                if unit.hp <= 0 and not unit.death_flag:
+                    unit.death_flag = True
+                    self.host.emit(Event("Death", {
+                        "source": unit
+                    }))
+                    # print("{} (ID: {}) is announced to be dead.".format(
+                    #     unit.name,
+                    #     unit.id
+                    # ))
 
 class CheckBarrackListener(EventListener):
     '''
@@ -225,16 +217,12 @@ class CheckBarrackListener(EventListener):
     '''
     def deal_event(self,event):
         if event.name == "CheckBarrack":
-            try:
-                for barrack in self.host.map.barrack_list:
-                    barrack.camp = -1
-                    for unit in self.host.map.unit_list:
-                        if unit.pos == barrack.pos and unit.flying == False:
-                            barrack.camp = unit.camp
-                            break                    
-            except:
-                # print("Parameter Dict Error.")
-                pass
+            for barrack in self.host.map.barrack_list:
+                barrack.camp = -1
+                for unit in self.host.map.unit_list:
+                    if unit.pos == barrack.pos and unit.flying == False:
+                        barrack.camp = unit.camp
+                        break
 
 class TurnStartListener(EventListener):
     '''
@@ -242,15 +230,11 @@ class TurnStartListener(EventListener):
     '''
     def deal_event(self,event):
         if event.name == "TurnStart":
-            try:
-                self.host.emit(Event("Refresh",{
-                    "camp": self.host.player_list[self.host.current_player_id].camp
-                },4))
-                self.host.emit(Event("CheckBarrack",{},4))
-                self.host.emit(Event("NewTurn",{},4))
-            except:
-                # print("Parameter Dict Error.")
-                pass
+            self.host.emit(Event("Refresh",{
+                "camp": self.host.player_list[self.host.current_player_id].camp
+            },4))
+            self.host.emit(Event("CheckBarrack",{},4))
+            self.host.emit(Event("NewTurn",{},4))
     
 class ChangeCurrentPlayerListener(EventListener):
     '''
