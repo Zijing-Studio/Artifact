@@ -116,7 +116,8 @@ def cube_reachable(start, movement, obstacles=[], obstructs=[]):
                 continue
             for j in range(0, 6):
                 neighbor = cube_neighbor(pos, j)
-                if neighbor not in visited and neighbor not in obstacles:
+                if neighbor not in visited and neighbor not in obstacles\
+                        and in_map(neighbor):
                     visited.append(neighbor)
                     fringes[i+1].append(neighbor)
     return fringes
