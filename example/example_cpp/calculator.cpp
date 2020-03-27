@@ -169,7 +169,8 @@ std::vector<std::vector<Point>> cube_reachable(Point start, int movement,
             if (contained(pos, obstructs)) continue;
             for (int k = 0; k < 6; k++) {
                 Point neighbor = cube_neighbor(pos, k);
-                if (!contained(neighbor, visited) && !contained(neighbor, obstacles)) {
+                if (!contained(neighbor, visited) && !contained(neighbor, obstacles)
+						&& in_map(neighbor)) {
                     visited.push_back(neighbor);
                     fringes[i+1].push_back(neighbor);
                 }
