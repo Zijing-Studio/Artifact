@@ -52,7 +52,7 @@ Creature ARCHER[4]; // 弓箭手
 Creature BLACKBAT[4]; // 黑蝙蝠
 Creature PRIEST[4]; // 牧师
 Creature VOLCANOGRAGON[4]; // 火山龙
-Creature AQUADRAGON[4]; // 海洋之龙
+Creature FROSTDRAGON[4]; // 海洋之龙
 Creature INFERNO; // 地狱火
 
 Artifact HOLYLIGHT; // 圣光之耀
@@ -65,7 +65,7 @@ const std::map<std::string, Creature *> CARD_DICT = {
     std::map<std::string, Creature *>::value_type("BlackBat", BLACKBAT),
     std::map<std::string, Creature *>::value_type("Priest", PRIEST),
     std::map<std::string, Creature *>::value_type("VolcanoDragon", VOLCANOGRAGON),
-    std::map<std::string, Creature *>::value_type("AquaDragon", AQUADRAGON)};
+    std::map<std::string, Creature *>::value_type("FrostDragon", FROSTDRAGON)};
 
 void get_data_from_json(json all_data);
 

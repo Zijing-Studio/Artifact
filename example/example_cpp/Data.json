@@ -85,7 +85,7 @@
             "agility": false,
             "holy_shield": false
         },
-        "AquaDragon": {
+        "FrostDragon": {
             "cost": [5,7,9],
             "atk": [3,4,5],
             "hp": [5,6,8],
@@ -129,7 +129,7 @@
         "Priest": 3,
         "VolcanoDragon": 4,
         "Inferno": 5,
-        "AquaDragon": 6
+        "FrostDragon": 6
     },
     "ArtifactNameParsed": {
         "HolyLight": 0,

@@ -9,7 +9,7 @@
 3. 黑蝙蝠（BlackBat）
 4. 牧师（Priest）
 5. 火山之龙（VolcanoDragon）
-6. 海洋之龙（AquaDragon）
+6. 海洋之龙（FrostDragon）
 
 ## 神器名称对照
 
