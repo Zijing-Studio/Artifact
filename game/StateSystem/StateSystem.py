@@ -182,8 +182,8 @@ class SummonListener(EventListener):
                     self.host,
                     event.parameter_dict["artifact_host"]
                 )
-            elif event.parameter_dict["type"] == "AquaDragon":
-                unit = AquaDragon(
+            elif event.parameter_dict["type"] == "FrostDragon":
+                unit = FrostDragon(
                     event.parameter_dict["camp"],
                     event.parameter_dict["level"],
                     event.parameter_dict["pos"],

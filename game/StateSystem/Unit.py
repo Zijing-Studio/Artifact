@@ -181,9 +181,9 @@ class VolcanoDragon(Unit):
 
         self.add_event_listener(VolcanoDragonAtkListener())
 
-class AquaDragon(Unit):
+class FrostDragon(Unit):
     def __init__(self,camp,level,pos,state_system):
-        name = "AquaDragon"
+        name = "FrostDragon"
         Unit.__init__(
             self,
             camp,
