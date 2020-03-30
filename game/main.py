@@ -188,8 +188,8 @@ class Game:
                        "Damage", "Death", "Heal", "ActivateArtifact",
                        "GameEnd", "GameStart", "BuffAdd", "BuffRemove",
                        "Attacking", "Attacked", "Leave", "Arrive", "Summon"]
-        creature_names = ["", "Swordsman", "Archer",
-                          "BlackBat", "Priest", "VolcanoDragon", "Inferno"]
+        creature_names = ["", "Swordsman", "Archer", "BlackBat", "Priest",
+                          "VolcanoDragon", "FrostDragon", "Inferno"]
         artifact_names = ["", "HolyLight", "SalamanderShield", "InfernoFlame"]
 
         media_info = []
@@ -242,8 +242,8 @@ class Game:
                 # damage
                 media_info.append(event.parameter_dict['damage'])
                 # type
-                damage_type = ["", "Attack", "AttackBack", 
-                               "VolcanoDragonSplash","InfernoFlameActivate"]
+                damage_type = ["", "Attack", "AttackBack",
+                               "VolcanoDragonSplash", "InfernoFlameActivate"]
                 media_info.append(damage_type.index(
                     event.parameter_dict['type']))
             elif event.name == "Death":
