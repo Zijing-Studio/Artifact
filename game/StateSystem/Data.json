@@ -103,7 +103,7 @@
         "HolyLight": {
             "target_type": "Pos",
             "cost": 6,
-            "cool_down": 6,
+            "cool_down": 5,
             "affect_range": 2,
             "atk_up": 2,
             "effect_rounds": 4
