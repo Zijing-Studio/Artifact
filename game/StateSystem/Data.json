@@ -40,20 +40,20 @@
             "holy_shield": false
         },
         "Priest": {
-            "cost": [2,3,5],
+            "cost": [2,4,7],
             "atk": [0,0,0],
             "hp": [3,4,5],
             "atk_range": [[0,0],[0,0],[0,0]],
             "max_move": [3,3,3],
-            "cool_down": [4,4,5],
+            "cool_down": [3,4,5],
             "duplicate": 3,
             "flying": false,
             "atk_flying": false,
             "agility": false,
             "holy_shield": false,
-            "heal": [1,0,2],
+            "heal": [1,1,2],
             "heal_range": 3,
-            "atk_up": [0,1,1],
+            "atk_up": [1,2,3],
             "atk_up_range": 3
         },
         "VolcanoDragon": {
