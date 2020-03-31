@@ -103,9 +103,10 @@
         "HolyLight": {
             "target_type": "Pos",
             "cost": 6,
-            "cool_down": 4,
+            "cool_down": 6,
             "affect_range": 2,
-            "atk_up": 2
+            "atk_up": 2,
+            "effect_rounds": 4
         },
         "SalamanderShield": {
             "target_type": "Unit",

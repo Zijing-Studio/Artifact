@@ -93,13 +93,16 @@ class HolyLightArtifact(Artifact):
 class RemoveOnEndTurnListener(EventListener):
     def deal_event(self,event):
         if event.name == "TurnEnd":
-            self.host.delete()
+            self.host.effect_rounds -= 1
+            if self.host.effect_rounds == 0:
+                self.host.delete()
 
 class HolyLightAtkBuff(Buff):
     def __init__(self,state_system):
         Buff.__init__(self,state_system)
         self.add_event_listener(RemoveOnEndTurnListener())
         self.type = "HolyLightAtkBuff"
+        self.effect_rounds = ARTIFACTS["HolyLight"]["effect_rounds"]
 
     def buff(self):
         self.host.atk += ARTIFACTS["HolyLight"]["atk_up"]
