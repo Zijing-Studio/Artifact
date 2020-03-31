@@ -142,7 +142,7 @@ class PriestHealListener(EventListener):
     def deal_event(self,event):
         if event.name == "TurnEnd" and self.host.state_system.current_player_id == self.host.camp:
             for unit in self.host.state_system.map.unit_list:
-                if calculator.cube_distance(unit.pos,self.host.pos) <= UNIT_DATA["Priest"]["heal_range"] \
+                if calculator.cube_distance(unit.pos,self.host.pos) <= UNIT_DATA["Priest"]["heal_range"][self.host.level-1] \
                     and unit.camp == self.host.camp:
                     self.host.emit(Event("Heal",{
                         "source": self.host,
@@ -155,7 +155,7 @@ class PriestAtkListener(EventListener):
         if event.name == "UpdateRingBuff":
             # Add buff
             for unit in self.host.state_system.map.unit_list:
-                if calculator.cube_distance(unit.pos,self.host.pos) <= UNIT_DATA["Priest"]["atk_up_range"] \
+                if calculator.cube_distance(unit.pos,self.host.pos) <= UNIT_DATA["Priest"]["atk_up_range"][self.host.level-1] \
                     and unit.camp == self.host.camp \
                     and unit != self.host:
                     found = False
