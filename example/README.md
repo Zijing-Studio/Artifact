@@ -92,7 +92,7 @@ C++的makefile文件，目前仅适用于样例AI。玩家编写自己的AI后�
 
 ## card.h
 
-包含生物、神器的基本属性。
+包含生物、神器的基本属性。启动ai时会从Data.json中读取。
 
 ## calculator.h & calculator.cpp
 
@@ -401,7 +401,7 @@ std::vector<gameunit::Pos> getSummonPosByCamp(int camp)
 
 ## card.py
 
-包含生物、神器的基本属性。
+包含生物、神器的基本属性。会从Data.json中读取。
 
 ## calculator.py
 
