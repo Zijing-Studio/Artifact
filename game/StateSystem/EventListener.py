@@ -169,7 +169,7 @@ class PriestAtkListener(EventListener):
                         self.host.priest_buff_list.append(new_buff)
             # Delete Buff
             for buff in self.host.priest_buff_list:
-                if calculator.cube_distance(buff.host.pos,self.host.pos) > UNIT_DATA["Priest"]["atk_up_range"]:
+                if calculator.cube_distance(buff.host.pos,self.host.pos) > UNIT_DATA["Priest"]["atk_up_range"][self.host.level-1]:
                     buff.delete()
                     self.host.priest_buff_list.remove(buff)
         if event.name == "Death":
