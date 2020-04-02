@@ -51,8 +51,8 @@ Creature SWORDSMAN[4]; // 剑士
 Creature ARCHER[4]; // 弓箭手
 Creature BLACKBAT[4]; // 黑蝙蝠
 Creature PRIEST[4]; // 牧师
-Creature VOLCANOGRAGON[4]; // 火山龙
-Creature FROSTDRAGON[4]; // 海洋之龙
+Creature VOLCANOGRAGON[4]; // 火山之龙
+Creature FROSTDRAGON[4]; // 冰霜之龙
 Creature INFERNO; // 地狱火
 
 Artifact HOLYLIGHT; // 圣光之耀

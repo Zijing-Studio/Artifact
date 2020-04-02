@@ -83,8 +83,8 @@ SWORDSMAN = [Creature("Swordsman")] + get_creature_data("Swordsman") # 剑士
 ARCHER = [Creature("Archer")] + get_creature_data("Archer") # 弓箭手
 BLACKBAT = [Creature("BlackBat")] + get_creature_data("BlackBat") # 黑蝙蝠
 PRIEST = [Creature("Priest")] + get_creature_data("Priest") # 牧师
-VOLCANOGRAGON = [Creature("VolcanoDragon")] + get_creature_data("VolcanoDragon") # 火山龙
-FROSTDRAGON = [Creature("FrostDragon")] + get_creature_data("FrostDragon") # 海洋之龙
+VOLCANOGRAGON = [Creature("VolcanoDragon")] + get_creature_data("VolcanoDragon") # 火山之龙
+FROSTDRAGON = [Creature("FrostDragon")] + get_creature_data("FrostDragon") # 冰霜之龙
 INFERNO = get_creature_data("Inferno")[0] # 地狱火
 
 HOLYLIGHT = get_artifact_data("HolyLight") # 圣光之耀
