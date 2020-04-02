@@ -91,7 +91,6 @@ class Game:
         miracle_hp = [self.statesystem.get_miracle_by_id(0).hp,
                       self.statesystem.get_miracle_by_id(1).hp]
         if self._round >= MAX_ROUND or miracle_hp[0] <= 0 or miracle_hp[1] <= 0:
-            self.is_end = True
             self.end(self.statesystem.get_player_score(0), self.statesystem.get_player_score(1))
 
     def change_round(self):
@@ -137,7 +136,6 @@ class Game:
                 if special_type == "endround":
                     break
                 if special_type == "surrender":
-                    self.is_end = True
                     if opt_dict['player'] == 0:
                         self.end(0, self.statesystem.get_player_score(1) + 1)
                     else:
@@ -147,7 +145,6 @@ class Game:
                 opt = json.loads(opt_dict['content'])
                 # AI异常退出
                 if opt['error'] == 0:
-                    self.is_end = True
                     if opt['player'] == 0:
                         self.end(0, self.statesystem.get_player_score(1) + 1)
                     else:
@@ -166,7 +163,6 @@ class Game:
                              "operation_parameters": {}})
                         self.parser.parse(msg)
                     else:
-                        self.is_end = True
                         if opt['player'] == 0:
                             self.end(0, self.statesystem.get_player_score(1) + 1)
                         else:
@@ -402,11 +398,10 @@ class Game:
                 opt_dict = read_opt()
             if opt_dict["player"] == -1:
                 error_player = json.loads(opt_dict['content'])["player"]
-                is_players_ready[error_player] = False
-                if error_player == 1 and player == 0:
-                    opt_dict = read_opt()
+                if error_player == 0:
+                    self.end(0, 1)
                 else:
-                    continue
+                    self.end(1, 0)
             if opt_dict["player"] == player:
                 try:
                     self.parser.parse(opt_dict["content"])
@@ -422,13 +417,12 @@ class Game:
                     is_players_ready[player] = True
             else:
                 is_players_ready[json.loads(opt_dict['content'])["player"]] = False
-        # 双方玩家是否均准备好卡组
-        if not is_players_ready[0]:
-            self.is_end = True
-            self.end(0, 1)
-        elif not is_players_ready[1]:
-            self.is_end = True
-            self.end(1, 0)
+
+            if player == 0:
+                if not is_players_ready[0]:
+                    self.end(0, 1)
+            elif not is_players_ready[1]:
+                self.end(1, 0)
 
     def start(self):
         '''开始游戏
@@ -450,6 +444,7 @@ class Game:
             player0_score: 先手玩家得分
             player1_score: 后手玩家得分
         '''
+        self.is_end = True
         if player0_score == player1_score:
             player1_score += 1
         winner = 0 if player0_score > player1_score else 1
