@@ -12,7 +12,7 @@ namespace gameunit
 
 typedef std::tuple<int, int, int> Pos; // 坐标
 
-const std::string UNIT_TYPE[6] = {"Archer", "Swordsman", "BlackBat", "Priest", "VolcanoDragon", "Inferno"};
+const std::string UNIT_TYPE[7] = {"Archer", "Swordsman", "BlackBat", "Priest", "VolcanoDragon", "Inferno", "FrostDragon"};
 const std::string ARTIFACT_NAME[3] = {"HolyLight", "SalamanderShield", "InfernoFlame"};
 const std::string ARTIFACT_STATE[3] = {"Ready", "In Use", "Cooling Down"};
 const std::string ARTIFACT_TARGET[2] = {"Pos", "Unit"};
