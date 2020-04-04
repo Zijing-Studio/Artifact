@@ -8,7 +8,7 @@ from PlayerLegality.player_legality import Parser
 from StateSystem.StateSystem import StateSystem
 
 DEBUG = False  # DEBUG时会生成一个log.txt记录logic收发的信息
-MAX_ROUND = 200
+MAX_ROUND = 100
 AI_TIME = 3
 PLAYER_TIME = 300
 
@@ -186,7 +186,8 @@ class Game:
                        "Attacking", "Attacked", "Leave", "Arrive", "Summon"]
         creature_names = ["", "Swordsman", "Archer", "BlackBat", "Priest",
                           "VolcanoDragon", "FrostDragon", "Inferno"]
-        artifact_names = ["", "HolyLight", "SalamanderShield", "InfernoFlame"]
+        artifact_names = ["", "HolyLight", "SalamanderShield", "InfernoFlame",
+                          "WindBlessing"]
 
         media_info = []
         for event in events:

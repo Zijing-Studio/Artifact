@@ -245,7 +245,7 @@ bool AiClient::canAttack(gameunit::Unit attacker, gameunit::Unit target)
 
 bool AiClient::canUseArtifact(gameunit::Artifact artifact, gameunit::Pos pos, int camp)
 {
-    if (artifact.name == "HolyLight")
+    if (artifact.name == "HolyLight" || artifact.name == "WindBlessing")
     {
         return calculator::in_map(pos);
     }

@@ -284,7 +284,7 @@ class AiClient:
             if artifact.name == "SalamanderShield":
                 return artifact.camp == target.camp
         elif isinstance(target, tuple) and len(target) == 3:
-            if artifact.name == "HolyLight":
+            if artifact.name == "HolyLight" or artifact.name == "WindBlessing":
                 return calculator.in_map(target)
             if artifact.name == "InfernoFlame":
                 # 不处于障碍物上

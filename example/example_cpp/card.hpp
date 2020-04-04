@@ -58,6 +58,7 @@ Creature INFERNO; // 地狱火
 Artifact HOLYLIGHT; // 圣光之耀
 Artifact SALAMANDERSHIELD; // 阳炎之盾
 Artifact INFERNOFLAME; // 地狱之火
+Artifact WINDBLESSING; // 风神之佑
 
 const std::map<std::string, Creature *> CARD_DICT = {
     std::map<std::string, Creature *>::value_type("Swordsman", SWORDSMAN),
@@ -98,6 +99,8 @@ void get_data_from_json(json all_data)
                                 artifact_data["SalamanderShield"]["cool_down"], artifact_data["SalamanderShield"]["target_type"]);
     INFERNOFLAME = Artifact("InfernoFlame", artifact_data["InfernoFlame"]["cost"],
                             artifact_data["InfernoFlame"]["cool_down"], artifact_data["InfernoFlame"]["target_type"]);
+    WINDBLESSING = Artifact("WindBlessing", artifact_data["WindBlessing"]["cost"],
+                            artifact_data["WindBlessing"]["cool_down"], artifact_data["WindBlessing"]["target_type"]);
 }
 }; // namespace card
 

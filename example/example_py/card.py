@@ -90,6 +90,7 @@ INFERNO = get_creature_data("Inferno")[0] # 地狱火
 HOLYLIGHT = get_artifact_data("HolyLight") # 圣光之耀
 SALAMANDERSHIELD = get_artifact_data("SalamanderShield") # 阳炎之盾
 INFERNOFLAME = get_artifact_data("InfernoFlame") # 地狱之火
+WINDBLESSING = get_artifact_data("WindBlessing") # 风神之佑
 
 CARD_DICT = {
     'Swordsman': SWORDSMAN,
