@@ -32,7 +32,7 @@ class DamageListener(EventListener):
     def deal_event(self,event):
         if event.name == "Damage":
             if event.parameter_dict["target"] == self.host:
-                if self.host.holy_shield:
+                if self.host.holy_shield and event.parameter_dict["damage"] != 0:
                     event.parameter_dict["damage"] = 0
                     self.host.emit(Event("BuffRemove", {
                         "source": self.host,
@@ -93,7 +93,8 @@ class AttackBackListener(EventListener):
                     event.parameter_dict["target"].pos,
                 )
                 if self.host.atk_range[0] <= distance <= self.host.atk_range[1] and \
-                    (not event.parameter_dict["source"].flying or self.host.atk_flying):
+                    (not event.parameter_dict["source"].flying or self.host.atk_flying) and \
+                    self.host.atk != 0:
                     self.host.emit(Event("Damage",{
                         "source": event.parameter_dict["target"],
                         "target": event.parameter_dict["source"],
