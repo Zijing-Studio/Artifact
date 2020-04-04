@@ -14,6 +14,8 @@ def gen_artifact_by_name(name,camp,state_system):
         return SalamanderShieldArtifact(camp,state_system)
     elif name == "InfernoFlame":
         return InfernoFlameArtifact(camp,state_system)
+    elif name == "WindBlessing":
+        return WindBlessingArtifact(camp,state_system)
     else:
         return None
 
@@ -196,3 +198,15 @@ class InfernoRecycleListener(EventListener):
     def deal_event(self,event):
         if event.name == "Death" and event.parameter_dict["source"] == self.host:
             self.host.artifact_host.recycle()
+
+class WindBlessingArtifact(Artifact):
+    def __init__(self,camp,state_system):
+        Artifact.__init__(self,camp,"WindBlessing",state_system)
+
+    def effect(self,target):
+        for unit in self.state_system.map.unit_list:
+            if calculator.cube_distance(unit.pos,target) <= ARTIFACTS["WindBlessing"]["affect_range"] \
+                and unit.camp == self.camp:
+                unit.can_atk = True
+                unit.can_move = True
+        self.recycle()

@@ -226,7 +226,6 @@ class CheckBarrackListener(EventListener):
     def deal_event(self,event):
         if event.name == "CheckBarrack":
             for barrack in self.host.map.barrack_list:
-                barrack.camp = -1
                 for unit in self.host.map.unit_list:
                     if unit.pos == barrack.pos and unit.flying == False:
                         barrack.camp = unit.camp

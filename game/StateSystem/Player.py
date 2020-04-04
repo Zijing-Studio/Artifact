@@ -1,6 +1,7 @@
 from StateSystem.EventListener import EventListener
 from StateSystem.CreatureCapacity import CreatureCapacity
 from StateSystem.Artifact import HolyLightArtifact, SalamanderShieldArtifact
+from StateSystem.UnitData import CREATURE_CAPACITY_LEVEL_UP_TURN
 
 class Player:
     def __init__(self,camp,mana,state_system):
@@ -19,6 +20,7 @@ class Player:
         self.add_event_listener(SummonListener())
         self.add_event_listener(ActivateArtifactListener())
         self.add_event_listener(ScoreListener())
+        self.add_event_listener(CreatureCapacityLevelUpListener())
 
     def add_event_listener(self,listener):
         listener.host = self
@@ -100,3 +102,9 @@ class ScoreListener(EventListener):
             self.host.score += event.parameter_dict["hp_loss"] * 1000
         if event.name == "Death" and event.parameter_dict["source"].camp != self.host.camp:
             self.host.score += event.parameter_dict["source"].level
+            
+class CreatureCapacityLevelUpListener(EventListener):
+    def deal_event(self,event):
+        if event.name == "Refresh" and event.parameter_dict["turn"] in CREATURE_CAPACITY_LEVEL_UP_TURN:
+            for item in self.host.creature_capacity_list:
+                item.duplicate_level_up()
