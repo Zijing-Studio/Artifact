@@ -2,7 +2,7 @@
 '''
 
 UNIT_TYPE = ["Archer", "Swordsman", "BlackBat", "Priest", "VolcanoDragon", "Inferno", "FrostDragon"]
-ARTIFACT_NAME = ["HolyLight", "SalamanderShield", "InfernoFlame"]
+ARTIFACT_NAME = ["HolyLight", "SalamanderShield", "InfernoFlame", "WindBlessing"]
 ARTIFACT_STATE = ["Ready", "In Use", "Cooling Down"]
 ARTIFACT_TARGET = ["Pos", "Unit"]
 
