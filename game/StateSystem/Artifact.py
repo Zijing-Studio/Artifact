@@ -32,6 +32,7 @@ class Artifact:
         self.state = "Ready"
         self.camp = camp
         self.name = name
+        self.last_used_pos = (-1,-1,-1)
         self.target_type = ARTIFACTS[name]["target_type"]
     
     def add_event_listener(self,listener):
@@ -53,11 +54,16 @@ class Artifact:
             self.max_cool_down,
             self.cool_down_time,
             ARTIFACT_STATE_PARSED[self.state],
-            ARTIFACT_TARGET_PARSED[self.target_type]
+            ARTIFACT_TARGET_PARSED[self.target_type],
+            list(self.last_used_pos)
         ]
 
     def activate(self,target):
         self.state = "In Use"
+        if(self.target_type == "Unit"):
+            self.last_used_pos = target.pos
+        else:
+            self.last_used_pos = target
         self.state_system.get_player_by_id(self.camp).mana -= self.cost
         self.effect(target)
         
