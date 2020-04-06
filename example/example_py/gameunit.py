@@ -74,7 +74,7 @@ class Artifact:
 
     def __init__(self, artifact_list=None):
         if artifact_list is None:
-            artifact_list = [-1, 0,  0, 0, 0, 0, 0]
+            artifact_list = [-1, 0,  0, 0, 0, 0, 0, [-1, -1, -1]]
         self.camp = artifact_list[0]
         self.name = ARTIFACT_NAME[artifact_list[1]]
         self.id = self.camp
@@ -83,6 +83,7 @@ class Artifact:
         self.cool_down_time = artifact_list[4]
         self.state = ARTIFACT_STATE[artifact_list[5]]
         self.target_type = ARTIFACT_TARGET[artifact_list[6]]
+        self.last_used_pos = artifact_list[7]
 
 
 class CreatureCapacity:

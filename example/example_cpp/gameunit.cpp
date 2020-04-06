@@ -54,6 +54,7 @@ void gameunit::from_json(const json &j, Artifact &a)
     a.state = ARTIFACT_STATE[s];
     j[6].get_to(t);
     a.target_type = ARTIFACT_TARGET[t];
+    j[7].get_to(a.last_used_pos);
 }
 
 void gameunit::from_json(const json &j, CreatureCapacity &c)

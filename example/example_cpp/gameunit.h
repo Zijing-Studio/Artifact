@@ -77,6 +77,7 @@ struct Artifact // 神器
     int cool_down_time;      // 当前冷却时间
     std::string state;       // 使用状态
     std::string target_type; // 目标种类
+    Pos last_used_pos;       // 上次使用目标位置（上次目标单位的位置）
 };
 
 struct CreatureCapacity
