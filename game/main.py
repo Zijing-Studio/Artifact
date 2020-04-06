@@ -258,11 +258,10 @@ class Game:
                 media_info.append(event.parameter_dict['camp'])
                 media_info.append(artifact_names.index(
                     event.parameter_dict['name']) + 10 * event.parameter_dict['camp'])
-                if (event.parameter_dict['name'] == "HolyLight" or
-                        event.parameter_dict['name'] == "InfernoFlame"):
+                if event.parameter_dict['name'] in ["HolyLight", "InfernoFlame", "WindBlessing"]:
                     media_info.append(event.parameter_dict['target'][0])
                     media_info.append(event.parameter_dict['target'][1])
-                elif event.parameter_dict['name'] == "SalamanderShield":
+                elif event.parameter_dict['name'] in ["SalamanderShield"]:
                     media_info.append(0)
                     media_info.append(0)
                     media_info.append(event.parameter_dict['target'].id)

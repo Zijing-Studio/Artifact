@@ -63,7 +63,7 @@ def get_creature_data(name):
     data = CREATURE_DATA[name]
     creature_list = []
     for level in range(len(data["hp"])):
-        creature_list.append(Creature(name, data["duplicate"], level + 1, data["cost"][level],
+        creature_list.append(Creature(name, data["duplicate"][level], level + 1, data["cost"][level],
                                       data["atk"][level], data["hp"][level], data["atk_range"][level][0],
                                       data["atk_range"][level][1], data["max_move"][level], data["cool_down"][level],
                                       data["flying"], data["atk_flying"], data["agility"], data["holy_shield"]))
