@@ -835,6 +835,10 @@ string。表示神器的目前使用状态。有"Ready", "In Use", "Cooling Down
 
 string。表示神器使用对象的种类。有"Unit", "Pos"两种取值。
 
+### last_used_pos
+
+Pos。表示神器上次使用对象的位置。默认值为(-1, -1, -1)。（target_type为"Unit"时，表示使用时对象的位置。）
+
 ## CreatureCapacity
 
 生物召唤情况。
