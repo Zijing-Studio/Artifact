@@ -809,7 +809,7 @@ int。表示神器的id。
 
 ### name
 
-string。表示神器的名字。有"HolyLight", "SalamanderShield", "InfernoFlame"三种取值。
+string。表示神器的名字。有"HolyLight", "SalamanderShield", "InfernoFlame", "WindBlessing"四种取值。
 
 ### camp
 
@@ -845,7 +845,7 @@ Pos。表示神器上次使用对象的位置。默认值为(-1, -1, -1)。（ta
 
 ### type
 
-string。表示生物种类。有"Archer", "Swordsman", "BlackBat", "Priest", "VolcanoDragon", "Inferno"六种取值。
+string。表示生物种类。有"Archer", "Swordsman", "BlackBat", "Priest", "VolcanoDragon", "Inferno", "FrostDragon"七种取值。
 
 ### available_count
 
