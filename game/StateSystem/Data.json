@@ -74,7 +74,7 @@
             "target_range": 1
         },
         "Inferno": {
-            "cost": [8],
+            "cost": [0],
             "atk": [8],
             "hp": [12],
             "atk_range": [[0,1]],
