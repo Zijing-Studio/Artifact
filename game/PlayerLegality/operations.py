@@ -406,8 +406,9 @@ class Use(AbstractOperation):
         if self.artifact.name == "InfernoFlame":
             miracle = self.map.get_miracle_by_id(self.player_id)
             barracks = self.map.get_barracks(self.player_id)
+            abyss = [obstacle.pos for obstacle in self.map.get_ground_obstacles()]
             # infilter abyss and miracle
-            if self.target in self.map.get_ground_obstacles() or self.target == miracle.pos:
+            if self.target in abyss or self.target == miracle.pos:
                 return False
             in_range = False
             for barrack in barracks:
