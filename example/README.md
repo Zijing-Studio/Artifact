@@ -671,7 +671,7 @@ int。表示生物所属阵营。
 
 ### type
 
-string。表示生物的种类。有"Archer", "Swordsman", "BlackBat", "Priest", "VolcanoDragon", "Inferno"六种取值。
+string。表示生物的种类。有"Archer", "Swordsman", "BlackBat", "Priest", "VolcanoDragon", "Inferno", "FrostDragon"七种取值。
 
 ### cost
 
