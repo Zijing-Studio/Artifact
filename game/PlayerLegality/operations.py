@@ -358,6 +358,8 @@ class Attack(AbstractAct):
         dist = calculator.cube_distance(self.attacker.pos, self.target.pos)
         if self.attacker.camp != self.player_id:
             result = "You cannot manipulate the unit of the other player"
+        elif self.target.camp == self.player_id:
+            result = "You cannot attack your allies"
         elif self.attacker.atk <= 0:
             result = "Attack below zero"
         elif not self.attacker.can_atk:
