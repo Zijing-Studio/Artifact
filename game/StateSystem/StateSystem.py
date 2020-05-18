@@ -15,6 +15,7 @@ class StateSystem:
         self.map = Map()
         self.event_heap = EventHeap()
         self.player_list = [Player(0,1,self),Player(1,2,self)]
+        self.turn_count = 1
         self.current_player_id = 0
         self.map.miracle_list = [
             Miracle(0,30,(-7,7,0),[
@@ -181,6 +182,13 @@ class SummonListener(EventListener):
                     self.host,
                     event.parameter_dict["artifact_host"]
                 )
+            elif event.parameter_dict["type"] == "FrostDragon":
+                unit = FrostDragon(
+                    event.parameter_dict["camp"],
+                    event.parameter_dict["level"],
+                    event.parameter_dict["pos"],
+                    self.host
+                )
             if unit:
                 self.host.map.add_unit(unit)
                 self.host.emit(Event("Spawn",{
@@ -218,7 +226,6 @@ class CheckBarrackListener(EventListener):
     def deal_event(self,event):
         if event.name == "CheckBarrack":
             for barrack in self.host.map.barrack_list:
-                barrack.camp = -1
                 for unit in self.host.map.unit_list:
                     if unit.pos == barrack.pos and unit.flying == False:
                         barrack.camp = unit.camp
@@ -231,7 +238,8 @@ class TurnStartListener(EventListener):
     def deal_event(self,event):
         if event.name == "TurnStart":
             self.host.emit(Event("Refresh",{
-                "camp": self.host.player_list[self.host.current_player_id].camp
+                "camp": self.host.player_list[self.host.current_player_id].camp,
+                "turn": self.host.turn_count
             },4))
             self.host.emit(Event("CheckBarrack",{},4))
             self.host.emit(Event("NewTurn",{},4))
@@ -242,6 +250,7 @@ class ChangeCurrentPlayerListener(EventListener):
     '''
     def deal_event(self,event):
         if event.name == "TurnEnd":
+            self.host.turn_count += 1
             self.host.current_player_id += 1
             self.host.current_player_id %= len(self.host.player_list)
             # print("Current Player changed to {}".format(

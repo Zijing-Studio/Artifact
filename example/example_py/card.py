@@ -63,7 +63,7 @@ def get_creature_data(name):
     data = CREATURE_DATA[name]
     creature_list = []
     for level in range(len(data["hp"])):
-        creature_list.append(Creature(name, data["duplicate"], level + 1, data["cost"][level],
+        creature_list.append(Creature(name, data["duplicate"][level], level + 1, data["cost"][level],
                                       data["atk"][level], data["hp"][level], data["atk_range"][level][0],
                                       data["atk_range"][level][1], data["max_move"][level], data["cool_down"][level],
                                       data["flying"], data["atk_flying"], data["agility"], data["holy_shield"]))
@@ -83,19 +83,22 @@ SWORDSMAN = [Creature("Swordsman")] + get_creature_data("Swordsman") # 剑士
 ARCHER = [Creature("Archer")] + get_creature_data("Archer") # 弓箭手
 BLACKBAT = [Creature("BlackBat")] + get_creature_data("BlackBat") # 黑蝙蝠
 PRIEST = [Creature("Priest")] + get_creature_data("Priest") # 牧师
-VOLCANOGRAGON = [Creature("VolcanoDragon")] + get_creature_data("VolcanoDragon") # 火山龙
+VOLCANOGRAGON = [Creature("VolcanoDragon")] + get_creature_data("VolcanoDragon") # 火山之龙
+FROSTDRAGON = [Creature("FrostDragon")] + get_creature_data("FrostDragon") # 冰霜之龙
 INFERNO = get_creature_data("Inferno")[0] # 地狱火
 
 HOLYLIGHT = get_artifact_data("HolyLight") # 圣光之耀
 SALAMANDERSHIELD = get_artifact_data("SalamanderShield") # 阳炎之盾
 INFERNOFLAME = get_artifact_data("InfernoFlame") # 地狱之火
+WINDBLESSING = get_artifact_data("WindBlessing") # 风神之佑
 
 CARD_DICT = {
     'Swordsman': SWORDSMAN,
     'Archer': ARCHER,
     'BlackBat': BLACKBAT,
     'Priest': PRIEST,
-    'VolcanoDragon': VOLCANOGRAGON
+    'VolcanoDragon': VOLCANOGRAGON,
+    'FrostDragon': FROSTDRAGON
 }
 
 if __name__ == "__main__":

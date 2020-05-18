@@ -319,8 +319,6 @@ class Move(AbstractAct):
         elif self.mover.max_move < len(path)-1: # path include start point, so len need -1
             result = "Out of reach: max move: {}, shortest path: {}"\
                      .format(self.mover.max_move, path)
-        elif self.summoned_this_round(self.mover.id):
-            result = "Just summoned"
         elif not self.mover.can_move:
             result = "Has acted this round"
         if result is not True:
@@ -360,10 +358,10 @@ class Attack(AbstractAct):
         dist = calculator.cube_distance(self.attacker.pos, self.target.pos)
         if self.attacker.camp != self.player_id:
             result = "You cannot manipulate the unit of the other player"
+        elif self.target.camp == self.player_id:
+            result = "You cannot attack your allies"
         elif self.attacker.atk <= 0:
             result = "Attack below zero"
-        elif self.summoned_this_round(self.attacker.id):
-            result = "Just summoned"
         elif not self.attacker.can_atk:
             result = "Has acted this round"
         elif not self.attacker.atk_range[0] <= dist <= self.attacker.atk_range[-1]:
@@ -410,6 +408,10 @@ class Use(AbstractOperation):
         if self.artifact.name == "InfernoFlame":
             miracle = self.map.get_miracle_by_id(self.player_id)
             barracks = self.map.get_barracks(self.player_id)
+            abyss = [obstacle.pos for obstacle in self.map.get_ground_obstacles()]
+            # infilter abyss and miracle
+            if self.target in abyss or self.target == miracle.pos:
+                return False
             in_range = False
             for barrack in barracks:
                 if calculator.cube_distance(barrack.pos, self.target) <= 5:

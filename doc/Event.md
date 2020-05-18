@@ -154,10 +154,12 @@ Priority = 3 (when in move)
 ### Refresh
 
 玩家回合开始刷新事件，会刷新法力水晶和生物冷却
+turn_count是当前的回合数，从1开始，在回合结束切换当前玩家的时候会增加1
 
 ```
 {
-	"camp": camp
+	"camp": camp,
+    "turn": turn_count
 }
 ```
 

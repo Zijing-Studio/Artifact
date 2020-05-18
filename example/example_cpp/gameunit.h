@@ -12,8 +12,8 @@ namespace gameunit
 
 typedef std::tuple<int, int, int> Pos; // 坐标
 
-const std::string UNIT_TYPE[6] = {"Archer", "Swordsman", "BlackBat", "Priest", "VolcanoDragon", "Inferno"};
-const std::string ARTIFACT_NAME[3] = {"HolyLight", "SalamanderShield", "InfernoFlame"};
+const std::string UNIT_TYPE[7] = {"Archer", "Swordsman", "BlackBat", "Priest", "VolcanoDragon", "Inferno", "FrostDragon"};
+const std::string ARTIFACT_NAME[4] = {"HolyLight", "SalamanderShield", "InfernoFlame", "WindBlessing"};
 const std::string ARTIFACT_STATE[3] = {"Ready", "In Use", "Cooling Down"};
 const std::string ARTIFACT_TARGET[2] = {"Pos", "Unit"};
 
@@ -77,6 +77,7 @@ struct Artifact // 神器
     int cool_down_time;      // 当前冷却时间
     std::string state;       // 使用状态
     std::string target_type; // 目标种类
+    Pos last_used_pos;       // 上次使用目标位置（上次目标单位的位置）
 };
 
 struct CreatureCapacity

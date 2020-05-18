@@ -14,6 +14,8 @@ def gen_artifact_by_name(name,camp,state_system):
         return SalamanderShieldArtifact(camp,state_system)
     elif name == "InfernoFlame":
         return InfernoFlameArtifact(camp,state_system)
+    elif name == "WindBlessing":
+        return WindBlessingArtifact(camp,state_system)
     else:
         return None
 
@@ -30,6 +32,7 @@ class Artifact:
         self.state = "Ready"
         self.camp = camp
         self.name = name
+        self.last_used_pos = (-1,-1,-1)
         self.target_type = ARTIFACTS[name]["target_type"]
     
     def add_event_listener(self,listener):
@@ -51,11 +54,16 @@ class Artifact:
             self.max_cool_down,
             self.cool_down_time,
             ARTIFACT_STATE_PARSED[self.state],
-            ARTIFACT_TARGET_PARSED[self.target_type]
+            ARTIFACT_TARGET_PARSED[self.target_type],
+            list(self.last_used_pos)
         ]
 
     def activate(self,target):
         self.state = "In Use"
+        if(self.target_type == "Unit"):
+            self.last_used_pos = target.pos
+        else:
+            self.last_used_pos = target
         self.state_system.get_player_by_id(self.camp).mana -= self.cost
         self.effect(target)
         
@@ -93,13 +101,16 @@ class HolyLightArtifact(Artifact):
 class RemoveOnEndTurnListener(EventListener):
     def deal_event(self,event):
         if event.name == "TurnEnd":
-            self.host.delete()
+            self.host.effect_rounds -= 1
+            if self.host.effect_rounds == 0:
+                self.host.delete()
 
 class HolyLightAtkBuff(Buff):
     def __init__(self,state_system):
         Buff.__init__(self,state_system)
         self.add_event_listener(RemoveOnEndTurnListener())
         self.type = "HolyLightAtkBuff"
+        self.effect_rounds = ARTIFACTS["HolyLight"]["effect_rounds"]
 
     def buff(self):
         self.host.atk += ARTIFACTS["HolyLight"]["atk_up"]
@@ -193,3 +204,15 @@ class InfernoRecycleListener(EventListener):
     def deal_event(self,event):
         if event.name == "Death" and event.parameter_dict["source"] == self.host:
             self.host.artifact_host.recycle()
+
+class WindBlessingArtifact(Artifact):
+    def __init__(self,camp,state_system):
+        Artifact.__init__(self,camp,"WindBlessing",state_system)
+
+    def effect(self,target):
+        for unit in self.state_system.map.unit_list:
+            if calculator.cube_distance(unit.pos,target) <= ARTIFACTS["WindBlessing"]["affect_range"] \
+                and unit.camp == self.camp:
+                unit.can_atk = True
+                unit.can_move = True
+        self.recycle()

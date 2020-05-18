@@ -8,7 +8,7 @@ from PlayerLegality.player_legality import Parser
 from StateSystem.StateSystem import StateSystem
 
 DEBUG = False  # DEBUG时会生成一个log.txt记录logic收发的信息
-MAX_ROUND = 200
+MAX_ROUND = 100
 AI_TIME = 3
 PLAYER_TIME = 300
 
@@ -91,7 +91,6 @@ class Game:
         miracle_hp = [self.statesystem.get_miracle_by_id(0).hp,
                       self.statesystem.get_miracle_by_id(1).hp]
         if self._round >= MAX_ROUND or miracle_hp[0] <= 0 or miracle_hp[1] <= 0:
-            self.is_end = True
             self.end(self.statesystem.get_player_score(0), self.statesystem.get_player_score(1))
 
     def change_round(self):
@@ -137,7 +136,6 @@ class Game:
                 if special_type == "endround":
                     break
                 if special_type == "surrender":
-                    self.is_end = True
                     if opt_dict['player'] == 0:
                         self.end(0, self.statesystem.get_player_score(1) + 1)
                     else:
@@ -147,7 +145,6 @@ class Game:
                 opt = json.loads(opt_dict['content'])
                 # AI异常退出
                 if opt['error'] == 0:
-                    self.is_end = True
                     if opt['player'] == 0:
                         self.end(0, self.statesystem.get_player_score(1) + 1)
                     else:
@@ -166,7 +163,6 @@ class Game:
                              "operation_parameters": {}})
                         self.parser.parse(msg)
                     else:
-                        self.is_end = True
                         if opt['player'] == 0:
                             self.end(0, self.statesystem.get_player_score(1) + 1)
                         else:
@@ -188,9 +184,10 @@ class Game:
                        "Damage", "Death", "Heal", "ActivateArtifact",
                        "GameEnd", "GameStart", "BuffAdd", "BuffRemove",
                        "Attacking", "Attacked", "Leave", "Arrive", "Summon"]
-        creature_names = ["", "Swordsman", "Archer",
-                          "BlackBat", "Priest", "VolcanoDragon", "Inferno"]
-        artifact_names = ["", "HolyLight", "SalamanderShield", "InfernoFlame"]
+        creature_names = ["", "Swordsman", "Archer", "BlackBat", "Priest",
+                          "VolcanoDragon", "FrostDragon", "Inferno"]
+        artifact_names = ["", "HolyLight", "SalamanderShield", "InfernoFlame",
+                          "WindBlessing"]
 
         media_info = []
         for event in events:
@@ -242,8 +239,8 @@ class Game:
                 # damage
                 media_info.append(event.parameter_dict['damage'])
                 # type
-                damage_type = ["", "Attack", "AttackBack", 
-                               "VolcanoDragonSplash","InfernoFlameActivate"]
+                damage_type = ["", "Attack", "AttackBack",
+                               "VolcanoDragonSplash", "InfernoFlameActivate"]
                 media_info.append(damage_type.index(
                     event.parameter_dict['type']))
             elif event.name == "Death":
@@ -261,11 +258,10 @@ class Game:
                 media_info.append(event.parameter_dict['camp'])
                 media_info.append(artifact_names.index(
                     event.parameter_dict['name']) + 10 * event.parameter_dict['camp'])
-                if (event.parameter_dict['name'] == "HolyLight" or
-                        event.parameter_dict['name'] == "InfernoFlame"):
+                if event.parameter_dict['name'] in ["HolyLight", "InfernoFlame", "WindBlessing"]:
                     media_info.append(event.parameter_dict['target'][0])
                     media_info.append(event.parameter_dict['target'][1])
-                elif event.parameter_dict['name'] == "SalamanderShield":
+                elif event.parameter_dict['name'] in ["SalamanderShield"]:
                     media_info.append(0)
                     media_info.append(0)
                     media_info.append(event.parameter_dict['target'].id)
@@ -402,11 +398,10 @@ class Game:
                 opt_dict = read_opt()
             if opt_dict["player"] == -1:
                 error_player = json.loads(opt_dict['content'])["player"]
-                is_players_ready[error_player] = False
-                if error_player == 1 and player == 0:
-                    opt_dict = read_opt()
+                if error_player == 0:
+                    self.end(0, 1)
                 else:
-                    continue
+                    self.end(1, 0)
             if opt_dict["player"] == player:
                 try:
                     self.parser.parse(opt_dict["content"])
@@ -422,13 +417,12 @@ class Game:
                     is_players_ready[player] = True
             else:
                 is_players_ready[json.loads(opt_dict['content'])["player"]] = False
-        # 双方玩家是否均准备好卡组
-        if not is_players_ready[0]:
-            self.is_end = True
-            self.end(0, 1)
-        elif not is_players_ready[1]:
-            self.is_end = True
-            self.end(1, 0)
+
+            if player == 0:
+                if not is_players_ready[0]:
+                    self.end(0, 1)
+            elif not is_players_ready[1]:
+                self.end(1, 0)
 
     def start(self):
         '''开始游戏
@@ -450,6 +444,7 @@ class Game:
             player0_score: 先手玩家得分
             player1_score: 后手玩家得分
         '''
+        self.is_end = True
         if player0_score == player1_score:
             player1_score += 1
         winner = 0 if player0_score > player1_score else 1

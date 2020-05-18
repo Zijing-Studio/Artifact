@@ -1,6 +1,7 @@
 from StateSystem.EventListener import EventListener
 from StateSystem.CreatureCapacity import CreatureCapacity
 from StateSystem.Artifact import HolyLightArtifact, SalamanderShieldArtifact
+from StateSystem.UnitData import CREATURE_CAPACITY_LEVEL_UP_TURN
 
 class Player:
     def __init__(self,camp,mana,state_system):
@@ -19,6 +20,7 @@ class Player:
         self.add_event_listener(SummonListener())
         self.add_event_listener(ActivateArtifactListener())
         self.add_event_listener(ScoreListener())
+        self.add_event_listener(CreatureCapacityLevelUpListener())
 
     def add_event_listener(self,listener):
         listener.host = self
@@ -44,23 +46,16 @@ class RefreshListener(EventListener):
     def deal_event(self,event):
         if event.name == "Refresh" and event.parameter_dict["camp"] == self.host.camp:
             if self.host.max_mana < 12:
-                self.host.max_mana += 1
+                # on the 4kth turn camp=1 player
+                # on the 4k+1st turn camp=0 player
+                if event.parameter_dict["turn"] % 4 == 1 - self.host.camp:
+                    self.host.max_mana += 1
             self.host.mana = self.host.max_mana
-            # print("Player {}'s mana refreshed to {}".format(
-            #     self.host.camp,
-            #     self.host.mana
-            #     ))
             for capacity in self.host.creature_capacity_list:
                 capacity.cool_down()
             for artifact in self.host.artifact_list:
                 artifact.cool_down()
-            # print("Player {}'s creatures and artifacts cool down".format(
-            #     self.host.camp
-            # ))
             self.host.newly_summoned_id_list = []
-            # print("Player {}'s newly summoned list cleared.".format(
-            #     self.host.camp
-            # ))
 
 class IntoCoolDownListener(EventListener):
     '''
@@ -107,3 +102,9 @@ class ScoreListener(EventListener):
             self.host.score += event.parameter_dict["hp_loss"] * 1000
         if event.name == "Death" and event.parameter_dict["source"].camp != self.host.camp:
             self.host.score += event.parameter_dict["source"].level
+            
+class CreatureCapacityLevelUpListener(EventListener):
+    def deal_event(self,event):
+        if event.name == "Refresh" and event.parameter_dict["turn"] in CREATURE_CAPACITY_LEVEL_UP_TURN:
+            for item in self.host.creature_capacity_list:
+                item.duplicate_level_up()

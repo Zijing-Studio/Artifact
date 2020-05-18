@@ -92,7 +92,7 @@ C++的makefile文件，目前仅适用于样例AI。玩家编写自己的AI后�
 
 ## card.h
 
-包含生物、神器的基本属性。
+包含生物、神器的基本属性。启动ai时会从Data.json中读取。
 
 ## calculator.h & calculator.cpp
 
@@ -401,7 +401,7 @@ std::vector<gameunit::Pos> getSummonPosByCamp(int camp)
 
 ## card.py
 
-包含生物、神器的基本属性。
+包含生物、神器的基本属性。会从Data.json中读取。
 
 ## calculator.py
 
@@ -671,7 +671,7 @@ int。表示生物所属阵营。
 
 ### type
 
-string。表示生物的种类。有"Archer", "Swordsman", "BlackBat", "Priest", "VolcanoDragon", "Inferno"六种取值。
+string。表示生物的种类。有"Archer", "Swordsman", "BlackBat", "Priest", "VolcanoDragon", "Inferno", "FrostDragon"七种取值。
 
 ### cost
 
@@ -809,7 +809,7 @@ int。表示神器的id。
 
 ### name
 
-string。表示神器的名字。有"HolyLight", "SalamanderShield", "InfernoFlame"三种取值。
+string。表示神器的名字。有"HolyLight", "SalamanderShield", "InfernoFlame", "WindBlessing"四种取值。
 
 ### camp
 
@@ -835,13 +835,17 @@ string。表示神器的目前使用状态。有"Ready", "In Use", "Cooling Down
 
 string。表示神器使用对象的种类。有"Unit", "Pos"两种取值。
 
+### last_used_pos
+
+Pos。表示神器上次使用对象的位置。默认值为(-1, -1, -1)。（target_type为"Unit"时，表示使用时对象的位置。）
+
 ## CreatureCapacity
 
 生物召唤情况。
 
 ### type
 
-string。表示生物种类。有"Archer", "Swordsman", "BlackBat", "Priest", "VolcanoDragon", "Inferno"六种取值。
+string。表示生物种类。有"Archer", "Swordsman", "BlackBat", "Priest", "VolcanoDragon", "Inferno", "FrostDragon"七种取值。
 
 ### available_count
 

@@ -5,6 +5,8 @@ currentPath = os.path.dirname(__file__)
 
 DATA = json.load(open(currentPath + "/Data.json","r"))
 
+CREATURE_CAPACITY_LEVEL_UP_TURN = DATA["CreatureCapacityLevelUpTurn"]
+
 UNIT_DATA = DATA["UnitData"]
 
 ARTIFACTS = DATA["Artifacts"]

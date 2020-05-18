@@ -32,7 +32,7 @@ class DamageListener(EventListener):
     def deal_event(self,event):
         if event.name == "Damage":
             if event.parameter_dict["target"] == self.host:
-                if self.host.holy_shield:
+                if self.host.holy_shield and event.parameter_dict["damage"] != 0:
                     event.parameter_dict["damage"] = 0
                     self.host.emit(Event("BuffRemove", {
                         "source": self.host,
@@ -93,7 +93,8 @@ class AttackBackListener(EventListener):
                     event.parameter_dict["target"].pos,
                 )
                 if self.host.atk_range[0] <= distance <= self.host.atk_range[1] and \
-                    (not event.parameter_dict["source"].flying or self.host.atk_flying):
+                    (not event.parameter_dict["source"].flying or self.host.atk_flying) and \
+                    self.host.atk != 0:
                     self.host.emit(Event("Damage",{
                         "source": event.parameter_dict["target"],
                         "target": event.parameter_dict["source"],
@@ -142,12 +143,12 @@ class PriestHealListener(EventListener):
     def deal_event(self,event):
         if event.name == "TurnEnd" and self.host.state_system.current_player_id == self.host.camp:
             for unit in self.host.state_system.map.unit_list:
-                if calculator.cube_distance(unit.pos,self.host.pos) <= UNIT_DATA["Priest"]["heal_range"] \
+                if calculator.cube_distance(unit.pos,self.host.pos) <= UNIT_DATA["Priest"]["heal_range"][self.host.level-1] \
                     and unit.camp == self.host.camp:
                     self.host.emit(Event("Heal",{
                         "source": self.host,
                         "target": unit,
-                        "heal": UNIT_DATA["Priest"]["heal"]
+                        "heal": UNIT_DATA["Priest"]["heal"][self.host.level-1]
                     },-3))
 
 class PriestAtkListener(EventListener):
@@ -155,7 +156,7 @@ class PriestAtkListener(EventListener):
         if event.name == "UpdateRingBuff":
             # Add buff
             for unit in self.host.state_system.map.unit_list:
-                if calculator.cube_distance(unit.pos,self.host.pos) <= UNIT_DATA["Priest"]["atk_up_range"] \
+                if calculator.cube_distance(unit.pos,self.host.pos) <= UNIT_DATA["Priest"]["atk_up_range"][self.host.level-1] \
                     and unit.camp == self.host.camp \
                     and unit != self.host:
                     found = False
@@ -164,12 +165,12 @@ class PriestAtkListener(EventListener):
                             found = True
                             break
                     if not found:
-                        new_buff = PriestAtkBuff(self.host.state_system)
+                        new_buff = PriestAtkBuff(self.host.level,self.host.state_system)
                         new_buff.add_on(unit)
                         self.host.priest_buff_list.append(new_buff)
             # Delete Buff
             for buff in self.host.priest_buff_list:
-                if calculator.cube_distance(buff.host.pos,self.host.pos) > UNIT_DATA["Priest"]["atk_up_range"]:
+                if calculator.cube_distance(buff.host.pos,self.host.pos) > UNIT_DATA["Priest"]["atk_up_range"][self.host.level-1]:
                     buff.delete()
                     self.host.priest_buff_list.remove(buff)
         if event.name == "Death":

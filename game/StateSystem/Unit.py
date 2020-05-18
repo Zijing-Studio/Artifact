@@ -161,11 +161,9 @@ class Priest(Unit):
         )
         self.priest_buff_list = []
 
-        if level == 1 or level == 3:
-            self.add_event_listener(PriestHealListener())
+        self.add_event_listener(PriestHealListener())
 
-        if level == 2 or level == 3:
-            self.add_event_listener(PriestAtkListener())
+        self.add_event_listener(PriestAtkListener())
 
 class VolcanoDragon(Unit):
     def __init__(self,camp,level,pos,state_system):
@@ -180,3 +178,15 @@ class VolcanoDragon(Unit):
         )
 
         self.add_event_listener(VolcanoDragonAtkListener())
+
+class FrostDragon(Unit):
+    def __init__(self,camp,level,pos,state_system):
+        name = "FrostDragon"
+        Unit.__init__(
+            self,
+            camp,
+            name,
+            level,
+            pos,
+            state_system
+        )

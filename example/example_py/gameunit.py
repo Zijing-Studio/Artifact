@@ -1,8 +1,8 @@
 '''游戏单位
 '''
 
-UNIT_TYPE = ["Archer", "Swordsman", "BlackBat", "Priest", "VolcanoDragon", "Inferno"]
-ARTIFACT_NAME = ["HolyLight", "SalamanderShield", "InfernoFlame"]
+UNIT_TYPE = ["Archer", "Swordsman", "BlackBat", "Priest", "VolcanoDragon", "Inferno", "FrostDragon"]
+ARTIFACT_NAME = ["HolyLight", "SalamanderShield", "InfernoFlame", "WindBlessing"]
 ARTIFACT_STATE = ["Ready", "In Use", "Cooling Down"]
 ARTIFACT_TARGET = ["Pos", "Unit"]
 
@@ -74,7 +74,7 @@ class Artifact:
 
     def __init__(self, artifact_list=None):
         if artifact_list is None:
-            artifact_list = [-1, 0,  0, 0, 0, 0, 0]
+            artifact_list = [-1, 0,  0, 0, 0, 0, 0, [-1, -1, -1]]
         self.camp = artifact_list[0]
         self.name = ARTIFACT_NAME[artifact_list[1]]
         self.id = self.camp
@@ -83,6 +83,7 @@ class Artifact:
         self.cool_down_time = artifact_list[4]
         self.state = ARTIFACT_STATE[artifact_list[5]]
         self.target_type = ARTIFACT_TARGET[artifact_list[6]]
+        self.last_used_pos = artifact_list[7]
 
 
 class CreatureCapacity:
@@ -110,7 +111,10 @@ class Map:
                           (0, 1, -1), (-1, 1, 0), (-2, -1, 3), (-1, -2, 3), (-2, -2, 4),
                           (-3, -2, 5), (-4, -4, 8), (-5, -4, 9), (-4, -5, 9), (-5, -5, 10),
                           (-6, -5, 11), (1, 2, -3), (2, 1, -3), (2, 2, -4), (3, 2, -5),
-                          (4, 4, -8), (5, 4, -9), (4, 5, -9), (5, 5, -10), (6, 5, -11)]
+                          (4, 4, -8), (5, 4, -9), (4, 5, -9), (5, 5, -10), (6, 5, -11),
+                          (5,8,-13), (6,7,-13), (7,6,-13), (8,5,-13), (6,8,-14), (7,7,-14),
+                          (8,6,-14), (-5,-8,13), (-6,-7,13), (-7,-6,13), (-8,-5,13),
+                          (-6,-8,14), (-7,-7,14), (-8,-6,14)]
         self.obstacles = [Obstacle("Abyss", pos, True, False) for pos in ABYSS_POS_LIST]\
             + [Obstacle("Miracle", (-7, 7, 0), False, False)]\
             + [Obstacle("Miracle", (7, -7, 0), False, False)]
